@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어휘끝 수능 단어 시험 (Unit 01-10)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .correct-flash { animation: flash-green 0.5s; }
+        .incorrect-flash { animation: flash-red 0.5s; }
+        @keyframes flash-green { 50% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.5); } }
+        @keyframes flash-red { 50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.5); } }
+        #toast { transition: opacity 0.3s, transform 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
+
+    <div id="app-container" class="w-full max-w-2xl mx-auto bg-white shadow-xl rounded-lg p-4 sm:p-8">
+
+        <!-- NEW: 사용자 정보 입력 화면 -->
+        <div id="user-info-screen">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">사용자 정보 입력</h1>
+            <p class="text-center text-gray-600 mb-8">결과 저장에 사용될 정보를 입력해주세요.</p>
+            <div class="space-y-4">
+                <div>
+                    <label for="school-input" class="block text-sm font-medium text-gray-700">학교</label>
+                    <input type="text" id="school-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="예: 새싹고등학교">
+                </div>
+                <div>
+                    <label for="grade-input" class="block text-sm font-medium text-gray-700">학년</label>
+                    <input type="text" id="grade-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="예: 3">
+                </div>
+                <div>
+                    <label for="name-input" class="block text-sm font-medium text-gray-700">이름</label>
+                    <input type="text" id="name-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="예: 홍길동">
+                </div>
+            </div>
+            <button id="start-app-button" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300">시험 시작하기</button>
+        </div>
+
+        <!-- 1. 유닛 선택 화면 (이제 hidden) -->
+        <div id="unit-selection-screen" class="hidden">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">어휘끝 수능 단어 시험</h1>
+            <p class="text-center text-gray-600 mb-8">시험 볼 유닛을 선택하세요. (Unit 01-10)</p>
+            <div id="unit-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- 유닛 버튼은 JS로 생성 -->
+            </div>
+        </div>
+
+        <!-- 2. 단어 시험 화면 -->
+        <div id="test-screen" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="test-title" class="text-xl sm:text-2xl font-bold text-gray-800"></h2>
+                <div id="timer" class="text-lg font-semibold text-red-500 bg-red-100 px-4 py-2 rounded-lg">10:00</div>
+            </div>
+            <div class="mb-6">
+                <div class="w-full bg-gray-200 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"></div></div>
+                <p id="progress-text" class="text-center text-sm text-gray-600 mt-2"></p>
+            </div>
+            <div id="question-container" class="text-center p-6 bg-gray-50 rounded-lg">
+                <p id="question-type" class="text-sm font-semibold text-blue-600 mb-2"></p>
+                <p id="question" class="text-2xl sm:text-3xl font-medium text-gray-900 mb-6 min-h-[72px] flex items-center justify-center"></p>
+                <input type="text" id="answer-input" class="w-full p-3 border border-gray-300 rounded-lg text-lg text-center focus:ring-2 focus:ring-blue-500" placeholder="정답을 입력하세요">
+            </div>
+            <button id="next-button" class="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">다음</button>
+        </div>
+
+        <!-- 3. 채점 결과 화면 -->
+        <div id="results-screen" class="hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4">시험 결과</h2>
+            <div id="score-container" class="text-5xl font-bold text-center py-8 mb-6 rounded-lg">
+                <span id="final-score"></span><span class="text-3xl text-gray-500"> / 100</span>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">틀린 문제 목록</h3>
+            <div class="overflow-x-auto border border-gray-200 rounded-lg max-h-64">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50 sticky top-0"><tr><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">문제</th><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">제출한 답</th><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">정답</th><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">점수</th></tr></thead>
+                    <tbody id="incorrect-answers-body" class="bg-white divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <button id="save-results-button" class="w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600">결과 저장</button>
+                <button id="retry-button" class="w-full bg-blue-500 text-white font-bold py-3 rounded-lg hover:bg-blue-600">다시 풀기</button>
+                <button id="home-button" class="w-full bg-gray-500 text-white font-bold py-3 rounded-lg hover:bg-gray-600">처음으로</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transform translate-y-5"></div>
+    <script>
+        const vocabularyData = {
+            "Unit 01": [ { word: "appearance", meaning: "1. 외모, (겉)모습; 2. 출현, 등장" }, { word: "emerge", meaning: "(안 보이던 곳에서) 나오다, 나타나다" }, { word: "essential", meaning: "필수적인; 본질적인" }, { word: "major", meaning: "중요한, 주된; 전공하다; 1. 전공; 2. 소령" }, { word: "sake", meaning: "이익; 목적" }, { word: "radical", meaning: "1. 급진적인, 과격한; 2. 근본적인" }, { word: "feature", meaning: "1.특징; 2. 이목구비, 용모; 3. (신문, 텔레비전 등의) 특집; 특징으로 삼다" }, { word: "grant", meaning: "(공식적으로) 승인하다, 허락하다; 1. 승인, 허락; 2. (정부 등의) 보조금" }, { word: "tone", meaning: "1. 어조, 말투; 2. 색조; 3. 분위기" }, { word: "relieve", meaning: "(고통, 불안 등을) 완화하다, 덜어주다" }, { word: "phenomenon", meaning: "현상" }, { word: "contain", meaning: "1. 포함하다, 함유하다; 2. (감정을) 억누르다, 억제하다" }, { word: "relationship", meaning: "관계" }, { word: "fluid", meaning: "1. 유동체, 액체; 2. 유동적인, 변하기 쉬운" }, { word: "occur", meaning: "일어나다, 발생하다" }, { word: "select", meaning: "선택하다, 선발하다" }, { word: "discipline", meaning: "1. 훈련, 규율; 2. 학과, 학문 분야; 훈련하다; 징계하다" }, { word: "conscious", meaning: "의식하는, 자각하는" }, { word: "frequent", meaning: "잦은, 빈번한" }, { word: "sufficient", meaning: "충분한" }, { word: "tiny", meaning: "아주 작은" }, { word: "vertical", meaning: "수직의, 세로의" }, { word: "political", meaning: "정치적인, 정치의" } ],
+            "Unit 02": [ { word: "structure", meaning: "1. 구조, 조직; 2. 건조물, 건축물; 조직하다, 구조화하다" }, { word: "construct", meaning: "건설하다; 구성하다" }, { word: "instruct", meaning: "지시하다; 가르치다" }, { word: "destroy", meaning: "파괴하다, 말살하다" }, { word: "instrument", meaning: "1. 기구, 도구; 2. 악기" }, { word: "industry", meaning: "1. 산업, 공업; 2. 근면" }, { word: "consult", meaning: "상의하다; 상담하다" }, { word: "insult", meaning: "모욕하다; 모욕" }, { word: "result", meaning: "결과; (~의 결과로) 되다" }, { word: "salmon", meaning: "연어" }, { word: "assume", meaning: "1. (사실일 것으로) 추정하다; 2. (책임, 임무 등을) 맡다; 3. ~인 척하다" }, { word: "consume", meaning: "소비하다, 소모하다" }, { word: "presume", meaning: "추정하다, 간주하다" }, { word: "resume", meaning: "다시 시작하다, 재개하다" }, { word: "ensure", meaning: "보장하다, 반드시 ~하게 하다" }, { word: "assure", meaning: "장담하다, 확언하다" }, { word: "reassure", meaning: "안심시키다" }, { word: "insure", meaning: "보험에 들다" }, { word: "attach", meaning: "붙이다, 첨부하다" }, { word: "detach", meaning: "떼다, 분리하다" }, { word: "attack", meaning: "공격하다; 공격" }, { word: "stake", meaning: "1. 말뚝; 2. 이해관계; 3. (내기에) 건 돈; (돈, 목숨 등을) 걸다" }, { word: "tackle", meaning: "(힘든 문제와) 씨름하다, 다루다" }, { word: "intact", meaning: "손상되지 않은, 온전한" }, { word: "contact", meaning: "접촉; 연락; 접촉하다, 연락하다" }, { word: "integrate", meaning: "통합하다, 통합되다" }, { word: "tangible", meaning: "만질 수 있는, 실재하는" } ],
+            "Unit 03": [ { word: "entire", meaning: "전체의, 온" }, { word: "garment", meaning: "의복, 옷" }, { word: "guardian", meaning: "보호자, 수호자" }, { word: "guarantee", meaning: "보장하다, 약속하다; 보장, 보증" }, { word: "regard", meaning: "1. ~으로 여기다, 간주하다; 2. 주시하다; 1. 관심, 고려; 2. 존경; 3. 안부" }, { word: "award", meaning: "상; (상을) 수여하다" }, { word: "reward", meaning: "보상, 보답; 보상하다" }, { word: "aware", meaning: "알고 있는, 인식하는" }, { word: "warn", meaning: "경고하다, 주의를 주다" }, { word: "generate", meaning: "발생시키다, 만들어 내다" }, { word: "general", meaning: "1. 일반적인, 보편적인; 2. 전체적인, 개략적인; 장군" }, { word: "generous", meaning: "관대한, 후한" }, { word: "genetic", meaning: "유전의, 유전학의" }, { word: "genius", meaning: "천재, 천재성" }, { word: "genuine", meaning: "진짜의, 진품의" }, { word: "pregnant", meaning: "임신한" }, { word: "gender", meaning: "성, 성별" }, { word: "hydrogen", meaning: "수소" }, { word: "oxygen", meaning: "산소" }, { word: "alter", meaning: "바꾸다, 변경하다" }, { word: "alternative", meaning: "대안, 선택 가능한 것; 대안의" }, { word: "alien", meaning: "1. 외국의; 2. 이질적인; 3. 외계의; 1. 외국인; 2. 외계인" }, { word: "otherwise", meaning: "1. 그렇지 않으면; 2. 다른 방법으로" }, { word: "variety", meaning: "1. 다양성; 2. 품종" }, { word: "various", meaning: "다양한, 여러 가지의" }, { word: "vary", meaning: "다르다, 다양하다" } ],
+            "Unit 04": [ { word: "celebrate", meaning: "기념하다, 축하하다" }, { word: "celebrity", meaning: "유명 인사" }, { word: "civilized", meaning: "문명화된" }, { word: "citizen", meaning: "시민" }, { word: "civil", meaning: "1. 시민의; 2. 민간의; 3. 정중한" }, { word: "community", meaning: "공동체, 사회" }, { word: "communicate", meaning: "의사소통하다, 전달하다" }, { word: "common", meaning: "1. 흔한; 2. 공동의, 공통의" }, { word: "commute", meaning: "통근하다; 통근 (거리)" }, { word: "culture", meaning: "문화" }, { word: "agriculture", meaning: "농업" }, { word: "colony", meaning: "1. 식민지; 2. (동식물의) 군집" }, { word: "cultivate", meaning: "경작하다, 재배하다" }, { word: "economy", meaning: "1. 경제; 2. 절약" }, { word: "economics", meaning: "경제학" }, { word: "inhabit", meaning: "살다, 서식하다" }, { word: "habitat", meaning: "서식지" }, { word: "exhibit", meaning: "전시하다, 보이다; 전시(품)" }, { word: "prohibit", meaning: "금지하다" }, { word: "able", meaning: "~할 수 있는" }, { word: "hobby", meaning: "취미" }, { word: "urban", meaning: "도시의" }, { word: "suburb", meaning: "교외, 변두리" }, { word: "rural", meaning: "시골의, 지방의" } ],
+            "Unit 05": [ { word: "tradition", meaning: "전통" }, { word: "betray", meaning: "1. 배반하다, 배신하다; 2. (비밀을) 누설하다" }, { word: "traitor", meaning: "배반자, 반역자" }, { word: "donate", meaning: "기부하다, 기증하다" }, { word: "pardon", meaning: "용서; 용서하다" }, { word: "anecdote", meaning: "일화" }, { word: "dose", meaning: "(약의) 1회 복용량" }, { word: "antidote", meaning: "해독제" }, { word: "edit", meaning: "편집하다, 교정하다" }, { word: "render", meaning: "1. (어떤 상태가 되게) 만들다; 2. 주다, 제공하다" }, { word: "surrender", meaning: "항복하다; 포기하다" }, { word: "rent", meaning: "임대료; 빌리다" }, { word: "add", meaning: "더하다, 추가하다" }, { word: "addict", meaning: "중독자; 중독시키다" }, { word: "contradict", meaning: "1. 반박하다; 2. 모순되다" }, { word: "dedicate", meaning: "바치다, 헌신하다" }, { word: "indicate", meaning: "가리키다, 나타내다" }, { word: "dictator", meaning: "독재자" }, { word: "vocation", meaning: "1. 천직, 직업; 2. 소명 의식" }, { word: "advocate", meaning: "옹호하다, 지지하다; 옹호자" }, { word: "vowel", meaning: "모음" } ],
+            "Unit 06": [ { word: "face", meaning: "1. 얼굴; 2. 표면; 1. 직면하다; 2. ~을 향하다" }, { word: "preface", meaning: "서문, 머리말" }, { word: "surface", meaning: "표면, 외관" }, { word: "capital", meaning: "1. 수도; 2. 자본; 3. 대문자; 1. 주요한; 2. 대문자의; 3. 사형의" }, { word: "capable", meaning: "~을 할 수 있는, 유능한" }, { word: "capture", meaning: "1. 포획하다, 사로잡다; 2. (마음을) 사로잡다; 1. 포획; 2. 억류" }, { word: "chief", meaning: "주요한, 최고의; 우두머리, 장" }, { word: "achieve", meaning: "성취하다, 달성하다" }, { word: "occupy", meaning: "1. 차지하다; 2. 사용하다; 3. 점령하다" }, { word: "participate", meaning: "참가하다, 참여하다" }, { word: "accept", meaning: "받아들이다, 수락하다" }, { word: "except", meaning: "~을 제외하고" }, { word: "deceive", meaning: "속이다, 기만하다" }, { word: "receive", meaning: "받다, 수신하다" }, { word: "perceive", meaning: "인식하다, 감지하다" }, { word: "conceive", meaning: "1. (생각, 계획 등을) 마음에 품다, 생각하다; 2. 임신하다" }, { word: "career", meaning: "1. 직업; 2. 경력" }, { word: "carpenter", meaning: "목수" }, { word: "carriage", meaning: "마차, 탈 것" }, { word: "carrier", meaning: "1. 운송 회사; 2. 운반하는 사람, 운반기; 3. (질병) 보균자" }, { word: "charge", meaning: "1. 요금; 2. 책임; 3. 고발; 1. 요금을 청구하다; 2. 책임을 지우다; 3. 고발하다; 4. 충전하다" }, { word: "discharge", meaning: "1. 해고하다; 2. (병원에서) 퇴원시키다; 3. (액체, 가스를) 방출하다; 4. (의무를) 이행하다; 1. 해고; 2. 퇴원; 3. 방출; 4. 이행" } ],
+            "Unit 07": [ { word: "cast", meaning: "1. (시선, 미소 등을) 던지다; 2. (그림자를) 드리우다; 3. 배역을 정하다; 4. 주조하다; 1. 출연자들; 2. 깁스; 3. 주형" }, { word: "broadcast", meaning: "방송하다; 방송" }, { word: "forecast", meaning: "예보하다; 예보" }, { word: "precede", meaning: "~보다 먼저 일어나다, 선행하다" }, { word: "exceed", meaning: "넘다, 초과하다" }, { word: "proceed", meaning: "계속하다, 진행하다" }, { word: "succeed", meaning: "1. 성공하다; 2. 뒤를 잇다, 계승하다" }, { word: "predecessor", meaning: "전임자" }, { word: "incessant", meaning: "끊임없는" }, { word: "access", meaning: "1. 접근; 2. 입장; 3. 접근권; 접근하다" }, { word: "cease", meaning: "그만두다, 멈추다" }, { word: "concentrate", meaning: "집중하다, 전념하다" }, { word: "eccentric", meaning: "괴짜인, 이상한" }, { word: "concern", meaning: "1. 걱정, 염려; 2. 관심사; 3. 관계; 1. 걱정하다; 2. 관심을 갖다; 3. ~에 관계하다" }, { word: "discern", meaning: "알아차리다, 식별하다" }, { word: "discriminate", meaning: "차별하다; 식별하다" }, { word: "crisis", meaning: "위기" }, { word: "criticize", meaning: "비판하다, 비난하다" }, { word: "certain", meaning: "1. 확실한, 틀림없는; 2. (어느) 일정한, 특정한" }, { word: "certificate", meaning: "증명서, 이수증" } ],
+            "Unit 08": [ { word: "accident", meaning: "사고" }, { word: "incident", meaning: "사건" }, { word: "coincidence", meaning: "우연의 일치" }, { word: "casual", meaning: "1. 격식을 차리지 않는; 2. 우연한; 3. 평상시의" }, { word: "decay", meaning: "썩다, 부패하다; 쇠퇴하다; 부패, 쇠퇴" }, { word: "suicide", meaning: "자살" }, { word: "decision", meaning: "결정" }, { word: "precise", meaning: "정확한, 정밀한" }, { word: "circular", meaning: "원형의, 순환하는" }, { word: "circulate", meaning: "순환하다, 유포되다" }, { word: "circumstance", meaning: "상황, 환경" }, { word: "circuit", meaning: "1. 순환, 순회; 2. 회로" }, { word: "cite", meaning: "인용하다" }, { word: "recite", meaning: "암송하다, 낭독하다" }, { word: "excite", meaning: "흥분시키다, 자극하다" }, { word: "claim", meaning: "주장하다; 요구하다; 주장, 요구" }, { word: "exclaim", meaning: "외치다, 소리치다" }, { word: "proclaim", meaning: "선언하다, 공표하다" }, { word: "council", meaning: "의회, 위원회" }, { word: "decline", meaning: "1. 감소하다, 하락하다; 2. 거절하다; 감소, 하락" }, { word: "incline", meaning: "1. (~할) 마음이 내키다; 2. (~하는) 경향이 있다; 경사, 비탈" }, { word: "climate", meaning: "기후" }, { word: "conclude", meaning: "결론을 내리다; 끝내다" }, { word: "include", meaning: "포함하다" }, { word: "exclude", meaning: "제외하다, 배제하다" }, { word: "closet", meaning: "벽장" }, { word: "disclose", meaning: "드러내다, 폭로하다" }, { word: "recognize", meaning: "1. 알아보다, 인지하다; 2. 인정하다" }, { word: "diagnose", meaning: "진단하다" }, { word: "ignore", meaning: "무시하다" }, { word: "noble", meaning: "고귀한, 숭고한; 귀족" }, { word: "acknowledge", meaning: "인정하다" }, { word: "acquaint", meaning: "알리다, 숙지시키다" }, { word: "cordial", meaning: "진심에서 우러난, 다정한" }, { word: "discord", meaning: "불일치, 불화" }, { word: "accord", meaning: "일치, 합의; 일치하다, 조화되다" }, { word: "core", meaning: "핵심; 핵심적인" }, { word: "credit", meaning: "1. 신용; 2. 칭찬; 3. 학점; (공로를) ~에게 돌리다" }, { word: "incredible", meaning: "믿을 수 없는, 놀라운" }, { word: "creed", meaning: "신조, 신념" } ],
+            "Unit 09": [ { word: "crowd", meaning: "군중, 대중; 붐비다" }, { word: "create", meaning: "창조하다, 만들어내다" }, { word: "recreate", meaning: "다시 만들다, 재현하다" }, { word: "increase", meaning: "증가하다; 증가" }, { word: "decrease", meaning: "감소하다; 감소" }, { word: "concrete", meaning: "구체적인; 콘크리트" }, { word: "recruit", meaning: "모집하다, 채용하다; 신입사원" }, { word: "current", meaning: "1. 현재의; 2. 흐름, 해류, 기류" }, { word: "curriculum", meaning: "교육과정, 커리큘럼" }, { word: "excursion", meaning: "짧은 여행, 소풍" }, { word: "occur", meaning: "일어나다, 발생하다" }, { word: "cure", meaning: "치료하다; 치료(법)" }, { word: "curious", meaning: "호기심이 강한, 궁금한" }, { word: "accurate", meaning: "정확한, 정밀한" }, { word: "damage", meaning: "손상, 피해; 손상을 입히다" }, { word: "condemn", meaning: "1. 비난하다; 2. 선고를 내리다" }, { word: "demand", meaning: "요구하다; 수요" }, { word: "command", meaning: "명령하다; 지휘하다; 명령, 지휘" }, { word: "recommend", meaning: "추천하다" }, { word: "manual", meaning: "손으로 하는, 수동의; 설명서" }, { word: "manuscript", meaning: "원고" }, { word: "maintain", meaning: "유지하다, 주장하다" }, { word: "manipulate", meaning: "조종하다, 조작하다" }, { word: "manage", meaning: "관리하다, 경영하다; 그럭저럭 해내다" }, { word: "mechanism", meaning: "기계 장치, 메커니즘" }, { word: "mechanic", meaning: "정비공" }, { word: "machinery", meaning: "기계류" }, { word: "medium", meaning: "1. 중간의; 2. 매체; 수단" }, { word: "immediate", meaning: "즉각적인, 직접적인" }, { word: "mean", meaning: "1. 의미하다; 2. 의도하다; 비열한" }, { word: "meanwhile", meaning: "그 동안에, 한편" }, { word: "memory", meaning: "기억(력)" }, { word: "remember", meaning: "기억하다" }, { word: "comment", meaning: "논평, 의견; 논평하다" }, { word: "mental", meaning: "정신의, 마음의" }, { word: "mention", meaning: "언급하다, 말하다" }, { word: "remind", meaning: "상기시키다, 떠오르게 하다" }, { word: "monument", meaning: "기념물, 기념비" }, { word: "monitor", meaning: "감시하다, 관찰하다; 모니터" }, { word: "summon", meaning: "소환하다, 호출하다" } ],
+            "Unit 10": [ { word: "commerce", meaning: "상업, 무역" }, { word: "merchant", meaning: "상인, 무역상" }, { word: "mercy", meaning: "자비, 연민" }, { word: "emerge", meaning: "나오다, 나타나다" }, { word: "immerse", meaning: "담그다, 몰두하게 만들다" }, { word: "submerge", meaning: "물에 잠기게 하다, 잠수하다" }, { word: "meter", meaning: "미터; 측정기" }, { word: "measure", meaning: "측정하다, 재다; 조치, 수단" }, { word: "dimension", meaning: "1. 차원; 2. 크기, 치수" }, { word: "immense", meaning: "거대한, 엄청난" }, { word: "thermometer", meaning: "온도계" }, { word: "barometer", meaning: "기압계" }, { word: "diameter", meaning: "지름, 직경" }, { word: "migrate", meaning: "이주하다, 이동하다" }, { word: "emigrate", meaning: "(다른 나라로) 이민 가다" }, { word: "immigrate", meaning: "(다른 나라에서) 이민 오다" }, { word: "minor", meaning: "1. 미성년자; 2. 부전공; 1. 사소한, 덜 중요한; 2. 단조의" }, { word: "minister", meaning: "장관, 성직자" }, { word: "administer", meaning: "관리하다, 운영하다; (약을) 투여하다" }, { word: "diminish", meaning: "줄어들다, 약해지다" }, { word: "eminent", meaning: "저명한, 탁월한" }, { word: "imminent", meaning: "임박한, 곧 닥칠 것 같은" }, { word: "prominent", meaning: "1. 저명한, 중요한; 2. 돌출된" }, { word: "minimum", meaning: "최소, 최저; 최소의" }, { word: "miracle", meaning: "기적" }, { word: "admire", meaning: "존경하다, 감탄하다" }, { word: "marvelous", meaning: "놀라운, 경이로운" }, { word: "admit", meaning: "1. 인정하다; 2. 입장을 허락하다" }, { word: "commit", meaning: "1. (범죄를) 저지르다; 2. 약속하다; 3. 전념하다" }, { word: "committee", meaning: "위원회" }, { word: "emit", meaning: "(빛, 열, 소리 등을) 내다, 방출하다" }, { word: "omit", meaning: "생략하다, 빠뜨리다" }, { word: "permit", meaning: "허락하다, 용납하다; 허가증" }, { word: "submit", meaning: "1. 제출하다; 2. 항복하다, 굴복하다" }, { word: "transmit", meaning: "전송하다, 전달하다" }, { word: "missile", meaning: "미사일" }, { word: "mission", meaning: "1. 임무, 사명; 2. 사절단" }, { word: "commission", meaning: "1. 위원회; 2. 수수료; 3. 의뢰; 의뢰하다" }, { word: "mess", meaning: "엉망인 상태, 혼란" } ]
+        };
+        let userInfo = {};
+        let currentUnit = '', questions = [], currentQuestionIndex = 0, userAnswers = [], timerInterval;
+        const userInfoScreen = document.getElementById('user-info-screen');
+        const unitSelectionScreen = document.getElementById('unit-selection-screen');
+        const testScreen = document.getElementById('test-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const schoolInput = document.getElementById('school-input');
+        const gradeInput = document.getElementById('grade-input');
+        const nameInput = document.getElementById('name-input');
+        const startAppButton = document.getElementById('start-app-button');
+        const unitButtonsContainer = document.getElementById('unit-buttons');
+        const testTitle = document.getElementById('test-title');
+        const timerDisplay = document.getElementById('timer');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const questionType = document.getElementById('question-type');
+        const questionEl = document.getElementById('question');
+        const answerInput = document.getElementById('answer-input');
+        const nextButton = document.getElementById('next-button');
+        const finalScore = document.getElementById('final-score');
+        const incorrectAnswersBody = document.getElementById('incorrect-answers-body');
+        const saveResultsButton = document.getElementById('save-results-button');
+        const retryButton = document.getElementById('retry-button');
+        const homeButton = document.getElementById('home-button');
+
+        function init() {
+            Object.keys(vocabularyData).sort((a,b)=>parseInt(a.match(/\d+/)[0])-parseInt(b.match(/\d+/)[0])).forEach(unit=>{ const button=document.createElement('button'); button.textContent=unit; button.className='bg-white text-gray-700 font-semibold py-4 px-2 rounded-lg shadow hover:bg-gray-200 border border-gray-200 transition-all duration-200'; button.onclick=()=>startTest(unit); unitButtonsContainer.appendChild(button); });
+            startAppButton.addEventListener('click', startApp);
+            nextButton.addEventListener('click', handleNext);
+            answerInput.addEventListener('keyup', e => { if (e.key === 'Enter') { handleNext(); } });
+            retryButton.addEventListener('click', () => startTest(currentUnit));
+            homeButton.addEventListener('click', () => showScreen(unitSelectionScreen));
+            saveResultsButton.addEventListener('click', saveResults);
+            showScreen(userInfoScreen);
+        }
+        function startApp() {
+            const school = schoolInput.value.trim();
+            const grade = gradeInput.value.trim();
+            const name = nameInput.value.trim();
+            if (!school || !grade || !name) {
+                showToast("모든 정보를 입력해주세요.");
+                return;
+            }
+            userInfo = { school, grade, name };
+            showScreen(unitSelectionScreen);
+        }
+        function showScreen(screen) {
+            [userInfoScreen, unitSelectionScreen, testScreen, resultsScreen].forEach(s => s.classList.add('hidden'));
+            screen.classList.remove('hidden');
+        }
+        async function saveResults() {
+            const score = finalScore.textContent;
+            let title = `${userInfo.school} ${userInfo.grade}학년 ${userInfo.name}의 ${currentUnit} 시험지`;
+            let resultsText = `${title}\n\n총점: ${score}점\n\n--- 틀린 문제 목록 ---\n`;
+            const incorrectRows = incorrectAnswersBody.querySelectorAll('tr');
+            if (incorrectRows.length === 1 && incorrectRows[0].children[0].colSpan === 4) {
+                 resultsText += "틀린 문제가 없습니다.";
+            } else {
+                incorrectRows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    resultsText += `문제: ${cells[0].textContent}\n`;
+                    resultsText += `제출 답: ${cells[1].textContent}\n`;
+                    resultsText += `정답: ${cells[2].textContent}\n`;
+                    resultsText += `점수: ${cells[3].textContent}\n\n`;
+                });
+            }
+            try { await navigator.clipboard.writeText(resultsText.trim()); showToast('시험 결과가 클립보드에 복사되었습니다.'); }
+            catch (err) { console.error('클립보드 복사 실패:', err); showToast('결과 복사에 실패했습니다.'); }
+        }
+        // 나머지 JS 함수들은 이전과 동일하게 유지됩니다.
+        function startTest(unit){currentUnit=unit;let unitWords=[...vocabularyData[unit]];questions=[];userAnswers=[];currentQuestionIndex=0;unitWords.sort(()=>0.5-Math.random());const numQuestions=Math.min(20,unitWords.length);const selectedWords=unitWords.slice(0,numQuestions);const half=Math.ceil(numQuestions/2);for(let i=0;i<numQuestions;i++){const wordData=selectedWords[i];const type=i<half?'spelling':'meaning';questions.push({type:type,word:wordData.word,meaning:wordData.meaning,originalQuestion:type==='spelling'?wordData.meaning:wordData.word})}
+        questions.sort(()=>0.5-Math.random());testTitle.textContent=`${unit} 단어 시험`;showScreen(testScreen);displayQuestion();startTimer()}
+        function displayQuestion(){if(currentQuestionIndex>=questions.length){submitTest();return}
+        const q=questions[currentQuestionIndex];if(q.type==='spelling'){questionType.textContent='의미를 보고 철자 맞히기';questionEl.textContent=q.meaning.replace(/(\d+\.\s*)|[()]/g,'').replace(/;/g,', ')}else{questionType.textContent='철자를 보고 의미 맞히기';questionEl.textContent=q.word}
+        answerInput.value='';answerInput.focus();updateProgress();if(currentQuestionIndex===questions.length-1){nextButton.textContent='채점하기'}else{nextButton.textContent='다음'}}
+        function handleNext(){const answer=answerInput.value.trim();if(!answer){answerInput.classList.add('incorrect-flash');setTimeout(()=>answerInput.classList.remove('incorrect-flash'),500);return}
+        userAnswers[currentQuestionIndex]=answer;const isCorrectAnswer=isAnswerInitiallyCorrect(questions[currentQuestionIndex],answer);answerInput.classList.add(isCorrectAnswer?'correct-flash':'incorrect-flash');setTimeout(()=>answerInput.classList.remove('correct-flash','incorrect-flash'),500);setTimeout(()=>{currentQuestionIndex++;displayQuestion()},300)}
+        function isAnswerInitiallyCorrect(question,answer){if(question.type==='spelling'){return question.word.toLowerCase()===answer.toLowerCase()}else{const cleanCorrectAnswer=question.meaning.toLowerCase().replace(/(\d+\.\s*)|[()]/g,'');const userFirstMeaning=answer.split(/[,;]/)[0].toLowerCase().trim();return cleanCorrectAnswer.includes(userFirstMeaning)}}
+        function updateProgress(){const progress=((currentQuestionIndex)/questions.length)*100;progressBar.style.width=`${progress}%`;progressText.textContent=`문제 ${currentQuestionIndex+1} / ${questions.length}`}
+        function startTimer(){let timeLeft=600;timerDisplay.textContent="10:00";clearInterval(timerInterval);timerInterval=setInterval(()=>{timeLeft--;const minutes=Math.floor(timeLeft/60);const seconds=timeLeft%60;timerDisplay.textContent=`${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;if(timeLeft<=0){clearInterval(timerInterval);submitTest()}},1000)}
+        function submitTest(){clearInterval(timerInterval);let totalScore=0;const incorrectAnswers=[];questions.forEach((q,index)=>{const userAnswer=userAnswers[index]||"";let score=0;if(q.type==='spelling'){score=userAnswer.toLowerCase()===q.word.toLowerCase()?100:0}else{score=calculateMeaningScore(userAnswer,q.meaning)}
+        if(score<100){incorrectAnswers.push({question:q.originalQuestion,userAnswer:userAnswer||"미응답",correctAnswer:q.type==='spelling'?q.word:q.meaning,score:score})}
+        totalScore+=score});const averageScore=questions.length>0?Math.round(totalScore/questions.length):0;displayResults(averageScore,incorrectAnswers)}
+        function calculateMeaningScore(userAnswer,correctAnswer){const normalize=str=>str.toLowerCase().replace(/[()]/g,'').trim();const cleanCorrectAnswer=correctAnswer.replace(/\d+\.\s*/g,'').trim();const cleanUserAnswer=userAnswer.trim();if(cleanUserAnswer==="")return 0;const meaningGroups=cleanCorrectAnswer.split(';').map(g=>g.trim().split(',').map(s=>normalize(s)).filter(s=>s));const userMeanings=cleanUserAnswer.split(/[,;]/).map(m=>normalize(m)).filter(m=>m);const allPossibleCorrectMeanings=new Set(meaningGroups.flat());for(const userMeaning of userMeanings){let isMeaningValid=false;for(const correctMeaning of allPossibleCorrectMeanings){if(correctMeaning.includes(userMeaning)||userMeaning.includes(correctMeaning)){isMeaningValid=true;break}}
+        if(!isMeaningValid){return 0}}
+        let matchedGroupsCount=0;for(const group of meaningGroups){let isGroupMatched=false;for(const userMeaning of userMeanings){for(const similarMeaning of group){if(similarMeaning.includes(userMeaning)||userMeaning.includes(similarMeaning)){isGroupMatched=true;break}}
+        if(isGroupMatched)break}
+        if(isGroupMatched){matchedGroupsCount++}}
+        if(meaningGroups.length===0)return 100;const matchedRatio=matchedGroupsCount/meaningGroups.length;if(matchedRatio>=1){return 100}else if(matchedRatio>=0.5){return 50}else{return 0}}
+        function displayResults(score,incorrectList){finalScore.textContent=score;const scoreContainer=finalScore.parentElement;scoreContainer.className='text-5xl font-bold text-center py-8 mb-6 rounded-lg';if(score>=80){scoreContainer.classList.add('text-blue-600')}else if(score>=50){scoreContainer.classList.add('text-yellow-600')}else{scoreContainer.classList.add('text-red-600')}
+        incorrectAnswersBody.innerHTML='';if(incorrectList.length===0){incorrectAnswersBody.innerHTML=`<tr><td colspan="4" class="text-center py-4 text-gray-500">틀린 문제가 없습니다! 완벽해요!</td></tr>`}else{incorrectList.forEach(item=>{const row=`<tr class="text-sm"><td class="px-4 py-3 align-top">${item.question}</td><td class="px-4 py-3 align-top text-red-600">${item.userAnswer}</td><td class="px-4 py-3 align-top text-blue-600">${item.correctAnswer}</td><td class="px-4 py-3 align-top font-semibold">${item.score}점</td></tr>`;incorrectAnswersBody.innerHTML+=row})}
+        showScreen(resultsScreen)}
+        function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.remove('opacity-0','translate-y-5');setTimeout(()=>{toast.classList.add('opacity-0','translate-y-5')},2500)}
+        init();
+    </script>
+</body>
+</html>
