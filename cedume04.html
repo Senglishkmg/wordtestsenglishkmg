@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어휘끝 중학필수 단어 시험 (Unit 31-40)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .correct-flash { animation: flash-green 0.5s; }
+        .incorrect-flash { animation: flash-red 0.5s; }
+        @keyframes flash-green { 50% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.5); } }
+        @keyframes flash-red { 50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.5); } }
+        #toast { transition: opacity 0.3s, transform 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
+    <div id="app-container" class="w-full max-w-2xl mx-auto bg-white shadow-xl rounded-lg p-4 sm:p-8">
+        <!-- HTML 구조는 1-10 유닛 앱과 동일 -->
+        <div id="user-info-screen">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">사용자 정보 입력</h1>
+            <p class="text-center text-gray-600 mb-8">결과 저장에 사용될 정보를 입력해주세요.</p>
+            <div class="space-y-4">
+                <div><label for="school-input" class="block text-sm font-medium text-gray-700">학교</label><input type="text" id="school-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 새싹중학교"></div>
+                <div><label for="grade-input" class="block text-sm font-medium text-gray-700">학년</label><input type="text" id="grade-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 1"></div>
+                <div><label for="name-input" class="block text-sm font-medium text-gray-700">이름</label><input type="text" id="name-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 홍길동"></div>
+            </div>
+            <button id="start-app-button" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">시험 시작하기</button>
+        </div>
+        <div id="unit-selection-screen" class="hidden">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">어휘끝 중학필수 단어 시험</h1>
+            <p class="text-center text-gray-600 mb-8">시험 볼 유닛을 선택하세요. (Unit 31-40)</p>
+            <div id="unit-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </div>
+        <div id="test-screen" class="hidden">
+            <div class="flex justify-between items-center mb-6"><h2 id="test-title" class="text-xl sm:text-2xl font-bold"></h2><div id="timer" class="text-lg font-semibold text-red-500 bg-red-100 px-4 py-2 rounded-lg">10:00</div></div>
+            <div class="mb-6"><div class="w-full bg-gray-200 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full"></div></div><p id="progress-text" class="text-center text-sm text-gray-600 mt-2"></p></div>
+            <div id="question-container" class="text-center p-6 bg-gray-50 rounded-lg"><p id="question-type" class="text-sm font-semibold text-blue-600 mb-2"></p><p id="question" class="text-2xl sm:text-3xl font-medium mb-6 min-h-[72px] flex items-center justify-center"></p><input type="text" id="answer-input" class="w-full p-3 border rounded-lg text-lg text-center" placeholder="정답을 입력하세요"></div>
+            <button id="next-button" class="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">다음</button>
+        </div>
+        <div id="results-screen" class="hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">시험 결과</h2>
+            <div id="score-container" class="text-5xl font-bold text-center py-8 mb-6 rounded-lg"><span id="final-score"></span><span class="text-3xl text-gray-500"> / 100</span></div>
+            <h3 class="text-lg font-semibold mb-4">틀린 문제 목록</h3>
+            <div class="overflow-x-auto border rounded-lg max-h-64">
+                <table class="min-w-full divide-y"><thead class="bg-gray-50 sticky top-0"><tr><th class="px-4 py-3 text-left text-xs font-medium uppercase">문제</th><th class="px-4 py-3 text-left text-xs font-medium uppercase">제출한 답</th><th class="px-4 py-3 text-left text-xs font-medium uppercase">정답</th><th class="px-4 py-3 text-left text-xs font-medium uppercase">점수</th></tr></thead><tbody id="incorrect-answers-body" class="bg-white divide-y"></tbody></table>
+            </div>
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <button id="save-results-button" class="w-full bg-green-500 text-white font-bold py-3 rounded-lg">결과 저장</button>
+                <button id="retry-button" class="w-full bg-blue-500 text-white font-bold py-3 rounded-lg">다시 풀기</button>
+                <button id="home-button" class="w-full bg-gray-500 text-white font-bold py-3 rounded-lg">처음으로</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transform translate-y-5"></div>
+    <script>
+        const vocabularyData = {
+            "Unit 31": [ { word: "rice", meaning: "밥; 쌀" }, { word: "noodle", meaning: "국수" }, { word: "soup", meaning: "수프" }, { word: "stew", meaning: "스튜" }, { word: "salad", meaning: "샐러드" }, { word: "sandwich", meaning: "샌드위치" }, { word: "pizza", meaning: "피자" }, { word: "hamburger", meaning: "햄버거" }, { word: "steak", meaning: "스테이크" }, { word: "egg", meaning: "계란, 달걀" }, { word: "meat", meaning: "고기" }, { word: "pork", meaning: "돼지고기" } ],
+            "Unit 32": [ { "word": "beef", "meaning": "소고기" }, { "word": "chicken", "meaning": "닭고기; 닭" }, { "word": "sausage", "meaning": "소시지" }, { "word": "ham", "meaning": "햄" }, { "word": "fish", "meaning": "물고기, 생선" }, { "word": "vegetable", "meaning": "채소, 야채" }, { "word": "bean", "meaning": "콩" }, { "word": "potato", "meaning": "감자" }, { "word": "tomato", "meaning": "토마토" }, { "word": "onion", "meaning": "양파" }, { "word": "garlic", "meaning": "마늘" }, { "word": "carrot", "meaning": "당근" } ],
+            "Unit 33": [ { "word": "mushroom", "meaning": "버섯" }, { "word": "fruit", "meaning": "과일" }, { "word": "apple", "meaning": "사과" }, { "word": "banana", "meaning": "바나나" }, { "word": "grape", "meaning": "포도" }, { "word": "strawberry", "meaning": "딸기" }, { "word": "melon", "meaning": "멜론" }, { "word": "lemon", "meaning": "레몬" }, { "word": "peach", "meaning": "복숭아" }, { "word": "cherry", "meaning": "체리, 버찌" }, { "word": "nut", "meaning": "견과, 땅콩" }, { "word": "sugar", "meaning": "설탕" } ],
+            "Unit 34": [ { "word": "salt", "meaning": "소금" }, { "word": "pepper", "meaning": "후추" }, { "word": "sauce", "meaning": "소스" }, { "word": "oil", "meaning": "기름, 식용유" }, { "word": "honey", "meaning": "꿀" }, { "word": "candy", "meaning": "사탕" }, { "word": "chocolate", "meaning": "초콜릿" }, { "word": "ice cream", "meaning": "아이스크림" }, { "word": "cake", "meaning": "케이크" }, { "word": "cookie", "meaning": "쿠키" }, { "word": "pie", "meaning": "파이" }, { "word": "popcorn", "meaning": "팝콘" } ],
+            "Unit 35": [ { "word": "school", "meaning": "학교" }, { "word": "class", "meaning": "수업; 학급" }, { "word": "student", "meaning": "학생" }, { "word": "teacher", "meaning": "선생님" }, { "word": "study", "meaning": "공부하다; 연구" }, { "word": "learn", "meaning": "배우다" }, { "word": "teach", "meaning": "가르치다" }, { "word": "test", "meaning": "시험; 시험하다" }, { "word": "exam", "meaning": "시험" }, { "word": "grade", "meaning": "성적; 학년" }, { "word": "score", "meaning": "점수; 득점하다" }, { "word": "homework", "meaning": "숙제" } ],
+            "Unit 36": [ { "word": "subject", "meaning": "과목; 주제" }, { "word": "English", "meaning": "영어" }, { "word": "Korean", "meaning": "한국어; 한국의" }, { "word": "math", "meaning": "수학" }, { "word": "science", "meaning": "과학" }, { "word": "history", "meaning": "역사" }, { "word": "art", "meaning": "미술" }, { "word": "music", "meaning": "음악" }, { "word": "P.E.", "meaning": "체육" }, { "word": "uniform", "meaning": "교복, 제복" }, { "word": "vacation", "meaning": "방학, 휴가" }, { "word": "semester", "meaning": "학기" } ],
+            "Unit 37": [ { "word": "classroom", "meaning": "교실" }, { "word": "board", "meaning": "칠판; 판자" }, { "word": "desk", "meaning": "책상" }, { "word": "chair", "meaning": "의자" }, { "word": "pen", "meaning": "펜" }, { "word": "pencil", "meaning": "연필" }, { "word": "eraser", "meaning": "지우개" }, { "word": "ruler", "meaning": "자" }, { "word": "notebook", "meaning": "공책" }, { "word": "book", "meaning": "책" }, { "word": "page", "meaning": "페이지, 쪽" }, { "word": "library", "meaning": "도서관" } ],
+            "Unit 38": [ { "word": "question", "meaning": "질문" }, { "word": "answer", "meaning": "대답; 대답하다" }, { "word": "speak", "meaning": "말하다" }, { "word": "talk", "meaning": "이야기하다" }, { "word": "say", "meaning": "말하다" }, { "word": "tell", "meaning": "말하다, 알려주다" }, { "word": "read", "meaning": "읽다" }, { "word": "write", "meaning": "쓰다" }, { "word": "spell", "meaning": "철자를 말하다" }, { "word": "mean", "meaning": "의미하다; 비열한" }, { "word": "understand", "meaning": "이해하다" }, { "word": "know", "meaning": "알다" } ],
+            "Unit 39": [ { "word": "think", "meaning": "생각하다" }, { "word": "remember", "meaning": "기억하다" }, { "word": "forget", "meaning": "잊다" }, { "word": "guess", "meaning": "추측하다" }, { "word": "problem", "meaning": "문제" }, { "word": "easy", "meaning": "쉬운" }, { "word": "hard", "meaning": "어려운; 딱딱한; 열심히" }, { "word": "difficult", "meaning": "어려운" }, { "word": "right", "meaning": "옳은; 오른쪽의; 권리" }, { "word": "wrong", "meaning": "틀린" }, { "word": "true", "meaning": "사실인, 진짜의" }, { "word": "false", "meaning": "거짓의" } ],
+            "Unit 40": [ { "word": "example", "meaning": "예, 보기" }, { "word": "idea", "meaning": "생각, 아이디어" }, { "word": "fact", "meaning": "사실" }, { "word": "opinion", "meaning": "의견" }, { "word": "secret", "meaning": "비밀" }, { "word": "news", "meaning": "뉴스, 소식" }, { "word": "information", "meaning": "정보" }, { "word": "letter", "meaning": "편지; 글자" }, { "word": "word", "meaning": "단어, 말" }, { "word": "sentence", "meaning": "문장" }, { "word": "story", "meaning": "이야기" }, { "word": "title", "meaning": "제목" } ]
+        };
+        // --- 이하 스크립트 코드는 이전 앱들과 동일 ---
+        let userInfo = {};
+        let currentUnit='',questions=[],currentQuestionIndex=0,userAnswers=[],timerInterval;
+        const userInfoScreen = document.getElementById('user-info-screen');
+        const unitSelectionScreen=document.getElementById('unit-selection-screen');
+        const testScreen=document.getElementById('test-screen');
+        const resultsScreen=document.getElementById('results-screen');
+        const schoolInput = document.getElementById('school-input');
+        const gradeInput = document.getElementById('grade-input');
+        const nameInput = document.getElementById('name-input');
+        const startAppButton = document.getElementById('start-app-button');
+        const unitButtonsContainer=document.getElementById('unit-buttons');
+        const testTitle=document.getElementById('test-title');
+        const timerDisplay=document.getElementById('timer');
+        const progressBar=document.getElementById('progress-bar');
+        const progressText=document.getElementById('progress-text');
+        const questionType=document.getElementById('question-type');
+        const questionEl=document.getElementById('question');
+        const answerInput=document.getElementById('answer-input');
+        const nextButton=document.getElementById('next-button');
+        const finalScore=document.getElementById('final-score');
+        const incorrectAnswersBody=document.getElementById('incorrect-answers-body');
+        const saveResultsButton=document.getElementById('save-results-button');
+        const retryButton=document.getElementById('retry-button');
+        const homeButton=document.getElementById('home-button');
+        
+        function init(){
+            Object.keys(vocabularyData).sort((a,b)=>parseInt(a.match(/\d+/)[0])-parseInt(b.match(/\d+/)[0])).forEach(unit=>{const button=document.createElement('button');button.textContent=unit;button.className='bg-white text-gray-700 font-semibold py-4 px-2 rounded-lg shadow hover:bg-gray-200 border border-gray-200 transition-all duration-200';button.onclick=()=>startTest(unit);unitButtonsContainer.appendChild(button)});
+            startAppButton.addEventListener('click', startApp);
+            nextButton.addEventListener('click',handleNext);
+            answerInput.addEventListener('keyup',e=>{if(e.key==='Enter'){handleNext()}});
+            retryButton.addEventListener('click',()=>startTest(currentUnit));
+            homeButton.addEventListener('click',()=>showScreen(unitSelectionScreen));
+            saveResultsButton.addEventListener('click',saveResults);
+            showScreen(userInfoScreen);
+        }
+
+        function startApp() {
+            const school = schoolInput.value.trim();
+            const grade = gradeInput.value.trim();
+            const name = nameInput.value.trim();
+            if (!school || !grade || !name) {
+                showToast("모든 정보를 입력해주세요.");
+                return;
+            }
+            userInfo = { school, grade, name };
+            showScreen(unitSelectionScreen);
+        }
+
+        function showScreen(screen){
+            [userInfoScreen, unitSelectionScreen,testScreen,resultsScreen].forEach(s=>s.classList.add('hidden'));
+            screen.classList.remove('hidden');
+        }
+
+        async function saveResults(){
+            const score=finalScore.textContent;
+            let title = `${userInfo.school} ${userInfo.grade}학년 ${userInfo.name}의 ${currentUnit} 시험지`;
+            let resultsText = `${title}\n\n총점: ${score}점\n\n--- 틀린 문제 목록 ---\n`;
+            const incorrectRows=incorrectAnswersBody.querySelectorAll('tr');
+            if(incorrectRows.length===1&&incorrectRows[0].children[0].colSpan===4){
+                resultsText+="틀린 문제가 없습니다."
+            } else {
+                incorrectRows.forEach(row=>{
+                    const cells=row.querySelectorAll('td');
+                    resultsText+=`문제: ${cells[0].textContent}\n`;
+                    resultsText+=`제출 답: ${cells[1].textContent}\n`;
+                    resultsText+=`정답: ${cells[2].textContent}\n`;
+                    resultsText+=`점수: ${cells[3].textContent}\n\n`;
+                });
+            }
+            try{
+                await navigator.clipboard.writeText(resultsText.trim());
+                showToast('시험 결과가 클립보드에 복사되었습니다.');
+            } catch(err) {
+                console.error('클립보드 복사 실패:',err);
+                showToast('결과 복사에 실패했습니다.');
+            }
+        }
+        
+        function startTest(unit){currentUnit=unit;let unitWords=[...vocabularyData[unit]];questions=[];userAnswers=[];currentQuestionIndex=0;unitWords.sort(()=>0.5-Math.random());const numQuestions=Math.min(20,unitWords.length);const selectedWords=unitWords.slice(0,numQuestions);const half=Math.ceil(numQuestions/2);for(let i=0;i<numQuestions;i++){const wordData=selectedWords[i];const type=i<half?'spelling':'meaning';questions.push({type:type,word:wordData.word,meaning:wordData.meaning,originalQuestion:type==='spelling'?wordData.meaning:wordData.word})}
+        questions.sort(()=>0.5-Math.random());testTitle.textContent=`${unit} 단어 시험`;showScreen(testScreen);displayQuestion();startTimer()}
+        function displayQuestion(){if(currentQuestionIndex>=questions.length){submitTest();return}
+        const q=questions[currentQuestionIndex];if(q.type==='spelling'){questionType.textContent='의미를 보고 철자 맞히기';questionEl.textContent=q.meaning.replace(/(\d+\.\s*)|[()]/g,'').replace(/;/g,', ')}else{questionType.textContent='철자를 보고 의미 맞히기';questionEl.textContent=q.word}
+        answerInput.value='';answerInput.focus();updateProgress();if(currentQuestionIndex===questions.length-1){nextButton.textContent='채점하기'}else{nextButton.textContent='다음'}}
+        function handleNext(){const answer=answerInput.value.trim();if(!answer){answerInput.classList.add('incorrect-flash');setTimeout(()=>answerInput.classList.remove('incorrect-flash'),500);return}
+        userAnswers[currentQuestionIndex]=answer;const isCorrectAnswer=isAnswerInitiallyCorrect(questions[currentQuestionIndex],answer);answerInput.classList.add(isCorrectAnswer?'correct-flash':'incorrect-flash');setTimeout(()=>answerInput.classList.remove('correct-flash','incorrect-flash'),500);setTimeout(()=>{currentQuestionIndex++;displayQuestion()},300)}
+        function isAnswerInitiallyCorrect(question,answer){if(question.type==='spelling'){return question.word.toLowerCase()===answer.toLowerCase()}else{const cleanCorrectAnswer=question.meaning.toLowerCase().replace(/(\d+\.\s*)|[()]/g,'');const userFirstMeaning=answer.split(/[,;]/)[0].toLowerCase().trim();return cleanCorrectAnswer.includes(userFirstMeaning)}}
+        function updateProgress(){const progress=((currentQuestionIndex)/questions.length)*100;progressBar.style.width=`${progress}%`;progressText.textContent=`문제 ${currentQuestionIndex+1} / ${questions.length}`}
+        function startTimer(){let timeLeft=600;timerDisplay.textContent="10:00";clearInterval(timerInterval);timerInterval=setInterval(()=>{timeLeft--;const minutes=Math.floor(timeLeft/60);const seconds=timeLeft%60;timerDisplay.textContent=`${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;if(timeLeft<=0){clearInterval(timerInterval);submitTest()}},1000)}
+        function submitTest(){clearInterval(timerInterval);let totalScore=0;const incorrectAnswers=[];questions.forEach((q,index)=>{const userAnswer=userAnswers[index]||"";let score=0;if(q.type==='spelling'){score=userAnswer.toLowerCase()===q.word.toLowerCase()?100:0}else{score=calculateMeaningScore(userAnswer,q.meaning)}
+        if(score<100){incorrectAnswers.push({question:q.originalQuestion,userAnswer:userAnswer||"미응답",correctAnswer:q.type==='spelling'?q.word:q.meaning,score:score})}
+        totalScore+=score});const averageScore=questions.length>0?Math.round(totalScore/questions.length):0;displayResults(averageScore,incorrectAnswers)}
+        function calculateMeaningScore(userAnswer,correctAnswer){const normalize=str=>str.toLowerCase().replace(/[()]/g,'').trim();const cleanCorrectAnswer=correctAnswer.replace(/\d+\.\s*/g,'').trim();const cleanUserAnswer=userAnswer.trim();if(cleanUserAnswer==="")return 0;const meaningGroups=cleanCorrectAnswer.split(';').map(g=>g.trim().split(',').map(s=>normalize(s)).filter(s=>s));const userMeanings=cleanUserAnswer.split(/[,;]/).map(m=>normalize(m)).filter(m=>m);const allPossibleCorrectMeanings=new Set(meaningGroups.flat());for(const userMeaning of userMeanings){let isMeaningValid=false;for(const correctMeaning of allPossibleCorrectMeanings){if(correctMeaning.includes(userMeaning)||userMeaning.includes(correctMeaning)){isMeaningValid=true;break}}
+        if(!isMeaningValid){return 0}}
+        let matchedGroupsCount=0;for(const group of meaningGroups){let isGroupMatched=false;for(const userMeaning of userMeanings){for(const similarMeaning of group){if(similarMeaning.includes(userMeaning)||userMeaning.includes(similarMeaning)){isGroupMatched=true;break}}
+        if(isGroupMatched)break}
+        if(isGroupMatched){matchedGroupsCount++}}
+        if(meaningGroups.length===0)return 100;const matchedRatio=matchedGroupsCount/meaningGroups.length;if(matchedRatio>=1){return 100}else if(matchedRatio>=0.5){return 50}else{return 0}}
+        function displayResults(score,incorrectList){finalScore.textContent=score;const scoreContainer=finalScore.parentElement;scoreContainer.className='text-5xl font-bold text-center py-8 mb-6 rounded-lg';if(score>=80){scoreContainer.classList.add('text-blue-600')}else if(score>=50){scoreContainer.classList.add('text-yellow-600')}else{scoreContainer.classList.add('text-red-600')}
+        incorrectAnswersBody.innerHTML='';if(incorrectList.length===0){incorrectAnswersBody.innerHTML=`<tr><td colspan="4" class="text-center py-4 text-gray-500">틀린 문제가 없습니다! 완벽해요!</td></tr>`}else{incorrectList.forEach(item=>{const row=`<tr class="text-sm"><td class="px-4 py-3 align-top">${item.question}</td><td class="px-4 py-3 align-top text-red-600">${item.userAnswer}</td><td class="px-4 py-3 align-top text-blue-600">${item.correctAnswer}</td><td class="px-4 py-3 align-top font-semibold">${item.score}점</td></tr>`;incorrectAnswersBody.innerHTML+=row})}
+        showScreen(resultsScreen)}
+        function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.remove('opacity-0','translate-y-5');setTimeout(()=>{toast.classList.add('opacity-0','translate-y-5')},2500)}
+        init();
+    </script>
+</body>
+</html>
