@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어휘끝 수능 단어 시험 (Unit 21-30)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .correct-flash { animation: flash-green 0.5s; }
+        .incorrect-flash { animation: flash-red 0.5s; }
+        @keyframes flash-green { 50% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.5); } }
+        @keyframes flash-red { 50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.5); } }
+        #toast { transition: opacity 0.3s, transform 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
+    <div id="app-container" class="w-full max-w-2xl mx-auto bg-white shadow-xl rounded-lg p-4 sm:p-8">
+        
+        <!-- NEW: 사용자 정보 입력 화면 -->
+        <div id="user-info-screen">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">사용자 정보 입력</h1>
+            <p class="text-center text-gray-600 mb-8">결과 저장에 사용될 정보를 입력해주세요.</p>
+            <div class="space-y-4">
+                <div>
+                    <label for="school-input" class="block text-sm font-medium text-gray-700">학교</label>
+                    <input type="text" id="school-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 새싹고등학교">
+                </div>
+                <div>
+                    <label for="grade-input" class="block text-sm font-medium text-gray-700">학년</label>
+                    <input type="text" id="grade-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 3">
+                </div>
+                <div>
+                    <label for="name-input" class="block text-sm font-medium text-gray-700">이름</label>
+                    <input type="text" id="name-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 홍길동">
+                </div>
+            </div>
+            <button id="start-app-button" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">시험 시작하기</button>
+        </div>
+
+        <!-- 1. 유닛 선택 화면 (이제 hidden) -->
+        <div id="unit-selection-screen" class="hidden">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">어휘끝 수능 단어 시험</h1>
+            <p class="text-center text-gray-600 mb-8">시험 볼 유닛을 선택하세요. (Unit 21-30)</p>
+            <div id="unit-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        </div>
+        
+        <!-- 나머지 HTML 구조는 이전과 동일합니다 -->
+        <div id="test-screen" class="hidden">
+            <div class="flex justify-between items-center mb-6"><h2 id="test-title" class="text-xl sm:text-2xl font-bold"></h2><div id="timer" class="text-lg font-semibold text-red-500 bg-red-100 px-4 py-2 rounded-lg">10:00</div></div>
+            <div class="mb-6"><div class="w-full bg-gray-200 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full"></div></div><p id="progress-text" class="text-center text-sm text-gray-600 mt-2"></p></div>
+            <div id="question-container" class="text-center p-6 bg-gray-50 rounded-lg"><p id="question-type" class="text-sm font-semibold text-blue-600 mb-2"></p><p id="question" class="text-2xl sm:text-3xl font-medium mb-6 min-h-[72px] flex items-center justify-center"></p><input type="text" id="answer-input" class="w-full p-3 border rounded-lg text-lg text-center" placeholder="정답을 입력하세요"></div>
+            <button id="next-button" class="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">다음</button>
+        </div>
+        <div id="results-screen" class="hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">시험 결과</h2>
+            <div id="score-container" class="text-5xl font-bold text-center py-8 mb-6 rounded-lg"><span id="final-score"></span><span class="text-3xl text-gray-500"> / 100</span></div>
+            <h3 class="text-lg font-semibold mb-4">틀린 문제 목록</h3>
+            <div class="overflow-x-auto border rounded-lg max-h-64">
+                <table class="min-w-full divide-y"><thead class="bg-gray-50 sticky top-0"><tr><th class="px-4 py-3 text-left text-xs font-medium uppercase">문제</th><th class="px-4 py-3 text-left text-xs font-medium uppercase">제출한 답</th><th class="px-4 py-3 text-left text-xs font-medium uppercase">정답</th><th class="px-4 py-3 text-left text-xs font-medium uppercase">점수</th></tr></thead><tbody id="incorrect-answers-body" class="bg-white divide-y"></tbody></table>
+            </div>
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <button id="save-results-button" class="w-full bg-green-500 text-white font-bold py-3 rounded-lg">결과 저장</button>
+                <button id="retry-button" class="w-full bg-blue-500 text-white font-bold py-3 rounded-lg">다시 풀기</button>
+                <button id="home-button" class="w-full bg-gray-500 text-white font-bold py-3 rounded-lg">처음으로</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transform translate-y-5"></div>
+    <script>
+        const vocabularyData = {
+            "Unit 21": [ { word: "quest", meaning: "탐색, 탐구" }, { word: "request", meaning: "요청하다; 요청" }, { word: "require", meaning: "요구하다, 필요로 하다" }, { word: "acquire", meaning: "얻다, 습득하다" }, { word: "inquire", meaning: "묻다, 조사하다" }, { word: "conquer", meaning: "정복하다" }, { word: "exquisite", meaning: "정교한, 매우 아름다운" }, { word: "range", meaning: "범위; (~의) 범위에 이르다" }, { word: "arrange", meaning: "배열하다, 정리하다" }, { word: "rank", meaning: "계급, 등급; 등급을 매기다" }, { word: "rate", meaning: "비율, 속도, 요금; 평가하다" }, { word: "rational", meaning: "합리적인, 이성적인" }, { word: "reason", meaning: "이유, 이성; 추론하다" }, { word: "erect", meaning: "세우다, 직립한" }, { word: "correct", meaning: "맞는, 정확한; 바로잡다" }, { word: "direct", meaning: "직접적인; 지시하다, 감독하다" }, { word: "region", meaning: "지역, 지방" }, { word: "regular", meaning: "규칙적인, 보통의" } ],
+            "Unit 22": [ { word: "regulate", meaning: "규제하다, 조절하다" }, { word: "reign", meaning: "통치, 군림; 통치하다" }, { word: "royal", meaning: "왕의, 왕실의" }, { word: "rotate", meaning: "회전하다, 교대하다" }, { word: "control", meaning: "통제하다; 통제" }, { word: "enroll", meaning: "등록하다, 입학하다" }, { word: "bankrupt", meaning: "파산한" }, { word: "corrupt", meaning: "부패한, 타락한" }, { word: "erupt", meaning: "분출하다, 폭발하다" }, { word: "interrupt", meaning: "방해하다, 중단시키다" }, { word: "route", meaning: "길, 경로" }, { word: "routine", meaning: "일상, 판에 박힌 일" }, { word: "sacred", meaning: "신성한, 성스러운" }, { word: "sacrifice", meaning: "희생; 희생하다" }, { word: "saint", meaning: "성인" }, { word: "ascend", meaning: "오르다, 올라가다" }, { word: "descend", meaning: "내려가다, 하강하다" }, { word: "scale", meaning: "규모, 저울, 비늘" }, { word: "conscious", meaning: "의식하는, 자각하는" }, { word: "conscience", meaning: "양심" } ],
+            "Unit 23": [ { word: "science", meaning: "과학" }, { word: "describe", meaning: "묘사하다, 설명하다" }, { word: "prescribe", meaning: "처방하다, 규정하다" }, { word: "subscribe", meaning: "구독하다, 동의하다" }, { word: "ascribe", meaning: "~의 탓으로 돌리다" }, { word: "section", meaning: "부분, 구역" }, { word: "insect", meaning: "곤충" }, { word: "segment", meaning: "부분, 조각" }, { word: "sense", meaning: "감각, 느낌; 느끼다" }, { word: "sensation", meaning: "감각, 느낌, 센세이션" }, { word: "nonsense", meaning: "무의미한 말, 터무니없는 생각" }, { word: "assent", meaning: "동의, 찬성; 동의하다" }, { word: "consent", meaning: "동의, 허락; 동의하다" }, { word: "resent", meaning: "분개하다, 화를 내다" }, { word: "scent", meaning: "향기, 냄새" }, { word: "sequence", meaning: "연속, 순서" }, { word: "consequence", meaning: "결과, 중요성" }, { word: "subsequent", meaning: "그 다음의, 이어서 일어나는" } ],
+            "Unit 24": [ { word: "prosecute", meaning: "기소하다, 고소하다" }, { word: "execute", meaning: "실행하다, 처형하다" }, { word: "suit", meaning: "적합하다, 어울리다; 정장, 소송" }, { word: "pursue", meaning: "추구하다, 뒤쫓다" }, { word: "conserve", meaning: "보존하다, 보호하다" }, { word: "deserve", meaning: "~할 자격이 있다" }, { word: "observe", meaning: "관찰하다, 준수하다" }, { word: "preserve", meaning: "보존하다, 유지하다" }, { word: "reserve", meaning: "예약하다, 남겨두다" }, { word: "reside", meaning: "거주하다, 살다" }, { word: "president", meaning: "대통령, 회장" }, { word: "session", meaning: "회기, 기간" }, { word: "settle", meaning: "정착하다, 해결하다" }, { word: "signature", meaning: "서명" }, { word: "signify", meaning: "의미하다, 나타내다" }, { word: "assign", meaning: "할당하다, 지정하다" }, { word: "resign", meaning: "사임하다, 물러나다" }, { word: "seal", meaning: "봉인, 도장; 봉인하다" } ],
+            "Unit 25": [ { word: "similar", meaning: "비슷한, 유사한" }, { word: "assimilate", meaning: "동화되다, 흡수하다" }, { word: "simulate", meaning: "~인 체하다, 모의실험하다" }, { word: "simultaneous", meaning: "동시의" }, { word: "social", meaning: "사회의, 사교적인" }, { word: "associate", meaning: "연관 짓다, 어울리다; 동료" }, { word: "sociology", meaning: "사회학" }, { word: "sole", meaning: "유일한, 단 하나의" }, { word: "solitary", meaning: "혼자의, 고독한" }, { word: "desolate", meaning: "황량한, 적막한" }, { word: "solve", meaning: "풀다, 해결하다" }, { word: "resolve", meaning: "해결하다, 결심하다" }, { word: "dissolve", meaning: "녹다, 용해되다" }, { word: "philosophy", meaning: "철학" }, { word: "sophisticated", meaning: "세련된, 정교한" }, { word: "sophomore", meaning: "2학년생" }, { word: "spectacle", meaning: "광경, 구경거리" }, { word: "aspect", meaning: "측면, 양상" }, { word: "expect", meaning: "기대하다, 예상하다" } ],
+            "Unit 26": [ { word: "inspect", meaning: "조사하다, 검사하다" }, { word: "prospect", meaning: "전망, 가망" }, { word: "respect", meaning: "존경하다; 존경, 측면" }, { word: "suspect", meaning: "의심하다; 용의자" }, { word: "species", meaning: "종(생물 분류 단위)" }, { word: "specific", meaning: "구체적인, 특정한" }, { word: "special", meaning: "특별한" }, { word: "specimen", meaning: "견본, 표본" }, { word: "despise", meaning: "경멸하다, 얕보다" }, { word: "sphere", meaning: "구, 영역" }, { word: "atmosphere", meaning: "대기, 분위기" }, { word: "hemisphere", meaning: "반구" }, { word: "spirit", meaning: "정신, 영혼" }, { word: "aspire", meaning: "열망하다, 동경하다" }, { word: "conspire", meaning: "공모하다, 음모를 꾸미다" }, { word: "expire", meaning: "만료되다, 끝나다" }, { word: "inspire", meaning: "영감을 주다, 고무하다" }, { word: "perspire", meaning: "땀을 흘리다" }, { word: "respond", meaning: "응답하다, 반응하다" } ],
+            "Unit 27": [ { word: "sponsor", meaning: "후원자; 후원하다" }, { word: "stand", meaning: "서다, 견디다" }, { word: "standard", meaning: "표준, 기준" }, { word: "state", meaning: "상태, 국가, 진술하다" }, { word: "statistics", meaning: "통계, 통계학" }, { word: "statue", meaning: "조각상" }, { word: "status", meaning: "지위, 신분" }, { word: "stable", meaning: "안정된, 마구간" }, { word: "establish", meaning: "설립하다, 확립하다" }, { word: "stage", meaning: "무대, 단계" }, { word: "constant", meaning: "끊임없는, 일정한" }, { word: "distant", meaning: "먼, 떨어진" }, { word: "instant", meaning: "즉각적인, 순간" }, { word: "obstacle", meaning: "장애물, 방해" }, { word: "substance", meaning: "물질, 실체" }, { word: "assist", meaning: "돕다, 원조하다" }, { word: "consist", meaning: "~로 구성되다, ~에 있다" }, { word: "exist", meaning: "존재하다, 생존하다" }, { word: "insist", meaning: "주장하다, 고집하다" } ],
+            "Unit 28": [ { word: "persist", meaning: "고집하다, 지속하다" }, { word: "resist", meaning: "저항하다, 반대하다" }, { word: "subsist", meaning: "존속하다, 근근이 살아가다" }, { word: "arrest", meaning: "체포하다; 체포" }, { word: "cost", meaning: "비용, 대가; 비용이 들다" }, { word: "steady", meaning: "꾸준한, 안정된" }, { word: "system", meaning: "체계, 제도" }, { word: "substitute", meaning: "대체하다; 대리인" }, { word: "superstition", meaning: "미신" }, { word: "constitute", meaning: "구성하다, ~이 되다" }, { word: "institute", meaning: "기관, 협회; 설립하다" }, { word: "restitute", meaning: "반환하다, 복원하다" }, { word: "destine", meaning: "운명 짓다" }, { word: "contrast", meaning: "대조, 대비; 대조하다" }, { word: "contrary", meaning: "반대의" }, { word: "counterattack", meaning: "역습(하다)" }, { word: "counterfeit", meaning: "위조의, 가짜의; 위조하다" }, { word: "counterpart", meaning: "상대방, 대응물" }, { word: "controversy", meaning: "논란, 논쟁" } ],
+            "Unit 29": [ { word: "withdraw", meaning: "1. 철수하다; 2. (돈을) 인출하다; 3. 취소하다" }, { word: "withhold", meaning: "주지 않다, 보류하다" }, { word: "withstand", meaning: "견디다, 저항하다" }, { word: "separate", meaning: "분리된; 분리하다" }, { word: "secure", meaning: "안전한; 확보하다" }, { word: "select", meaning: "선택하다, 선발하다" }, { word: "seduce", meaning: "유혹하다, 꾀다" }, { word: "segregate", meaning: "분리하다, 차별하다" }, { word: "stress", meaning: "스트레스, 강조; 강조하다" }, { word: "stretch", meaning: "뻗다, 늘이다" }, { word: "strict", meaning: "엄격한, 엄한" }, { word: "prestige", meaning: "명성, 위신" }, { word: "restrain", meaning: "제지하다, 억누르다" }, { word: "strait", meaning: "해협, 궁핍" }, { word: "district", meaning: "지구, 지역" }, { word: "constrict", meaning: "수축시키다, 위축시키다" }, { word: "restrict", meaning: "제한하다, 한정하다" } ],
+            "Unit 30": [ { word: "strain", meaning: "긴장, 부담; 잡아당기다" }, { word: "straight", meaning: "곧은, 똑바로" }, { word: "distress", meaning: "고통, 곤궁" }, { word: "string", meaning: "끈, 줄" }, { word: "strike", meaning: "치다, 파업하다" }, { word: "strive", meaning: "노력하다, 애쓰다" }, { word: "struggle", meaning: "투쟁하다, 애쓰다" }, { word: "supreme", meaning: "최고의, 최상의" }, { word: "survey", meaning: "조사하다, 둘러보다" }, { word: "survive", meaning: "살아남다, 생존하다" }, { word: "surpass", meaning: "능가하다, 뛰어넘다" }, { word: "synthesis", meaning: "통합, 종합" }, { word: "symphony", meaning: "교향곡" }, { word: "sympathy", meaning: "동정, 연민" }, { word: "symptom", meaning: "증상, 징후" }, { word: "syndrome", meaning: "증후군" }, { word: "synergy", meaning: "시너지 효과, 동반 상승" }, { word: "synchronize", meaning: "동시에 일어나다" } ]
+        };
+        // --- 이하 스크립트 코드 수정 ---
+        let userInfo = {};
+        let currentUnit='',questions=[],currentQuestionIndex=0,userAnswers=[],timerInterval;
+        const userInfoScreen = document.getElementById('user-info-screen');
+        const unitSelectionScreen=document.getElementById('unit-selection-screen');
+        const testScreen=document.getElementById('test-screen');
+        const resultsScreen=document.getElementById('results-screen');
+        const schoolInput = document.getElementById('school-input');
+        const gradeInput = document.getElementById('grade-input');
+        const nameInput = document.getElementById('name-input');
+        const startAppButton = document.getElementById('start-app-button');
+        const unitButtonsContainer=document.getElementById('unit-buttons');
+        const testTitle=document.getElementById('test-title');
+        const timerDisplay=document.getElementById('timer');
+        const progressBar=document.getElementById('progress-bar');
+        const progressText=document.getElementById('progress-text');
+        const questionType=document.getElementById('question-type');
+        const questionEl=document.getElementById('question');
+        const answerInput=document.getElementById('answer-input');
+        const nextButton=document.getElementById('next-button');
+        const finalScore=document.getElementById('final-score');
+        const incorrectAnswersBody=document.getElementById('incorrect-answers-body');
+        const saveResultsButton=document.getElementById('save-results-button');
+        const retryButton=document.getElementById('retry-button');
+        const homeButton=document.getElementById('home-button');
+        
+        function init(){
+            Object.keys(vocabularyData).sort((a,b)=>parseInt(a.match(/\d+/)[0])-parseInt(b.match(/\d+/)[0])).forEach(unit=>{const button=document.createElement('button');button.textContent=unit;button.className='bg-white text-gray-700 font-semibold py-4 px-2 rounded-lg shadow hover:bg-gray-200 border border-gray-200 transition-all duration-200';button.onclick=()=>startTest(unit);unitButtonsContainer.appendChild(button)});
+            startAppButton.addEventListener('click', startApp);
+            nextButton.addEventListener('click',handleNext);
+            answerInput.addEventListener('keyup',e=>{if(e.key==='Enter'){handleNext()}});
+            retryButton.addEventListener('click',()=>startTest(currentUnit));
+            homeButton.addEventListener('click',()=>showScreen(unitSelectionScreen));
+            saveResultsButton.addEventListener('click',saveResults);
+            showScreen(userInfoScreen);
+        }
+
+        function startApp() {
+            const school = schoolInput.value.trim();
+            const grade = gradeInput.value.trim();
+            const name = nameInput.value.trim();
+            if (!school || !grade || !name) {
+                showToast("모든 정보를 입력해주세요.");
+                return;
+            }
+            userInfo = { school, grade, name };
+            showScreen(unitSelectionScreen);
+        }
+
+        function showScreen(screen){
+            [userInfoScreen, unitSelectionScreen,testScreen,resultsScreen].forEach(s=>s.classList.add('hidden'));
+            screen.classList.remove('hidden');
+        }
+
+        async function saveResults(){
+            const score=finalScore.textContent;
+            let title = `${userInfo.school} ${userInfo.grade}학년 ${userInfo.name}의 ${currentUnit} 시험지`;
+            let resultsText = `${title}\n\n총점: ${score}점\n\n--- 틀린 문제 목록 ---\n`;
+            const incorrectRows=incorrectAnswersBody.querySelectorAll('tr');
+            if(incorrectRows.length===1&&incorrectRows[0].children[0].colSpan===4){
+                resultsText+="틀린 문제가 없습니다."
+            } else {
+                incorrectRows.forEach(row=>{
+                    const cells=row.querySelectorAll('td');
+                    resultsText+=`문제: ${cells[0].textContent}\n`;
+                    resultsText+=`제출 답: ${cells[1].textContent}\n`;
+                    resultsText+=`정답: ${cells[2].textContent}\n`;
+                    resultsText+=`점수: ${cells[3].textContent}\n\n`;
+                });
+            }
+            try{
+                await navigator.clipboard.writeText(resultsText.trim());
+                showToast('시험 결과가 클립보드에 복사되었습니다.');
+            } catch(err) {
+                console.error('클립보드 복사 실패:',err);
+                showToast('결과 복사에 실패했습니다.');
+            }
+        }
+        
+        // 나머지 JS 함수들은 이전과 동일하게 유지됩니다.
+        function startTest(unit){currentUnit=unit;let unitWords=[...vocabularyData[unit]];questions=[];userAnswers=[];currentQuestionIndex=0;unitWords.sort(()=>0.5-Math.random());const numQuestions=Math.min(20,unitWords.length);const selectedWords=unitWords.slice(0,numQuestions);const half=Math.ceil(numQuestions/2);for(let i=0;i<numQuestions;i++){const wordData=selectedWords[i];const type=i<half?'spelling':'meaning';questions.push({type:type,word:wordData.word,meaning:wordData.meaning,originalQuestion:type==='spelling'?wordData.meaning:wordData.word})}
+        questions.sort(()=>0.5-Math.random());testTitle.textContent=`${unit} 단어 시험`;showScreen(testScreen);displayQuestion();startTimer()}
+        function displayQuestion(){if(currentQuestionIndex>=questions.length){submitTest();return}
+        const q=questions[currentQuestionIndex];if(q.type==='spelling'){questionType.textContent='의미를 보고 철자 맞히기';questionEl.textContent=q.meaning.replace(/(\d+\.\s*)|[()]/g,'').replace(/;/g,', ')}else{questionType.textContent='철자를 보고 의미 맞히기';questionEl.textContent=q.word}
+        answerInput.value='';answerInput.focus();updateProgress();if(currentQuestionIndex===questions.length-1){nextButton.textContent='채점하기'}else{nextButton.textContent='다음'}}
+        function handleNext(){const answer=answerInput.value.trim();if(!answer){answerInput.classList.add('incorrect-flash');setTimeout(()=>answerInput.classList.remove('incorrect-flash'),500);return}
+        userAnswers[currentQuestionIndex]=answer;const isCorrectAnswer=isAnswerInitiallyCorrect(questions[currentQuestionIndex],answer);answerInput.classList.add(isCorrectAnswer?'correct-flash':'incorrect-flash');setTimeout(()=>answerInput.classList.remove('correct-flash','incorrect-flash'),500);setTimeout(()=>{currentQuestionIndex++;displayQuestion()},300)}
+        function isAnswerInitiallyCorrect(question,answer){if(question.type==='spelling'){return question.word.toLowerCase()===answer.toLowerCase()}else{const cleanCorrectAnswer=question.meaning.toLowerCase().replace(/(\d+\.\s*)|[()]/g,'');const userFirstMeaning=answer.split(/[,;]/)[0].toLowerCase().trim();return cleanCorrectAnswer.includes(userFirstMeaning)}}
+        function updateProgress(){const progress=((currentQuestionIndex)/questions.length)*100;progressBar.style.width=`${progress}%`;progressText.textContent=`문제 ${currentQuestionIndex+1} / ${questions.length}`}
+        function startTimer(){let timeLeft=600;timerDisplay.textContent="10:00";clearInterval(timerInterval);timerInterval=setInterval(()=>{timeLeft--;const minutes=Math.floor(timeLeft/60);const seconds=timeLeft%60;timerDisplay.textContent=`${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;if(timeLeft<=0){clearInterval(timerInterval);submitTest()}},1000)}
+        function submitTest(){clearInterval(timerInterval);let totalScore=0;const incorrectAnswers=[];questions.forEach((q,index)=>{const userAnswer=userAnswers[index]||"";let score=0;if(q.type==='spelling'){score=userAnswer.toLowerCase()===q.word.toLowerCase()?100:0}else{score=calculateMeaningScore(userAnswer,q.meaning)}
+        if(score<100){incorrectAnswers.push({question:q.originalQuestion,userAnswer:userAnswer||"미응답",correctAnswer:q.type==='spelling'?q.word:q.meaning,score:score})}
+        totalScore+=score});const averageScore=questions.length>0?Math.round(totalScore/questions.length):0;displayResults(averageScore,incorrectAnswers)}
+        function calculateMeaningScore(userAnswer,correctAnswer){const normalize=str=>str.toLowerCase().replace(/[()]/g,'').trim();const cleanCorrectAnswer=correctAnswer.replace(/\d+\.\s*/g,'').trim();const cleanUserAnswer=userAnswer.trim();if(cleanUserAnswer==="")return 0;const meaningGroups=cleanCorrectAnswer.split(';').map(g=>g.trim().split(',').map(s=>normalize(s)).filter(s=>s));const userMeanings=cleanUserAnswer.split(/[,;]/).map(m=>normalize(m)).filter(m=>m);const allPossibleCorrectMeanings=new Set(meaningGroups.flat());for(const userMeaning of userMeanings){let isMeaningValid=false;for(const correctMeaning of allPossibleCorrectMeanings){if(correctMeaning.includes(userMeaning)||userMeaning.includes(correctMeaning)){isMeaningValid=true;break}}
+        if(!isMeaningValid){return 0}}
+        let matchedGroupsCount=0;for(const group of meaningGroups){let isGroupMatched=false;for(const userMeaning of userMeanings){for(const similarMeaning of group){if(similarMeaning.includes(userMeaning)||userMeaning.includes(similarMeaning)){isGroupMatched=true;break}}
+        if(isGroupMatched)break}
+        if(isGroupMatched){matchedGroupsCount++}}
+        if(meaningGroups.length===0)return 100;const matchedRatio=matchedGroupsCount/meaningGroups.length;if(matchedRatio>=1){return 100}else if(matchedRatio>=0.5){return 50}else{return 0}}
+        function displayResults(score,incorrectList){finalScore.textContent=score;const scoreContainer=finalScore.parentElement;scoreContainer.className='text-5xl font-bold text-center py-8 mb-6 rounded-lg';if(score>=80){scoreContainer.classList.add('text-blue-600')}else if(score>=50){scoreContainer.classList.add('text-yellow-600')}else{scoreContainer.classList.add('text-red-600')}
+        incorrectAnswersBody.innerHTML='';if(incorrectList.length===0){incorrectAnswersBody.innerHTML=`<tr><td colspan="4" class="text-center py-4 text-gray-500">틀린 문제가 없습니다! 완벽해요!</td></tr>`}else{incorrectList.forEach(item=>{const row=`<tr class="text-sm"><td class="px-4 py-3 align-top">${item.question}</td><td class="px-4 py-3 align-top text-red-600">${item.userAnswer}</td><td class="px-4 py-3 align-top text-blue-600">${item.correctAnswer}</td><td class="px-4 py-3 align-top font-semibold">${item.score}점</td></tr>`;incorrectAnswersBody.innerHTML+=row})}
+        showScreen(resultsScreen)}
+        function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.remove('opacity-0','translate-y-5');setTimeout(()=>{toast.classList.add('opacity-0','translate-y-5')},2500)}
+        init();
+    </script>
+</body>
+</html>
+
