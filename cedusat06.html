@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -15,43 +15,37 @@
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
+
     <div id="app-container" class="w-full max-w-2xl mx-auto bg-white shadow-xl rounded-lg p-4 sm:p-8">
-        
-        <!-- NEW: 사용자 정보 입력 화면 -->
+
+        <!-- 사용자 정보 입력 화면 -->
         <div id="user-info-screen">
             <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">사용자 정보 입력</h1>
             <p class="text-center text-gray-600 mb-8">결과 저장에 사용될 정보를 입력해주세요.</p>
             <div class="space-y-4">
-                <div>
-                    <label for="school-input" class="block text-sm font-medium text-gray-700">학교</label>
-                    <input type="text" id="school-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 새싹고등학교">
-                </div>
-                <div>
-                    <label for="grade-input" class="block text-sm font-medium text-gray-700">학년</label>
-                    <input type="text" id="grade-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 3">
-                </div>
-                <div>
-                    <label for="name-input" class="block text-sm font-medium text-gray-700">이름</label>
-                    <input type="text" id="name-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 홍길동">
-                </div>
+                <div><label for="school-input" class="block text-sm font-medium text-gray-700">학교</label><input type="text" id="school-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 새싹고등학교"></div>
+                <div><label for="grade-input" class="block text-sm font-medium text-gray-700">학년</label><input type="text" id="grade-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 1"></div>
+                <div><label for="name-input" class="block text-sm font-medium text-gray-700">이름</label><input type="text" id="name-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 홍길동"></div>
             </div>
             <button id="start-app-button" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">시험 시작하기</button>
         </div>
 
-        <!-- 1. 유닛 선택 화면 (이제 hidden) -->
+        <!-- 유닛 선택 화면 -->
         <div id="unit-selection-screen" class="hidden">
             <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">어휘끝 수능 단어 시험</h1>
-            <p class="text-center text-gray-600 mb-8">시험 볼 파트를 선택하세요. (부가 데이터)</p>
-            <div id="unit-buttons" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+            <p class="text-center text-gray-600 mb-8">시험 볼 유닛을 선택하세요. (부가 데이터)</p>
+            <div id="unit-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
         </div>
-        
-        <!-- 나머지 HTML 구조는 이전과 동일합니다 -->
+
+        <!-- 단어 시험 화면 -->
         <div id="test-screen" class="hidden">
             <div class="flex justify-between items-center mb-6"><h2 id="test-title" class="text-xl sm:text-2xl font-bold"></h2><div id="timer" class="text-lg font-semibold text-red-500 bg-red-100 px-4 py-2 rounded-lg">10:00</div></div>
             <div class="mb-6"><div class="w-full bg-gray-200 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full"></div></div><p id="progress-text" class="text-center text-sm text-gray-600 mt-2"></p></div>
             <div id="question-container" class="text-center p-6 bg-gray-50 rounded-lg"><p id="question-type" class="text-sm font-semibold text-blue-600 mb-2"></p><p id="question" class="text-2xl sm:text-3xl font-medium mb-6 min-h-[72px] flex items-center justify-center"></p><input type="text" id="answer-input" class="w-full p-3 border rounded-lg text-lg text-center" placeholder="정답을 입력하세요"></div>
             <button id="next-button" class="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">다음</button>
         </div>
+
+        <!-- 채점 결과 화면 -->
         <div id="results-screen" class="hidden">
             <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">시험 결과</h2>
             <div id="score-container" class="text-5xl font-bold text-center py-8 mb-6 rounded-lg"><span id="final-score"></span><span class="text-3xl text-gray-500"> / 100</span></div>
@@ -69,14 +63,64 @@
     <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transform translate-y-5"></div>
     <script>
         const vocabularyData = {
-            "구동사 (up)": [ { word: "break up", meaning: "헤어지다, 부수다" }, { word: "bring up", meaning: "양육하다, 제기하다" }, { word: "cheer up", meaning: "기운 내다" }, { word: "give up", meaning: "포기하다" }, { word: "look up", meaning: "찾아보다, 존경하다" }, { word: "make up", meaning: "구성하다, 화장하다, 화해하다" }, { word: "pick up", meaning: "줍다, 태우다" }, { word: "set up", meaning: "설립하다, 세우다" }, { word: "show up", meaning: "나타나다" }, { word: "turn up", meaning: "나타나다, 소리를 높이다" } ],
-            "구동사 (down)": [ { word: "break down", meaning: "고장 나다, 분해하다" }, { word: "calm down", meaning: "진정하다" }, { word: "cut down", meaning: "줄이다, 베어 넘어뜨리다" }, { word: "let down", meaning: "실망시키다" }, { word: "look down on", meaning: "얕보다, 경멸하다" }, { word: "put down", meaning: "내려놓다, 진압하다" }, { word: "slow down", meaning: "속도를 줄이다" }, { word: "turn down", meaning: "거절하다, 소리를 줄이다" }, { word: "write down", meaning: "적어두다" } ],
-            "구동사 (off)": [ { word: "call off", meaning: "취소하다" }, { word: "cut off", meaning: "중단하다, 잘라내다" }, { word: "get off", meaning: "내리다" }, { word: "go off", meaning: "폭발하다, 울리다" }, { word: "lay off", meaning: "해고하다" }, { word: "put off", meaning: "연기하다, 미루다" }, { word: "see off", meaning: "배웅하다" }, { word: "show off", meaning: "자랑하다, 과시하다" }, { word: "take off", meaning: "이륙하다, 벗다" }, { word: "turn off", meaning: "끄다" } ],
-            "구동사 (on/in/out)": [ { word: "carry on", meaning: "계속하다" }, { word: "get on", meaning: "타다, 잘 지내다" }, { word: "hold on", meaning: "기다리다, 붙잡다" }, { word: "turn on", meaning: "켜다" }, { word: "break in", meaning: "침입하다" }, { word: "fill in", meaning: "작성하다" }, { word: "check out", meaning: "확인하다, 대출하다" }, { word: "find out", meaning: "알아내다" }, { word: "run out of", meaning: "~을 다 써버리다" }, { word: "work out", meaning: "운동하다, 해결하다" } ],
-            "혼동 어휘 1": [ { word: "accept", meaning: "수락하다" }, { word: "except", meaning: "~을 제외하고" }, { word: "affect", meaning: "영향을 미치다" }, { word: "effect", meaning: "효과, 결과" }, { word: "advice", meaning: "조언, 충고" }, { word: "advise", meaning: "조언하다, 충고하다" }, { word: "allusion", meaning: "암시" }, { word: "illusion", meaning: "환상, 착각" }, { word: "capital", meaning: "수도, 자본" }, { word: "capitol", meaning: "미국 국회의사당" } ],
-            "혼동 어휘 2": [ { word: "complement", meaning: "보완하다, 보충물" }, { word: "compliment", meaning: "칭찬하다, 칭찬" }, { word: "conscience", meaning: "양심" }, { word: "conscious", meaning: "의식하는" }, { word: "desert", meaning: "사막; 버리다" }, { word: "dessert", meaning: "후식, 디저트" }, { word: "principle", meaning: "원리, 원칙" }, { word: "principal", meaning: "주요한; 교장" }, { word: "stationery", meaning: "문구류" }, { word: "stationary", meaning: "정지된, 움직이지 않는" } ]
+            "부가 데이터": [
+                { word: "demoralize", meaning: "사기를 꺾다, 의기소침하게 만들다" },
+                { word: "debase", meaning: "(가치, 품위를) 떨어뜨리다, 저하시키다" },
+                { word: "disregard", meaning: "무시하다, 경시하다; 소홀히 하다; 무시, 경시" },
+                { word: "enact", meaning: "(법을) 제정하다, 규정하다" },
+                { word: "invariable", meaning: "변함없는, 변치 않는" },
+                { word: "outset", meaning: "시작, 착수" },
+                { word: "override", meaning: "1. (결정, 명령 등을) 무시하다 2. (~보다) 더 중요하다 3. (작동 등을) 중단시키다" },
+                { word: "understate", meaning: "(실제보다) 축소해서 말하다, 낮추어 말하다" },
+                { word: "undo", meaning: "1. (이미 행해진 일을) 없던 일로 만들다, 원상태로 돌리다 2. (잠기거나 묶인 것을) 풀다, 열다" },
+                { word: "revert", meaning: "(본래 상태, 생각 등으로) 되돌아가다" },
+                { word: "assent", meaning: "동의하다, 찬성하다; 동의, 찬성" },
+                { word: "conspicuous", meaning: "눈에 잘 띄는, 튀는" },
+                { word: "deficient", meaning: "부족한, 결핍된" },
+                { word: "depreciate", meaning: "가치가 떨어지다; 낮게 평가하다" },
+                { word: "detract", meaning: "(가치 등을) 손상시키다; (가치 등이) 떨어지다" },
+                { word: "equilibrium", meaning: "평형, 균형; (마음의) 평정" },
+                { word: "indigenous", meaning: "토착의, 그 지역 고유의; 타고난" },
+                { word: "retract", meaning: "(앞서 한 말을) 취소하다, 철회하다" },
+                { word: "aggravate", meaning: "악화시키다, 심화시키다" },
+                { word: "align", meaning: "나란히 만들다, 일직선으로 하다; 조정[조절]하다" },
+                { word: "debris", meaning: "(파괴된 후의) 잔해, 파편; 쓰레기" },
+                { word: "diffuse", meaning: "분산[확산]시키다; 널리 퍼진" },
+                { word: "eminent", meaning: "1. 저명한 2. (자질 등이) 뛰어난" },
+                { word: "intricate", meaning: "복잡한, 뒤얽힌" },
+                { word: "nuisance", meaning: "성가신 사람[것], 귀찮음" },
+                { word: "unanimous", meaning: "만장일치의, 동의하는" },
+                { word: "feeble", meaning: "약한, 연약한; 미미한" },
+                { word: "abort", meaning: "1. 유산하다 2. (일을) 중단시키다" },
+                { word: "admonish", meaning: "꾸짖다; (강력히) 충고하다" },
+                { word: "appease", meaning: "달래다, 진정시키다" },
+                { word: "austerity", meaning: "1. 내핍 상태; 긴축 2. 금욕적임; 엄격함" },
+                { word: "bizarre", meaning: "기이한, 특이한" },
+                { word: "deflect", meaning: "1. 방향을 바꾸다 2. (관심 등을) 피하다; 빗나가게 하다" },
+                { word: "perpetual", meaning: "1. 영속하는 2. 끊임없는" },
+                { word: "requisite", meaning: "필요한, 필수의" },
+                { word: "strenuous", meaning: "1. 몹시 힘든, 격렬한 2. 불굴의" },
+                { word: "adjacent", meaning: "가까운, 인접한" },
+                { word: "adorn", meaning: "꾸미다, 장식하다" },
+                { word: "demolish", meaning: "1. 무너뜨리다, 허물다 2. (사상, 이론을) 뒤집다" },
+                { word: "falter", meaning: "불안정해지다, 흔들리다" },
+                { word: "inflict", meaning: "(괴로움 등을) 가하다, 안기다" },
+                { word: "rehabilitate", meaning: "1. 재활 치료를 하다 2. (명예를) 회복시키다 3. (건물을) 복원시키다" },
+                { word: "subside", meaning: "1. 가라앉다, 진정되다 2. (물이) 빠지다" },
+                { word: "symmetry", meaning: "대칭, 균형" },
+                { word: "transparent", meaning: "1. 투명한 2. 명료한, 알기 쉬운" },
+                { word: "afflict", meaning: "괴롭히다, 시달리게 하다" },
+                { word: "backfire", meaning: "역효과를 낳다" },
+                { word: "defy", meaning: "1. 반항하다, 저항[거역]하다 2. (설명하기) 불가능하다" },
+                { word: "delude", meaning: "속이다; 착각하게 하다" },
+                { word: "futile", meaning: "헛된, 소용없는" },
+                { word: "gasp", meaning: "(놀라서) 숨이 턱 막히다; 숨 막힘" },
+                { word: "gratify", meaning: "기쁘게 하다; 만족시키다" },
+                { word: "linger", meaning: "남아있다, 오래 머무르다" },
+                { word: "procrastination", meaning: "미루는 버릇, 지연, 연기" }
+            ]
         };
-        // --- 이하 스크립트 코드 수정 ---
+        // --- 이하 스크립트 코드는 이전 앱들과 동일 ---
         let userInfo = {};
         let currentUnit='',questions=[],currentQuestionIndex=0,userAnswers=[],timerInterval;
         const userInfoScreen = document.getElementById('user-info-screen');
@@ -103,7 +147,7 @@
         const homeButton=document.getElementById('home-button');
         
         function init(){
-            Object.keys(vocabularyData).sort().forEach(unit=>{const button=document.createElement('button');button.textContent=unit;button.className='bg-white text-gray-700 font-semibold py-4 px-2 rounded-lg shadow hover:bg-gray-200 border border-gray-200 transition-all duration-200';button.onclick=()=>startTest(unit);unitButtonsContainer.appendChild(button)});
+            Object.keys(vocabularyData).forEach(unit=>{const button=document.createElement('button');button.textContent=unit;button.className='bg-white text-gray-700 font-semibold py-4 px-2 rounded-lg shadow hover:bg-gray-200 border border-gray-200 transition-all duration-200 col-span-2 sm:col-span-3 md:col-span-4';button.onclick=()=>startTest(unit);unitButtonsContainer.appendChild(button)});
             startAppButton.addEventListener('click', startApp);
             nextButton.addEventListener('click',handleNext);
             answerInput.addEventListener('keyup',e=>{if(e.key==='Enter'){handleNext()}});
@@ -155,7 +199,6 @@
             }
         }
         
-        // 나머지 JS 함수들은 이전과 동일하게 유지됩니다.
         function startTest(unit){currentUnit=unit;let unitWords=[...vocabularyData[unit]];questions=[];userAnswers=[];currentQuestionIndex=0;unitWords.sort(()=>0.5-Math.random());const numQuestions=Math.min(20,unitWords.length);const selectedWords=unitWords.slice(0,numQuestions);const half=Math.ceil(numQuestions/2);for(let i=0;i<numQuestions;i++){const wordData=selectedWords[i];const type=i<half?'spelling':'meaning';questions.push({type:type,word:wordData.word,meaning:wordData.meaning,originalQuestion:type==='spelling'?wordData.meaning:wordData.word})}
         questions.sort(()=>0.5-Math.random());testTitle.textContent=`${unit} 단어 시험`;showScreen(testScreen);displayQuestion();startTimer()}
         function displayQuestion(){if(currentQuestionIndex>=questions.length){submitTest();return}
@@ -183,4 +226,3 @@
     </script>
 </body>
 </html>
-
