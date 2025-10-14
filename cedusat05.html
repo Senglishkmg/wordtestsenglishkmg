@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -15,43 +15,37 @@
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
+
     <div id="app-container" class="w-full max-w-2xl mx-auto bg-white shadow-xl rounded-lg p-4 sm:p-8">
-        
-        <!-- NEW: 사용자 정보 입력 화면 -->
+
+        <!-- 사용자 정보 입력 화면 -->
         <div id="user-info-screen">
             <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">사용자 정보 입력</h1>
             <p class="text-center text-gray-600 mb-8">결과 저장에 사용될 정보를 입력해주세요.</p>
             <div class="space-y-4">
-                <div>
-                    <label for="school-input" class="block text-sm font-medium text-gray-700">학교</label>
-                    <input type="text" id="school-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 새싹고등학교">
-                </div>
-                <div>
-                    <label for="grade-input" class="block text-sm font-medium text-gray-700">학년</label>
-                    <input type="text" id="grade-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 3">
-                </div>
-                <div>
-                    <label for="name-input" class="block text-sm font-medium text-gray-700">이름</label>
-                    <input type="text" id="name-input" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm" placeholder="예: 홍길동">
-                </div>
+                <div><label for="school-input" class="block text-sm font-medium text-gray-700">학교</label><input type="text" id="school-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 새싹고등학교"></div>
+                <div><label for="grade-input" class="block text-sm font-medium text-gray-700">학년</label><input type="text" id="grade-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 1"></div>
+                <div><label for="name-input" class="block text-sm font-medium text-gray-700">이름</label><input type="text" id="name-input" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" placeholder="예: 홍길동"></div>
             </div>
             <button id="start-app-button" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">시험 시작하기</button>
         </div>
 
-        <!-- 1. 유닛 선택 화면 (이제 hidden) -->
+        <!-- 유닛 선택 화면 -->
         <div id="unit-selection-screen" class="hidden">
             <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">어휘끝 수능 단어 시험</h1>
             <p class="text-center text-gray-600 mb-8">시험 볼 유닛을 선택하세요. (Unit 41-45)</p>
             <div id="unit-buttons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
         </div>
-        
-        <!-- 나머지 HTML 구조는 이전과 동일합니다 -->
+
+        <!-- 단어 시험 화면 -->
         <div id="test-screen" class="hidden">
             <div class="flex justify-between items-center mb-6"><h2 id="test-title" class="text-xl sm:text-2xl font-bold"></h2><div id="timer" class="text-lg font-semibold text-red-500 bg-red-100 px-4 py-2 rounded-lg">10:00</div></div>
             <div class="mb-6"><div class="w-full bg-gray-200 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full"></div></div><p id="progress-text" class="text-center text-sm text-gray-600 mt-2"></p></div>
             <div id="question-container" class="text-center p-6 bg-gray-50 rounded-lg"><p id="question-type" class="text-sm font-semibold text-blue-600 mb-2"></p><p id="question" class="text-2xl sm:text-3xl font-medium mb-6 min-h-[72px] flex items-center justify-center"></p><input type="text" id="answer-input" class="w-full p-3 border rounded-lg text-lg text-center" placeholder="정답을 입력하세요"></div>
             <button id="next-button" class="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">다음</button>
         </div>
+
+        <!-- 채점 결과 화면 -->
         <div id="results-screen" class="hidden">
             <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">시험 결과</h2>
             <div id="score-container" class="text-5xl font-bold text-center py-8 mb-6 rounded-lg"><span id="final-score"></span><span class="text-3xl text-gray-500"> / 100</span></div>
@@ -69,13 +63,23 @@
     <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transform translate-y-5"></div>
     <script>
         const vocabularyData = {
-            "Unit 41": [ { word: "anatomy", meaning: "해부학, 구조" }, { word: "syndrome", meaning: "증후군" }, { word: "hygiene", meaning: "위생" }, { word: "cramp", meaning: "경련, 쥐" }, { word: "paralyze", meaning: "마비시키다" }, { word: "sanitary", meaning: "위생의, 깨끗한" }, { word: "chronic", meaning: "만성적인" }, { word: "vaccine", meaning: "백신" }, { word: "symptom", meaning: "증상" }, { word: "diagnose", meaning: "진단하다" }, { word: "obesity", meaning: "비만" }, { word: "remedy", meaning: "치료(법), 해결책" }, { word: "fatigue", meaning: "피로" }, { word: "allergic", meaning: "알레르기가 있는" }, { word: "prescribe", meaning: "처방하다" } ],
-            "Unit 42": [ { word: "psychology", meaning: "심리학" }, { word: "trauma", meaning: "정신적 외상, 트라우마" }, { word: "phobia", meaning: "공포증" }, { word: "addiction", meaning: "중독" }, { word: "mania", meaning: "열광, ~광" }, { word: "delusion", meaning: "망상, 착각" }, { word: "amnesia", meaning: "기억 상실(증)" }, { word: "schizophrenia", meaning: "조현병, 정신 분열증" }, { word: "autism", meaning: "자폐증" }, { word: "bipolar", meaning: "조울증의, 양극성의" }, { word: "cognitive", meaning: "인지의, 인식의" }, { word: "neurosis", meaning: "신경증, 노이로제" }, { word: "psychosis", meaning: "정신병" }, { word: "therapist", meaning: "치료사" } ],
-            "Unit 43": [ { word: "joy", meaning: "기쁨" }, { word: "anger", meaning: "분노" }, { word: "sorrow", meaning: "슬픔" }, { word: "fear", meaning: "두려움" }, { word: "anxiety", meaning: "불안, 걱정" }, { word: "depression", meaning: "우울증, 불경기" }, { word: "ecstasy", meaning: "황홀경" }, { word: "grief", meaning: "비탄, 큰 슬픔" }, { word: "despair", meaning: "절망" }, { "word": "optimism", "meaning": "낙관주의" }, { "word": "pessimism", "meaning": "비관주의" }, { "word": "jealousy", "meaning": "질투, 시기" }, { "word": "envy", "meaning": "부러움, 선망" }, { "word": "pride", "meaning": "자부심, 자만심" }, { "word": "shame", "meaning": "수치심, 부끄러움" } ],
-            "Unit 44": [ { word: "diligent", meaning: "성실한, 근면한" }, { word: "lazy", meaning: "게으른" }, { word: "honest", meaning: "정직한" }, { word: "deceitful", meaning: "기만적인, 부정직한" }, { word: "brave", meaning: "용감한" }, { word: "cowardly", meaning: "겁이 많은, 비겁한" }, { word: "generous", meaning: "관대한, 후한" }, { word: "selfish", meaning: "이기적인" }, { word: "humble", meaning: "겸손한, 비천한" }, { word: "arrogant", meaning: "거만한, 오만한" }, { word: "polite", meaning: "공손한, 예의 바른" }, { word: "rude", meaning: "무례한, 버릇없는" }, { word: "sociable", meaning: "사교적인" }, { word: "shy", meaning: "수줍어하는" } ],
-            "Unit 45": [ { word: "stubborn", meaning: "완고한, 고집 센" }, { word: "flexible", meaning: "융통성 있는, 유연한" }, { word: "curious", meaning: "호기심 많은" }, { word: "indifferent", meaning: "무관심한" }, { word: "prudent", meaning: "신중한" }, { word: "reckless", meaning: "무모한, 부주의한" }, { word: "calm", meaning: "침착한, 평온한" }, { word: "irritable", meaning: "화를 잘 내는, 짜증내는" }, { word: "modest", meaning: "겸손한, 수수한" }, { word: "conceited", meaning: "자부심이 강한, 자만하는" }, { word: "ambitious", meaning: "야심 있는" }, { word: "passive", meaning: "수동적인, 소극적인" }, { word: "active", meaning: "활동적인, 적극적인" }, { "word": "sincere", "meaning": "진실된, 성실한" } ]
+            "Unit 41": [
+                { word: "skeleton", meaning: "골격, 뼈대" }, { word: "spine", meaning: "1. 척추, 등뼈; 2. (동식물의) 가시" }, { word: "limb", meaning: "사지, 팔다리" }, { word: "flesh", meaning: "1. (사람, 동물의) 살; 피부; 2. (과일 등의) 과육" }, { word: "artery", meaning: "동맥" }, { word: "vein", meaning: "정맥; (식물의) 잎맥" }, { word: "nerve", meaning: "1. 신경; 2. 긴장, 불안" }, { word: "pupil", meaning: "1. 동공, 눈동자; 2. 학생" }, { word: "optical", meaning: "1. 시각[시력]의, 눈의; 2. 광학의, 빛의" }, { word: "aural", meaning: "청각의, 귀의" }, { word: "acoustic", meaning: "1. 청각의, 음향의; 2. (악기가) 전자 장치를 쓰지 않는" }, { word: "odor", meaning: "냄새, (특히) 악취" }, { word: "texture", meaning: "감촉, 질감; 결" }, { word: "respire", meaning: "호흡하다, 숨 쉬다" }, { word: "pulse", meaning: "1. 맥박; 고동; 2. (규칙적인) 진동; 박자" }, { word: "perspire", meaning: "땀을 흘리다, 땀이 나다" }, { word: "saliva", meaning: "타액, 침" }, { word: "sniff", meaning: "코를 훌쩍이다; 냄새를 맡다; 킁킁거리며 냄새 맡음" }, { word: "stumble", meaning: "발을 헛디디다; 비틀거리다; 발을 헛디딤" }, { word: "smash", meaning: "1. 세게 때리다; 박살 내다; 2. 충돌하다; 충돌시키다; 1. 박살(내는 소리); 2. 충돌" }, { word: "haul", meaning: "1. 세게 끌어당기다; 2. 운반하다" }, { word: "thrust", meaning: "밀치다; 찌르다; 찌르기" }, { word: "slap", meaning: "철썩 때리다; 철썩 때리기; 철썩 부딪치는 소리" }, { word: "tilt", meaning: "기울다; 기울이다; 기울기" }, { word: "sanitary", meaning: "위생의, 위생적인" }, { word: "hygiene", meaning: "위생, 청결" }, { word: "immune", meaning: "1. 면역성이 있는, 면역의; 2. 면제되는, 면하는" }, { word: "sturdy", meaning: "(몸이) 튼튼한, 건장한; (물건이) 견고한" }, { word: "stout", meaning: "1. (사람이) 통통한, 뚱뚱한; 2. (물건이) 튼튼한" }, { word: "weary", meaning: "1. (몹시) 지친, 피곤한; 2. 싫증 난" }, { word: "obesity", meaning: "비만, 비대" }, { word: "diet", meaning: "1. 식습관; 식사; 2. 식이요법; 다이어트; 다이어트하다" }, { word: "metabolism", meaning: "신진대사, 물질대사" }, { word: "digest", meaning: "1. 소화하다; 2. 이해하다; 요약(문)" }, { word: "nourish", meaning: "1. 영양분을 공급하다; 2. (생각, 감정 등을) 키우다, 육성하다" }, { word: "nutrition", meaning: "영양 (섭취)" }, { word: "fiber / fibre", meaning: "섬유(질)" }, { word: "longevity", meaning: "장수, 오래 삶" }, { word: "ground", meaning: "1. 땅, 지면; 토양; 2. 장소, -장, 마당; 3. (건물 주위의) 뜰, 구내; 4. 이유, 근거; (~에) 이유[근거]를 두다; 5. 입장, 의견" }, { word: "suit", meaning: "1. 정장, (옷) 한 벌; 2. 소송; 3. 적합하다; 편리하다; 4. 어울리다" }
+            ],
+            "Unit 42": [
+                { word: "ailment", meaning: "(심각하지 않은) 질병" }, { word: "infect", meaning: "감염[전염]시키다; 오염시키다" }, { word: "contagious", meaning: "전염성의, 전염되는" }, { word: "epidemic", meaning: "전염병; 유행(병); 유행성의" }, { word: "plague", meaning: "전염병; (한동안) 괴롭히다; 성가시게 하다" }, { word: "chronic", meaning: "(주로 병이) 만성의; 만성 질환을 앓고 있는" }, { word: "acute", meaning: "1. (질병이) 급성인, 급성의; 2. 극심한, 격렬한; 3. 예민한; 예리한" }, { word: "incurable", meaning: "불치의, 치유할 수 없는; (습관 등을) 바꿀 수 없는" }, { word: "influenza", meaning: "유행성 감기, 독감" }, { word: "diabetes", meaning: "당뇨병" }, { word: "dental", meaning: "치아의, 치과의" }, { word: "tumor / tumour", meaning: "종양" }, { word: "handicapped", meaning: "장애가 있는" }, { word: "cripple", meaning: "장애를 입히다; 손상시키다" }, { word: "swell", meaning: "1. 붓다, 부풀다; 2. 증가하다, 팽창하다" }, { word: "itchy", meaning: "가려운" }, { word: "bruise", meaning: "멍, 타박상; 멍이 생기다" }, { word: "sprain", meaning: "(손목, 발목 등을) 삐다, 접질리다" }, { word: "limp", meaning: "다리를 절다, 절뚝거리다; 절뚝거림" }, { word: "paralyze", meaning: "마비시키다; 무력하게 하다" }, { word: "numb", meaning: "감각이 없는, 마비된; 감각을 잃게 하다" }, { word: "strain", meaning: "1. (근육의) 긴장, 삠; 2. 부담, 압박; 1. (근육에) 무리를 주다; 2. 잡아당기다; 압박을 주다" }, { word: "allergy", meaning: "알레르기, 과민증" }, { word: "dehydration", meaning: "탈수(증); 건조" }, { word: "vomit", meaning: "토하다, 게우다" }, { word: "choke", meaning: "1. 질식시키다, 숨 막히게 하다; 2. (성장, 발전을) 저해하다; (식물을) 마르게 하다; 질식" }, { word: "vaccine", meaning: "(예방) 백신" }, { word: "diagnose", meaning: "(질병 등을) 진단하다" }, { word: "remedy", meaning: "1. 치료(약); 2. 해결책; 바로잡다, 개선하다" }, { word: "hospitalize", meaning: "입원시키다" }, { word: "painkiller", meaning: "진통제" }, { word: "sterilize", meaning: "살균하다, 소독하다" }, { word: "transfusion", meaning: "수혈; 주입" }, { word: "prescribe", meaning: "1. (약을) 처방하다; 2. 규정하다" }, { word: "dose", meaning: "(약의 1회분) 복용량, 투여량; (약을) 투여하다" }, { word: "alleviate", meaning: "(고통 등을) 완화하다, 덜다" }, { word: "soothe", meaning: "1. (고통 등을) 완화하다, 덜다; 2. (사람을) 달래다, 진정시키다" }, { word: "stroke", meaning: "1. 타격, 타법; 때리기, 치기; 2. 성공적인 일[행동, 생각]; 3. 뇌졸중; 발작; 4. 수영법; 노 젓기; 5. (글씨, 그림의) 한 획; 6. (특히 동물을) 쓰다듬다" }, { word: "due", meaning: "1. ~하기로 되어 있는, ~할 예정인; 2. ~ 때문에, ~로 인한; 3. 지불해야 할; 4. 마땅한, 적절한" }, { word: "case", meaning: "1. 경우, 사례; 2. 실정, 사실; 3. (경찰이 조사 중인) 사건; 4. 소송 (사건); 5. 상자, 통" }
+            ],
+            "Unit 43": [
+                { word: "arouse", meaning: "1. (감정, 태도 등을) 불러일으키다; 자극하다; 2. (잠에서) 깨우다" }, { word: "invoke", meaning: "1. (느낌을) 불러일으키다; 2. (법 등을) 적용하다" }, { word: "provoke", meaning: "(감정 등을) 불러일으키다; 유발하다" }, { word: "manifest", meaning: "(감정, 태도 등을) 분명히 나타내다; 분명한, 명백한" }, { word: "outburst", meaning: "1. (감정의) 폭발, 분출; 2. (특정 활동의) 급격한 증가" }, { word: "agreeable", meaning: "1. 기분 좋은; 쾌활한; 2. 기꺼이 동의하는; 알맞은" }, { word: "grin", meaning: "(이를 드러내고) 씩 웃다, 활짝 웃다" }, { word: "rejoice", meaning: "크게 기뻐하다" }, { word: "ecstasy", meaning: "황홀(감), 무아의 경지" }, { word: "grief", meaning: "비탄, 큰 슬픔" }, { word: "weep", meaning: "울다, 눈물을 흘리다" }, { word: "lament", meaning: "슬퍼하다, 한탄하다; 애도" }, { word: "mourn", meaning: "(죽음을) 슬퍼하다, 애도하다" }, { word: "wail", meaning: "(슬픔, 통증으로) 통곡하다, 울부짖다; 통곡, 울부짖음" }, { word: "sob", meaning: "흐느껴 울다, 흐느끼다" }, { word: "miserable", meaning: "비참한, 불쌍한; 괴로운" }, { word: "distress", meaning: "1. 고통, 괴로움; 2. 곤궁, 빈곤; 괴롭히다, 고민하게 하다" }, { word: "agony", meaning: "극심한 고통[괴로움]" }, { word: "groan", meaning: "(고통, 짜증으로) 신음하다, 끙끙거리다; 신음" }, { word: "console", meaning: "위로하다, 위안을 주다" }, { word: "dismay", meaning: "당황하게 하다; 크게 실망시키다; 당황; 실망" }, { word: "perplex", meaning: "당혹케 하다, 난처하게 하다" }, { word: "flush", meaning: "1. 얼굴이 붉어지다; 2. (변기의) 물을 내리다; 1. 홍조; 2. 물 내림" }, { word: "astonish", meaning: "깜짝 놀라게 하다" }, { word: "stun", meaning: "1. 놀라게 하다; 2. (때려서) 기절시키다, 실신시키다" }, { word: "affection", meaning: "애정, 애착" }, { word: "bond", meaning: "1. 유대감을 형성하다; 2. 접착시키다; 1. 유대, 결속; 2. 접착제; 3. 채권" }, { word: "enchant", meaning: "1. 황홀하게 하다, 매혹하다; 2. 마술을 걸다" }, { word: "hail", meaning: "1. 찬사를 보내다; 2. 우박이 쏟아지다; 우박" }, { word: "hilarious", meaning: "재미있는, 우스운" }, { word: "nostalgia", meaning: "향수, 옛날을 그리워함" }, { word: "displease", meaning: "불쾌하게 하다, 기분 상하게 하다" }, { word: "haunt", meaning: "1. (특히 불쾌한 생각이) 계속 떠오르다; (오랫동안) 괴롭히다; 2. (유령 등이) 출몰하다" }, { word: "dreadful", meaning: "몹시 불쾌한, 끔찍한" }, { word: "detest", meaning: "몹시 싫어하다, 혐오하다" }, { word: "hatred", meaning: "증오, 혐오" }, { word: "glare", meaning: "1. 노려보다; 2. 눈부시게 빛나다; 1. 노려봄; 2. 눈부신 빛" }, { word: "rage", meaning: "격노; 격노하다, 몹시 화내다" }, { word: "revenge", meaning: "복수, 보복" }, { word: "content", meaning: "1. 내용(물); 2. 함유량, 함량; 3. 목차; 4. 만족하는; 만족시키다; 만족" }
+            ],
+            "Unit 44": [
+                { word: "stance", meaning: "1. 입장, 태도; 2. (서 있는) 자세" }, { word: "apt", meaning: "1. ~하기 쉬운, ~하는 경향이 있는; 2. 적절한" }, { word: "temper", meaning: "1. (화를 잘 내는) 성질, 기질; 화; 2. (특정한 때의) 기분, 심정" }, { word: "tact", meaning: "요령, 눈치, 재치" }, { word: "goodwill", meaning: "호의, 친절; 친선" }, { word: "mercy", meaning: "자비, 인정" }, { word: "benevolent", meaning: "자비로운, 인정 많은" }, { word: "selfless", meaning: "이타적인, 사심 없는" }, { word: "virtue", meaning: "1. 미덕; 선, 선행; 2. 장점, 이점" }, { word: "esteem", meaning: "존경, 존중; 존경하다, 존중하다" }, { word: "awe", meaning: "경외심; 경외심을 갖게 하다" }, { word: "discreet", meaning: "분별 있는, 신중한" }, { word: "punctual", meaning: "시간[기한]을 엄수하는" }, { word: "alert", meaning: "경계하는, 방심하지 않는; 기민한; (위험 등을) 알리다" }, { word: "beware", meaning: "조심하다, 주의하다" }, { word: "sophisticated", meaning: "1. 교양 있는, 세련된; 지적인; 2. (기계 등이) 정교한, 복잡한" }, { word: "elegant", meaning: "우아한, 고상한" }, { word: "grace", meaning: "1. 우아함; 2. 친절, 호의; 3. (신의) 은총, 은혜" }, { word: "decent", meaning: "1. 예의 바른; 친절한; 2. (수준, 질이) 괜찮은, 적당한" }, { word: "dignity", meaning: "위엄, 품위" }, { word: "keen", meaning: "1. 열망하는, 간절히 바라는; 2. 예리한, 날카로운" }, { word: "adventurous", meaning: "1. 모험심이 강한; 2. 흥미진진한" }, { word: "morale", meaning: "사기, 의욕" }, { word: "ambitious", meaning: "야심 있는; 열망하는" }, { word: "spontaneous", meaning: "1. 자발적인; 자연히 일어나는; 2. 즉흥적인" }, { word: "decisive", meaning: "1. 결단력 있는, 단호한; 2. 결정적인" }, { word: "sincere", meaning: "진실한, 진심 어린" }, { word: "earnest", meaning: "진실한, 진지한" }, { word: "integrity", meaning: "1. 정직; 성실; 2. 완전한 상태; 보전" }, { word: "frank", meaning: "솔직한" }, { word: "humility", meaning: "겸손" }, { word: "humble", meaning: "1. 겸손한; 2. 미천한, 보잘것없는" }, { word: "modest", meaning: "1. 겸손한; 2. 적당한; 수수한" }, { word: "gratitude", meaning: "감사, 고마움" }, { word: "persevere", meaning: "인내하다, 끈기 있게 계속하다" }, { word: "versatile", meaning: "1. 다재다능한; 2. (사물이) 다용도의, 다목적의" }, { word: "feminine", meaning: "여성의, 여성스러운" }, { word: "regard", meaning: "1. 주시[응시]하다; 주목; 2. 여기다, 간주하다; 3. 관심, 고려; 4. 존중, 존경; 존중하다, 존경하다" }, { word: "dispense", meaning: "1. 분배하다, 나누어 주다; 2. (약을) 조제하다; 3. 면제하다, 없애다" }, { word: "tip", meaning: "1. (뾰족한) 끝, 끝 부분; 정상; 2. 조언; 3. 팁; 팁을 주다; 4. 기울이다; (기울여서) 따르다, 뒤집어엎다" }
+            ],
+            "Unit 45": [
+                { word: "infamous", meaning: "악명 높은" }, { word: "notorious", meaning: "악명 높은" }, { word: "cynical", meaning: "냉소적인, 빈정대는" }, { word: "skeptical", meaning: "회의적인, 의심 많은" }, { word: "reluctant", meaning: "꺼리는, 마음 내키지 않는" }, { word: "rigid", meaning: "1. 융통성 없는, 완고한; 2. 뻣뻣한, 단단한" }, { word: "stern", meaning: "매우 엄한, 엄격한, 근엄한; 심각한" }, { word: "immature", meaning: "미숙한, 다 자라지 못한" }, { word: "naive", meaning: "(경험, 지식 부족으로) 순진한, 세상을 모르는" }, { word: "clumsy", meaning: "어설픈, 서투른" }, { word: "haste", meaning: "서두름, 급함, 성급" }, { word: "reckless", meaning: "무모한, 신중하지 못한" }, { word: "arrogant", meaning: "거만한, 오만한" }, { word: "outspoken", meaning: "노골적으로[거침없이] 말하는" }, { word: "arbitrary", meaning: "(행동, 결정 등이) 임의의, 제멋대로인; 독단적인" }, { word: "overbearing", meaning: "강압적인, 남을 지배하려 드는" }, { word: "nasty", meaning: "1. 못된, 심술궂은; 2. 더러운, 불쾌한" }, { word: "wicked", meaning: "1. 사악한, 못된; 2. 짓궂은, 장난기 있는" }, { word: "mischief", meaning: "(특히 아이들의) 장난, 못된 짓" }, { word: "tease", meaning: "놀리다, 장난하다, 짓궂게 괴롭히다" }, { word: "mock", meaning: "조롱하다, 놀리다" }, { word: "humiliate", meaning: "굴욕감을 느끼게 하다, 창피를 주다" }, { word: "immoral", meaning: "부도덕한, 비도덕적인" }, { word: "deviant", meaning: "일탈적인, 정상에서 벗어난" }, { word: "despise", meaning: "경멸하다, 멸시하다" }, { word: "contempt", meaning: "경멸, 멸시" }, { word: "brutal", meaning: "잔인한, 잔혹한" }, { word: "savage", meaning: "야만적인; 포악한, 몹시 사나운" }, { word: "insane", meaning: "제정신이 아닌, 미친" }, { word: "frantic", meaning: "(걱정, 공포 등으로) 제정신이 아닌; 정신없이 서두는" }, { word: "thrifty", meaning: "절약하는, 검소한" }, { word: "overlook", meaning: "1. 간과하다, 못 보고 넘어가다; 2. 눈감아 주다; 3. 내려다보다" }, { word: "coward", meaning: "겁쟁이" }, { word: "flatter", meaning: "아첨[아부]하다, 알랑거리다" }, { word: "lure", meaning: "꾀다, 유혹하다; 유혹; 매력; 미끼" }, { word: "brag", meaning: "(심하게) 자랑하다, 떠벌리다; 자랑, 허풍" }, { word: "old-fashioned", meaning: "전통적인 사고방식을 지닌; 구식의, 유행이 지난" }, { word: "hesitant", meaning: "주저하는" }, { word: "blunt", meaning: "1. 직설적인; 2. 무딘, 뭉툭한" }, { word: "settle", meaning: "1. 정착하다; 2. 해결하다, 끝내다; 3. 결정하다, 결심하다; 4. 진정[안정]시키다" }
+            ]
         };
-        // --- 이하 스크립트 코드 수정 ---
+        // --- 이하 스크립트 코드는 이전 앱들과 동일 ---
         let userInfo = {};
         let currentUnit='',questions=[],currentQuestionIndex=0,userAnswers=[],timerInterval;
         const userInfoScreen = document.getElementById('user-info-screen');
@@ -154,7 +158,6 @@
             }
         }
         
-        // 나머지 JS 함수들은 이전과 동일하게 유지됩니다.
         function startTest(unit){currentUnit=unit;let unitWords=[...vocabularyData[unit]];questions=[];userAnswers=[];currentQuestionIndex=0;unitWords.sort(()=>0.5-Math.random());const numQuestions=Math.min(20,unitWords.length);const selectedWords=unitWords.slice(0,numQuestions);const half=Math.ceil(numQuestions/2);for(let i=0;i<numQuestions;i++){const wordData=selectedWords[i];const type=i<half?'spelling':'meaning';questions.push({type:type,word:wordData.word,meaning:wordData.meaning,originalQuestion:type==='spelling'?wordData.meaning:wordData.word})}
         questions.sort(()=>0.5-Math.random());testTitle.textContent=`${unit} 단어 시험`;showScreen(testScreen);displayQuestion();startTimer()}
         function displayQuestion(){if(currentQuestionIndex>=questions.length){submitTest();return}
@@ -182,4 +185,3 @@
     </script>
 </body>
 </html>
-
