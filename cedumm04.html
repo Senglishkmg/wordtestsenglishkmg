@@ -1,0 +1,820 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중학 어휘 마스터 (Unit 31-40)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .screen { transition: opacity 0.3s ease-in-out; scroll-behavior: smooth; }
+        .hidden { display: none !important; }
+        button:disabled { cursor: not-allowed; opacity: 0.6; }
+        #toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 9999px;
+            background-color: rgba(17, 24, 39, 0.9);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 50;
+            transition: bottom 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        #toast.show { bottom: 30px; }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 md:p-10">
+            <div id="userInfoScreen" class="screen">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-800">단어 시험</h1>
+                    <p class="mt-2 text-slate-500">학습할 준비가 되셨나요? 정보를 입력해주세요.</p>
+                </div>
+                <div class="mt-8 space-y-5">
+                    <div>
+                        <label for="school" class="block text-sm font-medium text-slate-700 mb-1">학교</label>
+                        <input type="text" id="school" class="form-input" placeholder="예) 구글중학교">
+                    </div>
+                    <div>
+                        <label for="grade" class="block text-sm font-medium text-slate-700 mb-1">학년</label>
+                        <input type="text" id="grade" class="form-input" placeholder="예) 1">
+                    </div>
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-slate-700 mb-1">이름</label>
+                        <input type="text" id="name" class="form-input" placeholder="예) 홍길동">
+                    </div>
+                </div>
+                <button id="startAppButton" class="mt-10 w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 transform hover:scale-105" disabled>
+                    시험 시작하기
+                </button>
+            </div>
+
+            <div id="unitSelectionScreen" class="screen hidden">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Unit 선택</h1>
+                    <p class="mt-2 text-slate-500">도전할 유닛을 선택하세요.</p>
+                </div>
+                <div id="unitButtonsContainer" class="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    </div>
+            </div>
+
+            <div id="testScreen" class="screen hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="unitTitle" class="text-xl md:text-2xl font-bold text-slate-800"></h2>
+                    <div id="timer" class="text-lg font-semibold text-red-500 bg-red-100 px-3 py-1 rounded-full"></div>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5 mb-6">
+                    <div id="progressBar" class="bg-indigo-500 h-2.5 rounded-full transition-all duration-300"></div>
+                </div>
+                
+                <div class="bg-slate-100 p-6 rounded-lg shadow-inner min-h-[160px] flex flex-col items-center justify-center">
+                    <p id="questionType" class="text-sm font-bold text-indigo-600 mb-2"></p>
+                    <p id="questionText" class="text-2xl md:text-3xl font-bold text-center text-slate-900"></p>
+                </div>
+                
+                <div class="mt-6">
+                     <input type="text" id="answerInput" class="w-full text-center text-lg px-4 py-3 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition" placeholder="정답을 입력하세요">
+                </div>
+                
+                <div class="flex justify-between items-center mt-6">
+                    <p id="progressText" class="text-sm text-slate-500 font-medium"></p>
+                    <button id="nextButton" class="bg-indigo-600 text-white font-bold py-2 px-8 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 transform hover:scale-105">다음</button>
+                </div>
+            </div>
+
+            <div id="resultsScreen" class="screen hidden">
+                 <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-800">시험 결과</h1>
+                    <p class="mt-2 text-slate-500" id="resultUserInfo"></p>
+                 </div>
+                 
+                 <div class="text-center bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-xl my-8">
+                     <p class="text-lg text-slate-600 font-medium">총점</p>
+                     <p id="totalScore" class="text-6xl font-black text-indigo-600"></p>
+                 </div>
+                 
+                 <h2 class="text-xl font-bold text-slate-800 mb-4">틀린 문제 목록</h2>
+                 <div class="max-h-72 overflow-y-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-50 sticky top-0">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">문제</th>
+                                <th scope="col" class="px-4 py-3">제출 답</th>
+                                <th scope="col" class="px-4 py-3">정답</th>
+                                <th scope="col" class="px-4 py-3 text-center">점수</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wrongAnswersTable">
+                            </tbody>
+                    </table>
+                 </div>
+                 <div id="noWrongAnswers" class="hidden text-center py-10 text-slate-500 bg-slate-50 rounded-lg">
+                     틀린 문제가 없습니다! 완벽해요! 🎉
+                 </div>
+
+                 <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                     <button id="saveButton" class="result-button bg-green-600 hover:bg-green-700 focus:ring-green-300">결과 저장</button>
+                     <button id="retryButton" class="result-button bg-blue-600 hover:bg-blue-700 focus:ring-blue-300">다시 풀기</button>
+                     <button id="homeButton" class="result-button bg-slate-600 hover:bg-slate-700 focus:ring-slate-300">처음으로</button>
+                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast"></div>
+
+<script>
+// --- VOCABULARY DATA (Unit 31-40) ---
+const vocabularyData = {
+    "Unit 31": [
+        { word: "public", meaning: "대중의; 대중을 위한, 공공의; 대중, 일반 사람들" },
+        { word: "audience", meaning: "청중, 관객" },
+        { word: "crowd", meaning: "사람들, 군중; 붐비다" },
+        { word: "folk", meaning: "사람들; 민속의, 전통적인" },
+        { word: "collection", meaning: "소장품, 수집품" },
+        { word: "loud", meaning: "큰 소리의, 시끄러운" },
+        { word: "clap", meaning: "박수를 치다; 박수" },
+        { word: "impact", meaning: "영향, 충격" },
+        { word: "producer", meaning: "생산자; 프로듀서, 제작자" },
+        { word: "celebrity", meaning: "유명 인사" },
+        { word: "interview", meaning: "면접, 인터뷰; 인터뷰하다" },
+        { word: "talent", meaning: "(타고난) 재능, 재능 있는 사람" },
+        { word: "script", meaning: "대본, 각본" },
+        { word: "perform", meaning: "수행[실행]하다; 연기[연주, 공연]하다" },
+        { word: "fantastic", meaning: "환상적인, 기막히게 좋은" },
+        { word: "seat", meaning: "좌석, 자리" },
+        { word: "stage", meaning: "단계; 무대" },
+        { word: "critic", meaning: "비평가, 평론가" },
+        { word: "comment", meaning: "언급, 논평; 논평하다, 견해를 밝히다" },
+        { word: "media", meaning: "미디어, 대중 매체" },
+        { word: "broadcast", meaning: "방송하다; 방송" },
+        { word: "entertain", meaning: "즐겁게 하다" },
+        { word: "channel", meaning: "(TV·라디오의) 채널" },
+        { word: "advertise", meaning: "광고하다" },
+        { word: "publish", meaning: "출판하다, 발행하다" }
+    ],
+    "Unit 32": [
+        { word: "literature", meaning: "문학" },
+        { word: "author", meaning: "저자, 작가" },
+        { word: "edit", meaning: "편집하다, 교정하다" },
+        { word: "fiction", meaning: "소설; 허구, 지어낸 이야기" },
+        { word: "novel", meaning: "(장편) 소설" },
+        { word: "mystery", meaning: "수수께끼, 미스터리; 추리소설" },
+        { word: "myth", meaning: "신화, 근거없는 믿음" },
+        { word: "legend", meaning: "전설" },
+        { word: "fairy", meaning: "(이야기 속의) 요정" },
+        { word: "tale", meaning: "이야기" },
+        { word: "imaginary", meaning: "상상의, 가상의" },
+        { word: "romantic", meaning: "로맨틱한, 연애(애정)의" },
+        { word: "poem", meaning: "(한편의) 시" },
+        { word: "biography", meaning: "전기, 일대기" },
+        { word: "tragedy", meaning: "비극" },
+        { word: "dramatic", meaning: "극적인, 연극의" },
+        { word: "article", meaning: "기사, 논설; 물품, 물건" },
+        { word: "phrase", meaning: "구, 어구" },
+        { word: "sentence", meaning: "문장; (형을) 선고하다" },
+        { word: "theme", meaning: "주제, 테마" },
+        { word: "text", meaning: "본문; 글, 문자; (휴대전화로) 문자를 보내다" },
+        { word: "context", meaning: "문맥, 맥락" },
+        { word: "content", meaning: "내용; (상자 등의) 내용물; 만족하는" },
+        { word: "chapter", meaning: "장, 챕터" },
+        { word: "summary", meaning: "요약, 개요" }
+    ],
+    "Unit 33": [
+        { word: "costume", meaning: "의상, 복장" },
+        { word: "fabric", meaning: "직물, 천" },
+        { word: "wool", meaning: "양모, 양털" },
+        { word: "leather", meaning: "가죽" },
+        { word: "pattern", meaning: "패턴, 무늬" },
+        { word: "stripe", meaning: "줄무늬" },
+        { word: "dye", meaning: "염색하다; 염료, 물감" },
+        { word: "stitch", meaning: "바느질하다, 꿰매다; (한)바늘, (한)땀" },
+        { word: "sew", meaning: "바느질하다, 꿰매다" },
+        { word: "thread", meaning: "실" },
+        { word: "cardigan", meaning: "카디건" },
+        { word: "suit", meaning: "정장; 알맞다, 적합하다; 어울리다" },
+        { word: "collar", meaning: "칼라, 옷깃" },
+        { word: "sleeve", meaning: "소매" },
+        { word: "knot", meaning: "매듭; 매듭을 묶다" },
+        { word: "fashionable", meaning: "유행하는, 유행에 따른" },
+        { word: "trend", meaning: "경향, 추세" },
+        { word: "formal", meaning: "공식적인, 형식적인" },
+        { word: "luxury", meaning: "사치, 호화로움; 사치품" },
+        { word: "jewelry", meaning: "보석류, 장신구류" },
+        { word: "imitate", meaning: "모방하다, 흉내 내다" },
+        { word: "mend", meaning: "수선하다, 고치다" },
+        { word: "polish", meaning: "닦다, 광을 내다; 다듬다; 광택제; 광택, 닦기" },
+        { word: "fit", meaning: "(모양·크기가) 맞다; (옷이) 잘 어울리다; 건강한, 알맞은, 어울리는" },
+        { word: "tag", meaning: "꼬리표, 가격표" }
+    ],
+    "Unit 34": [
+        { word: "anniversary", meaning: "기념일" },
+        { word: "celebrate", meaning: "기념하다, 축하하다" },
+        { word: "congratulate", meaning: "축하하다" },
+        { word: "holiday", meaning: "공휴일, 휴일; 휴가" },
+        { word: "occasion", meaning: "(특정한) 때, 경우; 행사, 의식" },
+        { word: "ceremony", meaning: "의식, 식" },
+        { word: "national", meaning: "국가의, 국가적인" },
+        { word: "annual", meaning: "매년의" },
+        { word: "memorable", meaning: "기억할 만한, 인상적인" },
+        { word: "recall", meaning: "기억해 내다; 회수[리콜]하다" },
+        { word: "carnival", meaning: "축제, 카니발" },
+        { word: "parade", meaning: "행진, 퍼레이드" },
+        { word: "festive", meaning: "축제의, 축하하는" },
+        { word: "firework", meaning: "폭죽, 불꽃놀이" },
+        { word: "pop", meaning: "펑(하고 터지는 소리); 팝(뮤직); 펑 소리가나다, 터지다; 불쑥 나타나다" },
+        { word: "chant", meaning: "구호를 (거듭) 외치다; 노래를 부르다; 구호; 노래" },
+        { word: "decorate", meaning: "장식하다, 꾸미다" },
+        { word: "host", meaning: "주최하다; 주인, 주최자" },
+        { word: "organize", meaning: "조직하다, 계획하다" },
+        { word: "invitation", meaning: "초대, 초청" },
+        { word: "receive", meaning: "받다" },
+        { word: "response", meaning: "대답, 응답, 회신" },
+        { word: "amuse", meaning: "즐겁게 하다, 재미있게 하다" },
+        { word: "pleasure", meaning: "기쁨, 즐거움" },
+        { word: "merry", meaning: "즐거운, 명랑한" }
+    ],
+    "Unit 35": [
+        { word: "location", meaning: "위치, 장소" },
+        { word: "site", meaning: "터, 부지; 장소" },
+        { word: "zone", meaning: "지역, 구역" },
+        { word: "region", meaning: "지역, 지방" },
+        { word: "landmark", meaning: "주요 지형지물, 명소" },
+        { word: "facility", meaning: "시설, 설비" },
+        { word: "downstairs", meaning: "아래층에, 아래층으로; 아래층" },
+        { word: "nearby", meaning: "근처의, 인근의; 근처에, 인근에" },
+        { word: "entrance", meaning: "입구, 출입문" },
+        { word: "fireplace", meaning: "벽난로" },
+        { word: "fountain", meaning: "분수" },
+        { word: "lawn", meaning: "잔디밭" },
+        { word: "urban", meaning: "도시의" },
+        { word: "rural", meaning: "지방의, 시골의" },
+        { word: "countryside", meaning: "시골지역, 지방" },
+        { word: "neighborhood", meaning: "근처, 인근; 이웃 사람들" },
+        { word: "hometown", meaning: "고향" },
+        { word: "harbor", meaning: "항구" },
+        { word: "kindergarten", meaning: "유치원" },
+        { word: "pharmacy", meaning: "약국" },
+        { word: "platform", meaning: "플랫폼, 승강장; 강단, 연단" },
+        { word: "stadium", meaning: "경기장, 운동장" },
+        { word: "tomb", meaning: "무덤" },
+        { word: "waterfall", meaning: "폭포" },
+        { word: "windmill", meaning: "풍차" }
+    ],
+    "Unit 36": [
+        { word: "figure", meaning: "수치, 숫자; 인물; 형태" },
+        { word: "plural", meaning: "복수의" },
+        { word: "volume", meaning: "음량; 양, 분량" },
+        { word: "quantity", meaning: "양, 수량" },
+        { word: "calculate", meaning: "계산하다" },
+        { word: "random", meaning: "임의의, 무작위의" },
+        { word: "plenty", meaning: "많음, 풍부함; 많은, 풍부한" },
+        { word: "sufficient", meaning: "충분한" },
+        { word: "maximum", meaning: "최고의, 최대의; 최고, 최대" },
+        { word: "least", meaning: "최소; 가장 적은" },
+        { word: "less", meaning: "더 적은, 덜한" },
+        { word: "none", meaning: "아무것도[아무도, 조금도] ~않다" },
+        { word: "dozen", meaning: "12개" },
+        { word: "several", meaning: "몇몇의" },
+        { word: "single", meaning: "한 개, 하나, 독신; 하나의, 한 개의; 한 사람의" },
+        { word: "quarter", meaning: "4분의 1; 15분; 4분기 (1년을 넷으로 나눈 기간 중 하나)" },
+        { word: "section", meaning: "부분, 부문" },
+        { word: "percent", meaning: "백분율, 퍼센트" },
+        { word: "rate", meaning: "비율; 속도; 요금; 평가하다" },
+        { word: "total", meaning: "총, 전체의" },
+        { word: "whole", meaning: "전체의, 모든; 통째로 된; 전체" },
+        { word: "entire", meaning: "전체의, 완전한" },
+        { word: "average", meaning: "평균의; 평균" },
+        { word: "balance", meaning: "균형, 평형; 잔고, 잔액; 균형을 잡다" },
+        { word: "equal", meaning: "같은, 동일한; 평등한" }
+    ],
+    "Unit 37": [
+        { word: "feature", meaning: "특징, 특색; 얼굴 생김새, 이목구비; 특집 (기사)" },
+        { word: "depth", meaning: "깊이" },
+        { word: "length", meaning: "길이; 기간" },
+        { word: "typical", meaning: "전형적인, 대표적인" },
+        { word: "particular", meaning: "특정한; 특별한" },
+        { word: "pile", meaning: "쌓다, 포개다; 더미, 무더기" },
+        { word: "bundle", meaning: "꾸러미, 묶음" },
+        { word: "broad", meaning: "넓은" },
+        { word: "tight", meaning: "(옷 등이) 꼭 끼는; 단단한; 단단히, 꽉" },
+        { word: "loose", meaning: "느슨한, 헐거운" },
+        { word: "smooth", meaning: "(표면이) 매끄러운" },
+        { word: "rough", meaning: "매끈하지 않은, 거친; 대강의, 대충의" },
+        { word: "surface", meaning: "겉, 표면" },
+        { word: "thick", meaning: "두꺼운, 굵은" },
+        { word: "neat", meaning: "단정한, 정돈된" },
+        { word: "complex", meaning: "복잡한; 복합 건물, 단지" },
+        { word: "brief", meaning: "간결한; 잠깐의" },
+        { word: "fancy", meaning: "고급의, 일류의; 화려한, 장식이 많은; 공상" },
+        { word: "rapid", meaning: "빠른, 신속한" },
+        { word: "faint", meaning: "희미한, 어렴풋한; 현기증이 나는; 기절하다" },
+        { word: "enormous", meaning: "거대한, 막대한" },
+        { word: "mild", meaning: "온화한, 순한" },
+        { word: "pure", meaning: "순수한; 깨끗한, 맑은; 완전한" },
+        { word: "separate", meaning: "분리된, 별개의; 분리하다, 나누다" },
+        { word: "tough", meaning: "힘든, 어려운; 강인한, 굳센" }
+    ],
+    "Unit 38": [
+        { word: "barely", meaning: "간신히, 겨우; 거의 ~않다" },
+        { word: "frequently", meaning: "자주, 빈번히" },
+        { word: "hardly", meaning: "거의 ~ 않는" },
+        { word: "mostly", meaning: "주로, 일반적으로" },
+        { word: "once", meaning: "한 번; (과거) 언젠가" },
+        { word: "rarely", meaning: "드물게, 좀처럼 ~하지 않는" },
+        { word: "scarcely", meaning: "거의 ~ 않는" },
+        { word: "seldom", meaning: "좀처럼 ~ 않는" },
+        { word: "usually", meaning: "보통, 대개" },
+        { word: "per", meaning: "~당, ~마다" },
+        { word: "probably", meaning: "아마" },
+        { word: "extremely", meaning: "극도로, 극히" },
+        { word: "excess", meaning: "초과, 과잉" },
+        { word: "gradually", meaning: "서서히" },
+        { word: "incredible", meaning: "놀라운, 엄청난; 믿기 어려운" },
+        { word: "quite", meaning: "꽤, 상당히, 완전히" },
+        { word: "fairly", meaning: "상당히, 꽤" },
+        { word: "rather", meaning: "상당히, 약간" },
+        { word: "highly", meaning: "크게, 대단히; 높이, 많이" },
+        { word: "slight", meaning: "약간의, 조금의" },
+        { word: "minor", meaning: "작은, 사소한, 중요하지 않은" },
+        { word: "decrease", meaning: "줄다, 감소하다; 감소" },
+        { word: "limit", meaning: "제한, 한계; 제한하다, 한정하다" },
+        { word: "merely", meaning: "단지, 그저" },
+        { word: "indeed", meaning: "정말로, 확실히" }
+    ],
+    "Unit 39": [
+        { word: "period", meaning: "기간, 시대" },
+        { word: "current", meaning: "현재의, 지금의" },
+        { word: "modern", meaning: "현대의, 오늘날의" },
+        { word: "nowadays", meaning: "요즘에는" },
+        { word: "anymore", meaning: "더 이상은, 이제는" },
+        { word: "recent", meaning: "최근의" },
+        { word: "lately", meaning: "최근에, 요즈음" },
+        { word: "past", meaning: "과거; 과거의, 지나간" },
+        { word: "anytime", meaning: "언제든지, 언제나" },
+        { word: "someday", meaning: "언젠가, 머지않아, 훗날" },
+        { word: "century", meaning: "1세기, 100년" },
+        { word: "daily", meaning: "매일의; 매일, 날마다" },
+        { word: "decade", meaning: "10년" },
+        { word: "midnight", meaning: "자정(밤12시), 한밤중" },
+        { word: "meanwhile", meaning: "그 동안에, 그 사이에" },
+        { word: "series", meaning: "일련, 연속; 연재물, 시리즈" },
+        { word: "former", meaning: "예전의, 과거의; 앞서 말한" },
+        { word: "following", meaning: "다음에 나오는, 다음의" },
+        { word: "initial", meaning: "처음의, 초기의; (이름의) 첫 글자" },
+        { word: "previous", meaning: "이전의, 앞선" },
+        { word: "primary", meaning: "초기의, 첫째의; 주된, 주요한" },
+        { word: "prime", meaning: "가장 중요한, 주된; 최고의, 최상의; 전성" },
+        { word: "suddenly", meaning: "갑자기" },
+        { word: "until", meaning: "~까지" },
+        { word: "within", meaning: "(기간) ~이내에; (공간) ~안에" }
+    ],
+    "Unit 40": [
+        { word: "despite", meaning: "~에도 불구하고" },
+        { word: "still", meaning: "아직; 그럼에도 불구하고; ((비교급 강조)) 훨씬; 가만히 있는, 정지한" },
+        { word: "nevertheless", meaning: "그럼에도 불구하고" },
+        { word: "otherwise", meaning: "그렇지 않으면; 그 외에는" },
+        { word: "(al)though", meaning: "(비록) ~이긴 하지만; 그러나, 그래도" },
+        { word: "unless", meaning: "만약 ~이 아니면, ~하지 않는 한" },
+        { word: "whereas", meaning: "반면에, 그러나" },
+        { word: "therefore", meaning: "그러므로" },
+        { word: "thus", meaning: "이렇게, 이와 같이; 따라서, 그러므로" },
+        { word: "closely", meaning: "밀접하게, 친밀하게; 면밀히" },
+        { word: "especially", meaning: "특히, 특별히" },
+        { word: "exactly", meaning: "정확하게" },
+        { word: "except", meaning: "~을 제외하고" },
+        { word: "fortunately", meaning: "다행스럽게도, 운 좋게도" },
+        { word: "frankly", meaning: "솔직히" },
+        { word: "furthermore", meaning: "뿐만 아니라, 더욱이" },
+        { word: "moreover", meaning: "게다가, 더욱이" },
+        { word: "approximately", meaning: "대략, 거의" },
+        { word: "clearly", meaning: "뚜렷하게, 분명히" },
+        { word: "necessarily", meaning: "반드시, 필연적으로" },
+        { word: "somehow", meaning: "어떻게든; 왠지, 웬일인지" },
+        { word: "terribly", meaning: "몹시, 지독하게" },
+        { word: "even", meaning: "심지어, ~조차도; 고른, 균등한" },
+        { word: "yet", meaning: "아직, 여전히; 하지만, 그럼에도 불구하고" },
+        { word: "due", meaning: "~로 인한; ~하기로 예정된; (돈을) 지불해야 하는" }
+    ]
+};
+
+// --- APPLICATION STATE & ELEMENTS ---
+const appState = {
+    userInfo: { school: '', grade: '', name: '' },
+    currentUnit: '',
+    questions: [],
+    currentQuestionIndex: 0,
+    userAnswers: [],
+    timer: null,
+    timerInterval: null,
+    isProcessing: false,
+};
+
+const screens = {
+    userInfo: document.getElementById('userInfoScreen'),
+    unitSelection: document.getElementById('unitSelectionScreen'),
+    test: document.getElementById('testScreen'),
+    results: document.getElementById('resultsScreen'),
+};
+
+const userInfoInputs = {
+    school: document.getElementById('school'),
+    grade: document.getElementById('grade'),
+    name: document.getElementById('name'),
+};
+
+const startAppButton = document.getElementById('startAppButton');
+const unitButtonsContainer = document.getElementById('unitButtonsContainer');
+const answerInput = document.getElementById('answerInput');
+const nextButton = document.getElementById('nextButton');
+const toastElement = document.getElementById('toast');
+
+
+// --- CORE FUNCTIONS ---
+
+/**
+ * Shows a specific screen and hides others.
+ * @param {string} screenKey - The key of the screen to show (e.g., 'userInfo').
+ */
+function showScreen(screenKey) {
+    Object.values(screens).forEach(screen => screen.classList.add('hidden'));
+    if (screens[screenKey]) {
+        screens[screenKey].classList.remove('hidden');
+    }
+}
+
+/**
+ * Displays a toast message.
+ * @param {string} message - The message to display.
+ */
+function showToast(message) {
+    toastElement.textContent = message;
+    toastElement.classList.add('show');
+    setTimeout(() => {
+        toastElement.classList.remove('show');
+    }, 2500);
+}
+
+/**
+ * Shuffles an array in place.
+ * @param {Array} array - The array to shuffle.
+ * @returns {Array} The shuffled array.
+ */
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// --- INITIALIZATION ---
+
+/**
+ * Populates the unit selection screen with buttons.
+ */
+function initializeUnitSelection() {
+    unitButtonsContainer.innerHTML = '';
+    const unitKeys = Object.keys(vocabularyData);
+    unitKeys.forEach(unitKey => {
+        const button = document.createElement('button');
+        button.className = "text-center font-bold py-4 px-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-indigo-500 hover:text-white hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1";
+        button.textContent = unitKey;
+        button.onclick = () => startTest(unitKey);
+        unitButtonsContainer.appendChild(button);
+    });
+}
+
+/**
+ * Validates user info inputs and enables/disables the start button.
+ */
+function validateUserInfo() {
+    const { school, grade, name } = userInfoInputs;
+    const allFilled = school.value.trim() && grade.value.trim() && name.value.trim();
+    startAppButton.disabled = !allFilled;
+}
+
+// --- TEST LOGIC ---
+
+/**
+ * Starts the test for a given unit.
+ * @param {string} unitKey - The key of the unit to test.
+ */
+function startTest(unitKey) {
+    appState.currentUnit = unitKey;
+    const words = [...vocabularyData[unitKey]];
+    
+    // Create questions (50% word -> meaning, 50% meaning -> word)
+    const shuffledWords = shuffleArray(words);
+    const half = Math.ceil(shuffledWords.length / 2);
+    const meaningQuestions = shuffledWords.slice(0, half).map(w => ({
+        type: 'meaning',
+        question: w.word,
+        answer: w.meaning
+    }));
+    const spellingQuestions = shuffledWords.slice(half).map(w => ({
+        type: 'spelling',
+        question: w.meaning,
+        answer: w.word
+    }));
+    
+    appState.questions = shuffleArray([...meaningQuestions, ...spellingQuestions]);
+    appState.currentQuestionIndex = 0;
+    appState.userAnswers = [];
+
+    document.getElementById('unitTitle').textContent = unitKey;
+    showScreen('test');
+    displayCurrentQuestion();
+    startTimer();
+}
+
+/**
+ * Starts the countdown timer for the test.
+ */
+function startTimer() {
+    clearInterval(appState.timerInterval);
+    const totalSeconds = appState.questions.length * 30;
+    appState.timer = totalSeconds;
+
+    const timerElement = document.getElementById('timer');
+    
+    const updateTimerDisplay = () => {
+        const minutes = Math.floor(appState.timer / 60);
+        const seconds = appState.timer % 60;
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+    updateTimerDisplay();
+
+    appState.timerInterval = setInterval(() => {
+        appState.timer--;
+        updateTimerDisplay();
+        if (appState.timer <= 0) {
+            clearInterval(appState.timerInterval);
+            showToast('시간 종료! 자동으로 채점합니다.');
+            finishTest();
+        }
+    }, 1000);
+}
+
+
+/**
+ * Displays the current question and updates the progress bar.
+ */
+function displayCurrentQuestion() {
+    if (appState.currentQuestionIndex >= appState.questions.length) {
+        finishTest();
+        return;
+    }
+
+    const question = appState.questions[appState.currentQuestionIndex];
+    document.getElementById('questionText').textContent = question.question;
+    document.getElementById('questionType').textContent = question.type === 'meaning' ? '다음 단어의 의미를 적으세요.' : '다음 의미에 맞는 단어를 적으세요.';
+    
+    // Update progress
+    const progress = ((appState.currentQuestionIndex + 1) / appState.questions.length) * 100;
+    document.getElementById('progressBar').style.width = `${progress}%`;
+    document.getElementById('progressText').textContent = `문제 ${appState.currentQuestionIndex + 1} / ${appState.questions.length}`;
+    
+    answerInput.value = '';
+    answerInput.focus();
+}
+
+/**
+ * Processes the user's answer and moves to the next question.
+ */
+function processNextQuestion() {
+    if (appState.isProcessing) return;
+    appState.isProcessing = true;
+
+    const userAnswer = answerInput.value.trim();
+    appState.userAnswers.push(userAnswer);
+    appState.currentQuestionIndex++;
+    
+    displayCurrentQuestion();
+
+    // Prevent spamming
+    setTimeout(() => {
+        appState.isProcessing = false;
+    }, 200);
+}
+
+/**
+ * Finishes the test and proceeds to the results screen.
+ */
+function finishTest() {
+    clearInterval(appState.timerInterval);
+    while (appState.userAnswers.length < appState.questions.length) {
+        appState.userAnswers.push(''); // Fill empty answers for timed out questions
+    }
+    calculateAndShowResults();
+}
+
+// --- SCORING LOGIC ---
+
+/**
+ * Calculates the score for a 'meaning' type question based on complex rules.
+ * @param {string} userAnswer - The user's submitted answer.
+ * @param {string} correctAnswer - The correct answer string.
+ * @returns {number} The calculated score (100, 50, or 0).
+ */
+function calculateMeaningScore(userAnswer, correctAnswer) {
+    if (!userAnswer) return 0;
+
+    // 1. Pre-process answers
+    // Correct answers: [['그룹1-의미1', '그룹1-의미2'], ['그룹2-의미1']]
+    const correctGroups = correctAnswer.split(';')
+        .map(group => group.split(',')
+            .map(m => m.replace(/\[|\]|\(|\)/g, '').trim()) // Remove brackets and trim
+            .filter(m => m)
+        );
+    const totalGroupCount = correctGroups.length;
+    
+    // All possible correct individual meanings
+    const allCorrectMeanings = correctGroups.flat();
+
+    // User's submitted answers
+    const userSubmissions = userAnswer.replace(/;/g, ',').split(',')
+        .map(s => s.trim()).filter(s => s);
+
+    // 2. Rule 4-2.1: 0점 처리 (엉뚱한 의미 포함)
+    for (const submission of userSubmissions) {
+        const isPartiallyCorrect = allCorrectMeanings.some(correct => correct.startsWith(submission));
+        if (!isPartiallyCorrect) {
+            return 0; // Immediately return 0 if an invalid meaning is found
+        }
+    }
+
+    // 3. Count matched groups
+    let matchedGroupCount = 0;
+    for (const group of correctGroups) {
+        const groupMatched = group.some(correctMeaning => 
+            userSubmissions.some(userSubmission => correctMeaning.startsWith(userSubmission))
+        );
+        if (groupMatched) {
+            matchedGroupCount++;
+        }
+    }
+
+    // 4. Apply final scoring rules
+    if (matchedGroupCount === totalGroupCount) {
+        return 100; // 만점
+    }
+    if (matchedGroupCount / totalGroupCount >= 0.5) {
+        return 50; // 부분 점수
+    }
+    
+    return 0; // 나머지 0점
+}
+
+/**
+ * Calculates all scores and displays the results screen.
+ */
+function calculateAndShowResults() {
+    let totalScore = 0;
+    const wrongAnswers = [];
+
+    appState.questions.forEach((q, index) => {
+        const userAnswer = appState.userAnswers[index];
+        let score = 0;
+        
+        if (q.type === 'spelling') {
+            score = userAnswer.toLowerCase() === q.answer.toLowerCase() ? 100 : 0;
+        } else {
+            score = calculateMeaningScore(userAnswer, q.answer);
+        }
+
+        totalScore += score;
+        if (score < 100) {
+            wrongAnswers.push({
+                question: q.question,
+                userAnswer: userAnswer || '(미입력)',
+                correctAnswer: q.answer,
+                score: score,
+            });
+        }
+    });
+
+    const averageScore = Math.round(totalScore / appState.questions.length);
+    
+    // Display results
+    document.getElementById('totalScore').textContent = `${averageScore}점`;
+    const { school, grade, name } = appState.userInfo;
+    document.getElementById('resultUserInfo').textContent = `${school} ${grade}학년 ${name} (${appState.currentUnit})`;
+    
+    const tableBody = document.getElementById('wrongAnswersTable');
+    tableBody.innerHTML = '';
+
+    if (wrongAnswers.length > 0) {
+        document.getElementById('noWrongAnswers').classList.add('hidden');
+        tableBody.parentElement.parentElement.classList.remove('hidden');
+        wrongAnswers.forEach(item => {
+            const row = `
+                <tr class="bg-white border-b hover:bg-slate-50">
+                    <td class="px-4 py-3 font-medium text-slate-900">${item.question}</td>
+                    <td class="px-4 py-3 text-red-600">${item.userAnswer}</td>
+                    <td class="px-4 py-3 text-blue-600">${item.correctAnswer}</td>
+                    <td class="px-4 py-3 text-center">${item.score}점</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    } else {
+        tableBody.parentElement.parentElement.classList.add('hidden');
+        document.getElementById('noWrongAnswers').classList.remove('hidden');
+    }
+
+    showScreen('results');
+}
+
+// --- EVENT LISTENERS ---
+
+// User Info Screen
+Object.values(userInfoInputs).forEach(input => input.addEventListener('input', validateUserInfo));
+
+startAppButton.addEventListener('click', () => {
+    appState.userInfo = {
+        school: userInfoInputs.school.value.trim(),
+        grade: userInfoInputs.grade.value.trim(),
+        name: userInfoInputs.name.value.trim(),
+    };
+    showScreen('unitSelection');
+});
+
+// Test Screen
+nextButton.addEventListener('click', processNextQuestion);
+answerInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        processNextQuestion();
+    }
+});
+
+// Results Screen
+document.getElementById('retryButton').addEventListener('click', () => {
+    startTest(appState.currentUnit);
+});
+
+document.getElementById('homeButton').addEventListener('click', () => {
+    showScreen('unitSelection');
+});
+
+document.getElementById('saveButton').addEventListener('click', () => {
+    const tableBody = document.getElementById('wrongAnswersTable');
+    let wrongAnswersText = '';
+    if (tableBody.rows.length > 0) {
+        wrongAnswersText = '\n--- 틀린 문제 목록 ---\n';
+        for (const row of tableBody.rows) {
+            wrongAnswersText += `\n문제: ${row.cells[0].textContent}\n`;
+            wrongAnswersText += `제출 답: ${row.cells[1].textContent}\n`;
+            wrongAnswersText += `정답: ${row.cells[2].textContent}\n`;
+            wrongAnswersText += `점수: ${row.cells[3].textContent}\n`;
+        }
+    } else {
+        wrongAnswersText = '\n모든 문제를 맞혔습니다!';
+    }
+    
+    const { school, grade, name } = appState.userInfo;
+    const totalScore = document.getElementById('totalScore').textContent;
+    const clipboardText = `[${school}] ${grade}학년 ${name}의 [${appState.currentUnit}] 시험지\n\n총점: ${totalScore}${wrongAnswersText}`;
+
+    navigator.clipboard.writeText(clipboardText).then(() => {
+        showToast('결과가 클립보드에 복사되었습니다.');
+    }).catch(err => {
+        showToast('복사에 실패했습니다.');
+        console.error('Clipboard error:', err);
+    });
+});
+
+
+// --- APP START ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Add custom styles for inputs and buttons
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .form-input {
+            @apply mt-1 block w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition;
+        }
+        .result-button {
+            @apply w-full text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition-all duration-300 transform hover:scale-105;
+        }
+    `;
+    document.head.appendChild(style);
+
+    initializeUnitSelection();
+    showScreen('userInfo');
+});
+
+</script>
+</body>
+</html>
