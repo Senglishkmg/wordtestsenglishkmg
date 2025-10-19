@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어휘끝 중학 마스터 예문연습 - 메인 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-link {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            background-color: #4f46e5;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-decoration: none;
+        }
+        .btn-link:hover {
+            background-color: #4338ca;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="main-container" class="w-full max-w-md mx-auto">
+        <div class="card">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">어휘끝 중학 마스터 예문연습</h1>
+            <p class="text-center text-gray-600 mb-10">학습할 범위를 선택하세요.</p>
+            <div class="space-y-4">
+                <a href="cedummst01.html" class="btn-link">Unit 01-10</a>
+                <a href="cedummst02.html" class="btn-link">Unit 11-20</a>
+                <a href="cedummst03.html" class="btn-link">Unit 21-30</a>
+                <a href="cedummst04.html" class="btn-link">Unit 31-40</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
