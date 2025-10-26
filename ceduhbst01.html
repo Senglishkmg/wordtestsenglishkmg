@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어휘끝 고교기본 문장제 시험 (Units 1-10)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            background-color: #4f46e5;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #4338ca;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .btn-review {
+            background-color: #16a34a;
+        }
+        .btn-review:hover {
+            background-color: #15803d;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app-container" class="w-full max-w-2xl mx-auto">
+        <!-- Unit Selection Screen -->
+        <div id="unit-selection-screen" class="card">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">어휘끝 고교기본 문장제 시험</h1>
+            <p class="text-center text-gray-600 mb-8">학습할 유닛을 선택하세요. (Units 1-10)</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button onclick="startQuiz('review_1-5')" class="btn btn-review col-span-1 md:col-span-2">Unit 1-5 복습 (30문제)</button>
+                <button onclick="startQuiz('unit1')" class="btn">Unit 1</button>
+                <button onclick="startQuiz('unit2')" class="btn">Unit 2</button>
+                <button onclick="startQuiz('unit3')" class="btn">Unit 3</button>
+                <button onclick="startQuiz('unit4')" class="btn">Unit 4</button>
+                <button onclick="startQuiz('unit5')" class="btn">Unit 5</button>
+                
+                <button onclick="startQuiz('review_6-10')" class="btn btn-review col-span-1 md:col-span-2 mt-4">Unit 6-10 복습 (30문제)</button>
+                <button onclick="startQuiz('unit6')" class="btn">Unit 6</button>
+                <button onclick="startQuiz('unit7')" class="btn">Unit 7</button>
+                <button onclick="startQuiz('unit8')" class="btn">Unit 8</button>
+                <button onclick="startQuiz('unit9')" class="btn">Unit 9</button>
+                <button onclick="startQuiz('unit10')" class="btn">Unit 10</button>
+
+                <button onclick="startQuiz('all_1-10')" class="btn btn-secondary col-span-1 md:col-span-2 mt-4">Unit 1-10 통합 학습</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="card hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="quiz-title" class="text-2xl font-bold text-gray-800">Quiz</h2>
+                <div id="progress-indicator" class="text-lg font-semibold text-gray-600"></div>
+            </div>
+            <div class="mb-6 p-6 bg-gray-50 rounded-lg">
+                <p id="sentence" class="text-xl text-gray-700 mb-2"></p>
+                <p id="meaning" class="text-md text-indigo-600"></p>
+            </div>
+            <form id="answer-form">
+                <input type="text" id="answer-input" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="정답을 입력하세요...">
+                <button type="submit" class="w-full btn mt-4">제출</button>
+            </form>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="card hidden">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">퀴즈 결과</h2>
+            <p id="score" class="text-2xl text-center font-semibold text-indigo-600 mb-8"></p>
+            <div id="incorrect-answers-container" class="mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">틀린 문제</h3>
+                <ul id="incorrect-answers-list" class="space-y-4"></ul>
+            </div>
+            <div class="flex flex-col md:flex-row gap-4">
+                <button id="copy-results-btn" class="btn flex-1">결과 저장</button>
+                <button id="restart-btn" class="btn btn-secondary flex-1">유닛 선택</button>
+            </div>
+            <p id="copy-feedback" class="text-center text-green-600 mt-4 h-6"></p>
+        </div>
+    </div>
+
+    <script type='application/json' id='quiz-data'>
+{
+    "unit1": [
+        { "word": "compare", "sentence": "Don't c________ yourself to others.", "meaning": "비교하다", "translation": "자신을 다른 사람과 비교하지 마세요." },
+        { "word": "compare", "sentence": "The poet c________d her eyes to stars.", "meaning": "비유하다", "translation": "그 시인은 그녀의 눈을 별에 비유했다." },
+        { "word": "divide", "sentence": "Let's d________ the pizza into eight slices.", "meaning": "나누다, 갈라지다", "translation": "피자를 여덟 조각으로 나누자." },
+        { "word": "relate", "sentence": "The report r________s poverty to crime.", "meaning": "관련시키다, 관련이 있다", "translation": "그 보고서는 빈곤을 범죄와 관련시킨다." },
+        { "word": "leave", "sentence": "He will l________ for Paris tomorrow morning.", "meaning": "떠나다; 그만두다", "translation": "그는 내일 아침 파리로 떠날 것이다." },
+        { "word": "leave", "sentence": "Please l________ a message after the beep.", "meaning": "(남겨) 두다, 남기다", "translation": "삐 소리 후에 메시지를 남겨주세요." },
+        { "word": "follow", "sentence": "The dog f________ed his owner everywhere.", "meaning": "따라가다, 따라오다", "translation": "그 개는 주인을 어디든 따라갔다." },
+        { "word": "follow", "sentence": "You must f________ the rules of the school.", "meaning": "(지시 등을) 따르다", "translation": "당신은 학교의 규칙을 따라야 합니다." },
+        { "word": "follow", "sentence": "I couldn't f________ his explanation at all.", "meaning": "이해하다", "translation": "나는 그의 설명을 전혀 이해할 수 없었다." },
+        { "word": "endure", "sentence": "Athletes must e________ a lot of pain during training.", "meaning": "견디다, 참다", "translation": "운동선수들은 훈련 중 많은 고통을 견뎌야 한다." },
+        { "word": "endure", "sentence": "Their friendship has e________d for many years.", "meaning": "지속되다, 오래가다", "translation": "그들의 우정은 오랫동안 지속되어 왔다." },
+        { "word": "forbid", "sentence": "The law f________s smoking in public places.", "meaning": "금지하다; 못 하게 하다", "translation": "법은 공공장소에서의 흡연을 금지한다." },
+        { "word": "control", "sentence": "It is important to c________ your emotions.", "meaning": "통제하다", "translation": "감정을 통제하는 것이 중요하다." },
+        { "word": "control", "sentence": "The small party c________s the new government.", "meaning": "지배하다", "translation": "그 소수 정당이 새 정부를 지배하고 있다." },
+        { "word": "control", "sentence": "This switch c________s the speed of the fan.", "meaning": "조절하다", "translation": "이 스위치는 팬의 속도를 조절한다." },
+        { "word": "control", "sentence": "The situation is under c________.", "meaning": "통제", "translation": "상황은 통제 하에 있다." },
+        { "word": "control", "sentence": "The empire lost c________ over its territories.", "meaning": "지배", "translation": "그 제국은 영토에 대한 지배력을 잃었다." },
+        { "word": "focus", "sentence": "Please f________ on your work right now.", "meaning": "집중하다, 집중시키다", "translation": "지금 당장 당신의 일에 집중하세요." },
+        { "word": "focus", "sentence": "The camera will f________ on her face automatically.", "meaning": "초점을 맞추다", "translation": "카메라가 그녀의 얼굴에 자동으로 초점을 맞출 것이다." },
+        { "word": "focus", "sentence": "The main f________ of the report is on climate change.", "meaning": "집중", "translation": "그 보고서의 주된 집중은 기후 변화에 있다." },
+        { "word": "focus", "sentence": "The image is out of f________.", "meaning": "초점", "translation": "그 이미지는 초점이 맞지 않는다." },
+        { "word": "concentrate", "sentence": "I can't c________ on my studies with that noise.", "meaning": "집중하다, 집중시키다", "translation": "저 소음 때문에 공부에 집중할 수가 없다." },
+        { "word": "concentrate", "sentence": "Orange juice c________ is sold in frozen cans.", "meaning": "농축하다; 농축물", "translation": "오렌지 주스 농축액은 냉동 캔으로 판매된다." },
+        { "word": "determine", "sentence": "The judges will d________ the winner of the contest.", "meaning": "결정하다", "translation": "심사위원들이 대회의 우승자를 결정할 것이다." },
+        { "word": "determine", "sentence": "She d________d to finish the race.", "meaning": "결심하다", "translation": "그녀는 경주를 끝마치기로 결심했다." },
+        { "word": "determine", "sentence": "Police are trying to d________ the cause of the accident.", "meaning": "알아내다, 밝히다", "translation": "경찰은 사고 원인을 밝히려고 노력 중이다." },
+        { "word": "conclude", "sentence": "We c________d that he was telling the truth.", "meaning": "결론을 내리다", "translation": "우리는 그가 진실을 말하고 있다고 결론 내렸다." },
+        { "word": "conclude", "sentence": "The meeting will c________ at 5 PM.", "meaning": "끝내다, 끝나다", "translation": "회의는 오후 5시에 끝날 것이다." },
+        { "word": "fit", "sentence": "These shoes don't f________ me; they are too small.", "meaning": "(모양, 크기가) 맞다", "translation": "이 신발은 나에게 맞지 않는다; 너무 작다." },
+        { "word": "fit", "sentence": "He is not f________ for the job.", "meaning": "어울리다, 적합하다", "translation": "그는 그 일에 적합하지 않다." },
+        { "word": "fit", "sentence": "This tool is f________ for the purpose.", "meaning": "어울리는, 적합한", "translation": "이 도구는 그 목적에 적합하다." },
+        { "word": "fit", "sentence": "She exercises every day to stay f________.", "meaning": "(운동으로 몸이) 건강한", "translation": "그녀는 건강을 유지하기 위해 매일 운동한다." },
+        { "word": "belong", "sentence": "This book b________s to the library.", "meaning": "(~의) 것이다, 소유이다", "translation": "이 책은 도서관 소유이다." },
+        { "word": "belong", "sentence": "He feels like he doesn't b________ here.", "meaning": "(~에) 속하다", "translation": "그는 자신이 여기에 속하지 않는다고 느낀다." },
+        { "word": "occur", "sentence": "The accident o________red last night.", "meaning": "발생하다, 일어나다", "translation": "그 사고는 어젯밤에 일어났다." },
+        { "word": "occur", "sentence": "A good idea o________red to me.", "meaning": "(생각이) 떠오르다", "translation": "좋은 생각이 나에게 떠올랐다." },
+        { "word": "occur", "sentence": "These plants o________ naturally in the mountains.", "meaning": "(~에) 존재하다", "translation": "이 식물들은 산에 자연적으로 존재한다." },
+        { "word": "notice", "sentence": "Did you n________ that he left early?", "meaning": "알아차리다", "translation": "그가 일찍 떠난 것을 알아차렸나요?" },
+        { "word": "notice", "sentence": "Pay n________ to the warning signs.", "meaning": "주목하다", "translation": "경고 표지판에 주목하세요." },
+        { "word": "notice", "sentence": "They will n________ us of any changes.", "meaning": "통지하다", "translation": "그들은 우리에게 변동 사항을 통지할 것이다." },
+        { "word": "notice", "sentence": "Please give the matter your full n________.", "meaning": "주의, 주목", "translation": "그 문제에 충분히 주의를 기울여 주십시오." },
+        { "word": "notice", "sentence": "You must give two weeks' n________ if you want to quit.", "meaning": "통지(서); 게시(물)", "translation": "그만두고 싶다면 2주 전에 통지해야 한다." },
+        { "word": "inform", "sentence": "Please i________ us of your decision.", "meaning": "알리다, 통지하다", "translation": "당신의 결정을 우리에게 알려주세요." },
+        { "word": "suppose", "sentence": "Let's s________ (that) you won the lottery.", "meaning": "(사실이라고) 가정하다", "translation": "당신이 복권에 당첨되었다고 가정해 봅시다." },
+        { "word": "suppose", "sentence": "I s________ he will be late again.", "meaning": "(~일 것이라고) 생각하다, 추측하다", "translation": "나는 그가 또 늦을 것이라고 생각한다." },
+        { "word": "pretend", "sentence": "He p________ed to be asleep.", "meaning": "(~인) 척하다", "translation": "그는 자는 척했다." },
+        { "word": "pretend", "sentence": "She p________ed that she didn't know the answer.", "meaning": "(사실이 아닌 것을) 주장하다", "translation": "그녀는 답을 모른다고 주장했다." },
+        { "word": "suggest", "sentence": "I s________ (that) we go out for dinner.", "meaning": "제안하다", "translation": "나는 우리가 저녁 외식을 하는 것을 제안한다." },
+        { "word": "suggest", "sentence": "The evidence s________s he is innocent.", "meaning": "암시하다, 시사하다", "translation": "그 증거는 그가 무죄임을 암시한다." },
+        { "word": "develop", "sentence": "The city has d________ed rapidly in the last decade.", "meaning": "발달시키다, 발전하다", "translation": "그 도시는 지난 10년간 급속히 발전했다." },
+        { "word": "develop", "sentence": "They are d________ing a new software.", "meaning": "개발하다", "translation": "그들은 새로운 소프트웨어를 개발하고 있다." },
+        { "word": "develop", "sentence": "I need to d________ these photos.", "meaning": "(필름을) 현상하다", "translation": "나는 이 사진들을 현상해야 한다." },
+        { "word": "locate", "sentence": "Can you l________ the nearest post office on this map?", "meaning": "(~의) 위치를 찾아내다", "translation": "이 지도에서 가장 가까운 우체국 위치를 찾아낼 수 있나요?" },
+        { "word": "locate", "sentence": "The company is l________d in the city center.", "meaning": "(특정 장소에) 위치하다", "translation": "그 회사는 도심에 위치해 있다." },
+        { "word": "separate", "sentence": "Please s________ the white clothes from the colored ones.", "meaning": "분리하다", "translation": "흰 옷을 색깔 있는 옷과 분리해 주세요." },
+        { "word": "separate", "sentence": "The war s________d the family.", "meaning": "헤어지게 하다", "translation": "전쟁은 그 가족을 헤어지게 했다." },
+        { "word": "separate", "sentence": "They have been living in s________ houses.", "meaning": "분리된; 개개의", "translation": "그들은 분리된 집에서 살아오고 있다." },
+        { "word": "disappear", "sentence": "The magician made the rabbit d________.", "meaning": "사라지다, 없어지다", "translation": "마술사가 토끼를 사라지게 만들었다." },
+        { "word": "suffer", "sentence": "He s________s from a rare disease.", "meaning": "고통을 받다", "translation": "그는 희귀병으로 고통받고 있다." },
+        { "word": "suffer", "sentence": "The company s________ed huge losses last year.", "meaning": "(손해 등을) 겪다, 당하다", "translation": "그 회사는 작년에 막대한 손해를 겪었다." },
+        { "word": "require", "sentence": "This job r________s fluent English skills.", "meaning": "필요로 하다; 요구하다", "translation": "이 직업은 유창한 영어 실력을 필요로 한다." },
+        { "word": "prevent", "sentence": "We must p________ the spread of the virus.", "meaning": "막다, 방해하다", "translation": "우리는 바이러스의 확산을 막아야 한다." },
+        { "word": "prevent", "sentence": "Regular exercise can p________ heart disease.", "meaning": "예방하다", "translation": "규칙적인 운동은 심장병을 예방할 수 있다." },
+        { "word": "motivate", "sentence": "His speech m________d the students to study harder.", "meaning": "동기를 부여하다", "translation": "그의 연설은 학생들이 더 열심히 공부하도록 동기를 부여했다." },
+        { "word": "motivate", "sentence": "What m________d you to make that decision?", "meaning": "(행동 등의) 이유가 되다", "translation": "무엇이 당신이 그런 결정을 내린 이유가 되었나요?" },
+        { "word": "socialize", "sentence": "It's a good chance to s________ with new people.", "meaning": "(사람들과) 어울리다, 친하게 지내다", "translation": "새로운 사람들과 어울릴 좋은 기회이다." },
+        { "word": "socialize", "sentence": "The school tries to s________ the children.", "meaning": "사회화시키다", "translation": "학교는 아이들을 사회화시키려고 노력한다." },
+        { "word": "gather", "sentence": "A crowd g________ed to see what was happening.", "meaning": "모이다, 모으다", "translation": "무슨 일인지 보려고 군중이 모였다." }
+    ],
+    "unit2": [
+        { "word": "recognize", "sentence": "I didn't r________ you with your new haircut.", "meaning": "알아보다, 분간하다", "translation": "나는 너의 새 머리 스타일 때문에 너를 알아보지 못했다." },
+        { "word": "recognize", "sentence": "The government r________d the need for reform.", "meaning": "(존재, 사실을) 인정하다", "translation": "정부는 개혁의 필요성을 인정했다." },
+        { "word": "remind", "sentence": "This song r________s me of my childhood.", "meaning": "생각나게 하다, 상기시키다", "translation": "이 노래는 나에게 어린 시절을 생각나게 한다." },
+        { "word": "negotiate", "sentence": "The two countries will n________ a peace treaty.", "meaning": "협상하다, 교섭하다", "translation": "두 나라는 평화 조약을 협상할 것이다." },
+        { "word": "approve", "sentence": "The committee a________d the new budget.", "meaning": "승인하다; 찬성하다", "translation": "위원회는 새 예산안을 승인했다." },
+        { "word": "declare", "sentence": "The government d________d a state of emergency.", "meaning": "선언하다, 공표하다; 단언하다", "translation": "정부는 국가 비상사태를 선언했다." },
+        { "word": "declare", "sentence": "You must d________ all goods at customs.", "meaning": "(세관 등에) 신고하다", "translation": "세관에 모든 물품을 신고해야 합니다." },
+        { "word": "contrast", "sentence": "Let's c________ these two different approaches.", "meaning": "대조하다", "translation": "이 두 가지 다른 접근법을 대조해 봅시다." },
+        { "word": "contrast", "sentence": "His actions c________ sharply with his words.", "meaning": "대조[차이]를 보이다", "translation": "그의 행동은 그의 말과 극명한 대조를 보인다." },
+        { "word": "contrast", "sentence": "The c________ between the two cities is striking.", "meaning": "대조, 차이", "translation": "두 도시 간의 대조는 두드러진다." },
+        { "word": "avoid", "sentence": "He tried to a________ answering my question.", "meaning": "피하다, 회피하다", "translation": "그는 내 질문에 답하는 것을 피하려고 했다." },
+        { "word": "avoid", "sentence": "This cream helps to a________ skin problems.", "meaning": "막다, 예방하다", "translation": "이 크림은 피부 문제를 예방하는 데 도움이 된다." },
+        { "word": "postpone", "sentence": "We have to p________ the meeting until next week.", "meaning": "미루다, 연기하다", "translation": "우리는 회의를 다음 주로 미뤄야 한다." },
+        { "word": "confuse", "sentence": "I always c________ him with his twin brother.", "meaning": "혼동하다", "translation": "나는 항상 그를 그의 쌍둥이 형과 혼동한다." },
+        { "word": "confuse", "sentence": "The complex instructions c________d me.", "meaning": "혼란스럽게 하다; 당황하게 하다", "translation": "그 복잡한 설명서가 나를 혼란스럽게 했다." },
+        { "word": "defeat", "sentence": "Our team d________ed the rivals in the final match.", "meaning": "이기다, 패배시키다", "translation": "우리 팀은 결승전에서 라이벌을 이겼다." },
+        { "word": "defeat", "sentence": "It was a disappointing d________ for the team.", "meaning": "패배", "translation": "그것은 팀에게 실망스러운 패배였다." },
+        { "word": "destroy", "sentence": "The fire completely d________ed the building.", "meaning": "파괴하다; 파멸시키다", "translation": "화재가 건물을 완전히 파괴했다." },
+        { "word": "collapse", "sentence": "He c________d from exhaustion.", "meaning": "(의식을 잃고) 쓰러지다", "translation": "그는 기진맥진하여 쓰러졌다." },
+        { "word": "collapse", "sentence": "The old bridge c________d during the storm.", "meaning": "붕괴되다", "translation": "그 오래된 다리는 폭풍 중에 붕괴되었다." },
+        { "word": "collapse", "sentence": "The c________ of the company affected many workers.", "meaning": "붕괴", "translation": "그 회사의 붕괴는 많은 노동자에게 영향을 미쳤다." },
+        { "word": "involve", "sentence": "The new project will i________ a lot of teamwork.", "meaning": "포함하다, 수반하다", "translation": "그 새 프로젝트는 많은 팀워크를 포함할 것이다." },
+        { "word": "involve", "sentence": "Don't i________ me in your personal problems.", "meaning": "(사건 등에) 연루시키다, 관련시키다", "translation": "나를 너의 개인적인 문제에 연루시키지 마." },
+        { "word": "claim", "sentence": "He c________s that he saw a UFO.", "meaning": "(~이 사실이라고) 주장하다", "translation": "그는 UFO를 봤다고 주장한다." },
+        { "word": "claim", "sentence": "You can c________ your lost luggage at the counter.", "meaning": "(권리, 재산 등을) 요구하다", "translation": "카운터에서 분실한 수하물을 요구할 수 있습니다." },
+        { "word": "claim", "sentence": "His c________ of ownership was proven false.", "meaning": "주장", "translation": "그의 소유권 주장은 거짓으로 판명되었다." },
+        { "word": "claim", "sentence": "You have a c________ to the property.", "meaning": "요구; (요구할) 권리", "translation": "당신은 그 재산에 대한 권리가 있습니다." },
+        { "word": "demand", "sentence": "The workers are d________ing higher wages.", "meaning": "요구하다", "translation": "노동자들은 더 높은 임금을 요구하고 있다." },
+        { "word": "demand", "sentence": "Their d________ for a pay raise was rejected.", "meaning": "요구, 요청", "translation": "임금 인상에 대한 그들의 요구는 거절되었다." },
+        { "word": "demand", "sentence": "There is a high d________ for organic food.", "meaning": "수요", "translation": "유기농 식품에 대한 수요가 높다." },
+        { "word": "refund", "sentence": "They refused to r________ my money.", "meaning": "환불하다", "translation": "그들은 내 돈을 환불해 주기를 거부했다." },
+        { "word": "refund", "sentence": "I asked for a full r________.", "meaning": "환불(금)", "translation": "나는 전액 환불을 요청했다." },
+        { "word": "tend", "sentence": "People t________ to eat more in winter.", "meaning": "(~하는) 경향이 있다, ~하기 쉽다", "translation": "사람들은 겨울에 더 많이 먹는 경향이 있다." },
+        { "word": "tend", "sentence": "She t________ed to her sick child.", "meaning": "돌보다, 보살피다", "translation": "그녀는 아픈 아이를 돌보았다." },
+        { "word": "recommend", "sentence": "Can you r________ a good restaurant around here?", "meaning": "추천하다; 권고하다, 권장하다", "translation": "이 근처에 괜찮은 식당 좀 추천해 주시겠어요?" },
+        { "word": "respond", "sentence": "He hasn't r________ed to my email yet.", "meaning": "대답하다, 응답하다", "translation": "그는 아직 내 이메일에 응답하지 않았다." },
+        { "word": "respond", "sentence": "The patient is r________ing well to the treatment.", "meaning": "반응하다", "translation": "환자가 치료에 잘 반응하고 있다." },
+        { "word": "refer", "sentence": "Don't r________ to this matter again.", "meaning": "언급하다", "translation": "이 문제에 대해 다시는 언급하지 마세요." },
+        { "word": "refer", "sentence": "The arrow r________s to the next step.", "meaning": "가리키다, 나타내다", "translation": "화살표는 다음 단계를 가리킨다." },
+        { "word": "refer", "sentence": "Please r________ to the user manual for instructions.", "meaning": "참조하다, 참고하다", "translation": "설명서를 보려면 사용자 매뉴얼을 참조하세요." },
+        { "word": "react", "sentence": "How did she r________ to the news?", "meaning": "반응하다, 반응을 보이다", "translation": "그녀는 그 소식에 어떻게 반응했나요?" },
+        { "word": "reinforce", "sentence": "The army r________d the border defenses.", "meaning": "강화하다, 보강하다", "translation": "군대는 국경 수비를 강화했다." },
+        { "word": "export", "sentence": "Korea e________s cars and electronics.", "meaning": "수출하다", "translation": "한국은 자동차와 전자제품을 수출한다." },
+        { "word": "export", "sentence": "Coffee is one of Brazil's main e________s.", "meaning": "수출(품)", "translation": "커피는 브라질의 주요 수출품 중 하나이다." },
+        { "word": "trace", "sentence": "The police t________d the call to a public phone.", "meaning": "추적하다", "translation": "경찰은 그 전화가 공중전화에서 걸려온 것을 추적했다." },
+        { "word": "trace", "sentence": "They found t________s of an ancient village.", "meaning": "자취, 흔적", "translation": "그들은 고대 마을의 흔적을 발견했다." },
+        { "word": "retire", "sentence": "He will r________ from his job next year.", "meaning": "은퇴하다, 퇴직하다; 물러나다", "translation": "그는 내년에 직장에서 은퇴할 것이다." },
+        { "word": "organize", "sentence": "She is o________ing a charity event.", "meaning": "(행사 등을) 준비하다", "translation": "그녀는 자선 행사를 준비하고 있다." },
+        { "word": "organize", "sentence": "You need to o________ your thoughts before speaking.", "meaning": "정리하다, 체계화하다", "translation": "말하기 전에 생각을 정리할 필요가 있다." },
+        { "word": "organize", "sentence": "The workers decided to o________ a union.", "meaning": "(단체를) 조직하다", "translation": "노동자들은 노조를 조직하기로 결정했다." },
+        { "word": "construct", "sentence": "They are planning to c________ a new bridge.", "meaning": "건설하다", "translation": "그들은 새 다리를 건설할 계획이다." },
+        { "word": "construct", "sentence": "You must c________ a logical argument.", "meaning": "구성하다", "translation": "논리적인 주장을 구성해야 한다." },
+        { "word": "advertise", "sentence": "The company will a________ its new product on TV.", "meaning": "광고하다", "translation": "그 회사는 TV에 신제품을 광고할 것이다." },
+        { "word": "offend", "sentence": "I'm sorry if my comments o________ed you.", "meaning": "불쾌하게 하다", "translation": "제 말이 당신을 불쾌하게 했다면 죄송합니다." },
+        { "word": "offend", "sentence": "Stealing o________s against the law.", "meaning": "(도덕 등에) 어긋나다; 위반하다", "translation": "절도는 법에 어긋난다." },
+        { "word": "encounter", "sentence": "I e________ed an old friend at the market.", "meaning": "우연히 만나다", "translation": "나는 시장에서 옛 친구를 우연히 만났다." },
+        { "word": "encounter", "sentence": "The team e________ed many difficulties.", "meaning": "(위험 등에) 직면하다", "translation": "그 팀은 많은 어려움에 직면했다." },
+        { "word": "encounter", "sentence": "Our first e________ was at a party.", "meaning": "(우연한) 만남", "translation": "우리의 첫 만남은 파티에서였다." }
+    ],
+    "unit3": [
+        { "word": "structure", "sentence": "The s________ of the human brain is complex.", "meaning": "구조; 조직, 기구", "translation": "인간 뇌의 구조는 복잡하다." },
+        { "word": "structure", "sentence": "The Eiffel Tower is a famous s________.", "meaning": "구조물, 건축물", "translation": "에펠탑은 유명한 구조물이다." },
+        { "word": "structure", "sentence": "You need to s________ your essay carefully.", "meaning": "조직하다, 구조화하다", "translation": "너는 에세이를 세심하게 구조화해야 한다." },
+        { "word": "category", "sentence": "The books are divided into different c________ies.", "meaning": "범주, 카테고리, 부문", "translation": "그 책들은 여러 다른 범주로 나뉘어 있다." },
+        { "word": "sort", "sentence": "What s________ of music do you like?", "meaning": "종류; 분류", "translation": "어떤 종류의 음악을 좋아하세요?" },
+        { "word": "sort", "sentence": "Please s________ these papers by date.", "meaning": "분류하다", "translation": "이 서류들을 날짜순으로 분류해 주세요." },
+        { "word": "quality", "sentence": "This product is of high q________.", "meaning": "질(質)", "translation": "이 제품은 품질이 좋다." },
+        { "word": "quality", "sentence": "This is a q________ restaurant.", "meaning": "고급, 양질", "translation": "이곳은 고급 레스토랑이다." },
+        { "word": "quality", "sentence": "Patience is an important q________.", "meaning": "특성; 자질", "translation": "인내는 중요한 자질이다." },
+        { "word": "quality", "sentence": "They sell q________ leather goods.", "meaning": "고급의, 양질의", "translation": "그들은 고급 가죽 제품을 판다." },
+        { "word": "quantity", "sentence": "The q________ of food was not enough.", "meaning": "양, 수량", "translation": "음식의 양이 충분하지 않았다." },
+        { "word": "quantity", "sentence": "They bought shoes in q________.", "meaning": "다량, 다수", "translation": "그들은 신발을 다량으로 구매했다." },
+        { "word": "reason", "sentence": "What is the r________ for your decision?", "meaning": "이유; 근거", "translation": "당신이 결정한 이유는 무엇인가요?" },
+        { "word": "reason", "sentence": "Humans have the ability to r________.", "meaning": "이성, 판단력; 추론하다", "translation": "인간은 추론할 수 있는 능력을 가지고 있다." },
+        { "word": "period", "sentence": "The p________ of recovery will be long.", "meaning": "기간, 시기; 시대", "translation": "회복 기간은 길 것이다." },
+        { "word": "period", "sentence": "End your sentence with a p________.", "meaning": "마침표", "translation": "문장을 마침표로 끝내세요." },
+        { "word": "occasion", "sentence": "I only wear this suit on special o________s.", "meaning": "(특정한) 때, 경우", "translation": "나는 특별한 경우에만 이 정장을 입는다." },
+        { "word": "occasion", "sentence": "Their wedding was a joyous o________.", "meaning": "(특별한) 행사, 의식", "translation": "그들의 결혼식은 즐거운 행사였다." },
+        { "word": "state", "sentence": "The building is in a bad s________.", "meaning": "상태", "translation": "그 건물은 상태가 좋지 않다." },
+        { "word": "state", "sentence": "He is a citizen of a foreign s________.", "meaning": "국가", "translation": "그는 외국 국가의 시민이다." },
+        { "word": "state", "sentence": "California is a s________ in the USA.", "meaning": "(미국, 호주 등의) 주(州)", "translation": "캘리포니아는 미국의 주이다." },
+        { "word": "state", "sentence": "Please s________ your name clearly.", "meaning": "(격식을 차려) 말하다, 서술하다", "translation": "당신의 이름을 명확하게 말씀해 주세요." },
+        { "word": "circumstance", "sentence": "Under no c________s should you leave this room.", "meaning": "상황, 환경; (일의) 전후 사정", "translation": "어떤 상황에서도 이 방을 떠나서는 안 된다." },
+        { "word": "device", "sentence": "A smartphone is a very useful d________.", "meaning": "장치, 기구", "translation": "스마트폰은 매우 유용한 장치이다." },
+        { "word": "goods", "sentence": "The store sells a variety of g________.", "meaning": "상품, 제품", "translation": "그 상점은 다양한 상품을 판매한다." },
+        { "word": "industry", "sentence": "The tourism i________ is very important here.", "meaning": "산업, 공업", "translation": "이곳에서는 관광 산업이 매우 중요하다." },
+        { "word": "industry", "sentence": "He achieved success through hard work and i________.", "meaning": "근면, 부지런함", "translation": "그는 노력과 근면을 통해 성공을 이뤘다." },
+        { "word": "labor", "sentence": "The company was accused of using child l________.", "meaning": "노동(력)", "translation": "그 회사는 아동 노동력을 사용한 것으로 고발당했다." },
+        { "word": "labor", "sentence": "She l________ed in the field all day.", "meaning": "(부지런히) 일하다", "translation": "그녀는 하루 종일 밭에서 일했다." },
+        { "word": "factor", "sentence": "Price is a key f________ in our decision.", "meaning": "요인, 요소", "translation": "가격은 우리 결정의 핵심 요인이다." },
+        { "word": "theory", "sentence": "Einstein's t________ of relativity is famous.", "meaning": "이론, 학설", "translation": "아인슈타인의 상대성 이론은 유명하다." },
+        { "word": "context", "sentence": "You must understand the word in its c________.", "meaning": "문맥, 맥락", "translation": "당신은 그 단어를 문맥 속에서 이해해야 한다." },
+        { "word": "impact", "sentence": "The new law will have a big i________ on our lives.", "meaning": "영향(력), 효과", "translation": "새 법은 우리 삶에 큰 영향을 미칠 것이다." },
+        { "word": "impact", "sentence": "The i________ of the crash was severe.", "meaning": "충격, 충돌", "translation": "그 충돌의 충격은 심각했다." },
+        { "word": "impact", "sentence": "His speech i________ed everyone deeply.", "meaning": "영향을 주다", "translation": "그의 연설은 모든 사람에게 깊은 영향을 주었다." },
+        { "word": "climate", "sentence": "This region has a warm c________.", "meaning": "기후", "translation": "이 지역은 따뜻한 기후를 가지고 있다." },
+        { "word": "climate", "sentence": "The political c________ is very tense.", "meaning": "분위기, 풍조", "translation": "정치적 분위기가 매우 긴박하다." },
+        { "word": "crisis", "sentence": "The country is facing an economic c________.", "meaning": "위기; 중대한 기로", "translation": "그 나라는 경제 위기에 직면해 있다." },
+        { "word": "nature", "sentence": "We must protect n________ from pollution.", "meaning": "자연", "translation": "우리는 오염으로부터 자연을 보호해야 한다." },
+        { "word": "nature", "sentence": "It is in his n________ to be kind.", "meaning": "본성, 천성; 본질", "translation": "친절한 것은 그의 본성이다." },
+        { "word": "decade", "sentence": "He lived in that house for a d________.", "meaning": "10년, 10년간", "translation": "그는 그 집에서 10년 동안 살았다." },
+        { "word": "symptom", "sentence": "Fever is a common s________ of the flu.", "meaning": "증상", "translation": "열은 독감의 흔한 증상이다." },
+        { "word": "symptom", "sentence": "These riots are a s________ of deeper problems.", "meaning": "징후, 조짐", "translation": "이 폭동들은 더 깊은 문제들의 징후이다." },
+        { "word": "priority", "sentence": "My first p________ is to find a job.", "meaning": "우선 사항, 더 중요한 것; (시간, 순서가) 먼저임", "translation": "나의 첫 번째 우선 사항은 직업을 찾는 것이다." },
+        { "word": "minority", "sentence": "Only a small m________ of students opposed the plan.", "meaning": "소수; 소수파", "translation": "오직 소수의 학생들만이 그 계획에 반대했다." },
+        { "word": "minority", "sentence": "The country has several ethnic m________ groups.", "meaning": "소수 민족, 소수 집단", "translation": "그 나라에는 여러 소수 민족 집단이 있다." },
+        { "word": "purpose", "sentence": "What is the p________ of your visit?", "meaning": "목적; 의도", "translation": "방문 목적이 무엇인가요?" },
+        { "word": "resolution", "sentence": "He made a New Year's r________ to quit smoking.", "meaning": "결심, 결의(안)", "translation": "그는 금연하겠다는 새해 결심을 했다." },
+        { "word": "resolution", "sentence": "We are looking for a peaceful r________ to the conflict.", "meaning": "(문제의) 해결", "translation": "우리는 그 갈등에 대한 평화적인 해결책을 찾고 있다." },
+        { "word": "scent", "sentence": "The s________ of roses filled the air.", "meaning": "냄새, 향기", "translation": "장미 향기가 공기 중에 가득 찼다." },
+        { "word": "favor", "sentence": "Could you do me a f________?", "meaning": "호의, 친절", "translation": "부탁 하나 들어줄 수 있나요?" },
+        { "word": "favor", "sentence": "Most people are in f________ of the new policy.", "meaning": "지지, 찬성", "translation": "대부분의 사람들이 새 정책에 찬성한다." },
+        { "word": "favor", "sentence": "He f________s the proposal.", "meaning": "호의를 보이다", "translation": "그는 그 제안에 호의를 보인다." },
+        { "word": "favor", "sentence": "Which team do you f________ to win?", "meaning": "지지하다, 찬성하다", "translation": "어느 팀이 이길 거라고 지지하나요?" },
+        { "word": "fever", "sentence": "She has a high f________ and a cough.", "meaning": "열, 발열", "translation": "그녀는 고열과 기침이 있다." },
+        { "word": "fever", "sentence": "The whole country was caught up in World Cup f________.", "meaning": "열기", "translation": "온 나라가 월드컵 열기에 휩싸였다." }
+    ],
+    "unit4": [
+        { "word": "symbol", "sentence": "The dove is a s________ of peace.", "meaning": "상징(물)", "translation": "비둘기는 평화의 상징이다." },
+        { "word": "symbol", "sentence": "The chemical s________ for water is H2O.", "meaning": "기호, 부호", "translation": "물의 화학 기호는 H2O이다." },
+        { "word": "freedom", "sentence": "The constitution guarantees f________ of speech.", "meaning": "자유, 자유로운 상태", "translation": "헌법은 언론의 자유를 보장한다." },
+        { "word": "rest", "sentence": "I ate some of the pizza and saved the r________.", "meaning": "(어떤 것의) 나머지", "translation": "나는 피자를 좀 먹고 나머지는 남겼다." },
+        { "word": "rest", "sentence": "You look tired. You need to get some r________.", "meaning": "휴식", "translation": "너 피곤해 보여. 휴식이 좀 필요해." },
+        { "word": "rest", "sentence": "The doctor told him to r________ for a week.", "meaning": "쉬다, 휴식을 취하다", "translation": "의사는 그에게 일주일간 쉬라고 말했다." },
+        { "word": "award", "sentence": "She received an a________ for her performance.", "meaning": "상(금)", "translation": "그녀는 그녀의 연기로 상을 받았다." },
+        { "word": "award", "sentence": "He was a________ed the Nobel Prize.", "meaning": "수여하다, 주다", "translation": "그는 노벨상을 수여받았다." },
+        { "word": "reward", "sentence": "There is a $100 r________ for finding the lost dog.", "meaning": "보상(금)", "translation": "잃어버린 개를 찾는 데 100달러의 보상금이 있다." },
+        { "word": "reward", "sentence": "The company r________ed him for his hard work.", "meaning": "보상하다", "translation": "회사는 그의 노고에 대해 보상했다." },
+        { "word": "instance", "sentence": "For i________, you could try using a different color.", "meaning": "경우, 사례", "translation": "예를 들어, 당신은 다른 색을 사용해 볼 수 있습니다." },
+        { "word": "sequence", "sentence": "The tasks must be completed in the correct s________.", "meaning": "(일련의) 연속", "translation": "그 과제들은 올바른 연속으로 완료되어야 한다." },
+        { "word": "sequence", "sentence": "He described the s________ of events.", "meaning": "순서, 차례", "translation": "그는 사건들의 순서를 설명했다." },
+        { "word": "vision", "sentence": "My v________ is getting worse; I need glasses.", "meaning": "시력; 시야", "translation": "시력이 나빠지고 있어서 안경이 필요해요." },
+        { "word": "vision", "sentence": "The company needs a leader with v________.", "meaning": "선견지명, 통찰력", "translation": "그 회사는 통찰력을 가진 리더가 필요하다." },
+        { "word": "expert", "sentence": "He is an e________ in computer science.", "meaning": "전문가", "translation": "그는 컴퓨터 공학 전문가이다." },
+        { "word": "expert", "sentence": "She gave us some e________ advice.", "meaning": "전문가의, 전문적인; 능숙한, 숙련된", "translation": "그녀는 우리에게 전문적인 조언을 해주었다." },
+        { "word": "potential", "sentence": "She has the p________ to become a great musician.", "meaning": "잠재력, 가능성", "translation": "그녀는 훌륭한 음악가가 될 잠재력을 가지고 있다." },
+        { "word": "potential", "sentence": "We identified a p________ problem with the plan.", "meaning": "잠재적인; 가능성 있는", "translation": "우리는 그 계획의 잠재적인 문제를 확인했다." },
+        { "word": "risk", "sentence": "Smoking increases the r________ of lung cancer.", "meaning": "위험(성); 모험", "translation": "흡연은 폐암의 위험성을 증가시킨다." },
+        { "word": "risk", "sentence": "He r________ed his life to save the child.", "meaning": "위태롭게 하다", "translation": "그는 아이를 구하기 위해 목숨을 걸었다." },
+        { "word": "expense", "sentence": "We need to reduce our living e________s.", "meaning": "비용, 지출; 경비", "translation": "우리는 생활 비용을 줄여야 한다." },
+        { "word": "crash", "sentence": "He was injured in a car c________.", "meaning": "충돌; 추락", "translation": "그는 자동차 충돌 사고로 다쳤다." },
+        { "word": "crash", "sentence": "The plane c________ed in the mountains.", "meaning": "충돌하다; (비행기가) 추락하다", "translation": "그 비행기는 산에 추락했다." },
+        { "word": "victim", "sentence": "He was the v________ of a robbery.", "meaning": "(전쟁, 사고 등의) 피해자, 희생자", "translation": "그는 강도 사건의 피해자였다." },
+        { "word": "fault", "sentence": "It was my f________ that we were late.", "meaning": "잘못", "translation": "우리가 늦은 것은 내 잘못이었다." },
+        { "word": "fault", "sentence": "The f________ for the accident lies with the driver.", "meaning": "(과실의) 책임", "translation": "그 사고의 책임은 운전자에게 있다." },
+        { "word": "fault", "sentence": "He has many f________s, but he is still a good friend.", "meaning": "단점, 결점; 결함", "translation": "그는 단점이 많지만, 여전히 좋은 친구이다." },
+        { "word": "boundary", "sentence": "This river forms the b________ between the two countries.", "meaning": "경계(선)", "translation": "이 강은 두 나라 사이의 경계를 이룬다." },
+        { "word": "boundary", "sentence": "We must respect the b________ies of others.", "meaning": "한계, 한도", "translation": "우리는 다른 사람들의 한계를 존중해야 한다." },
+        { "word": "depth", "sentence": "What is the d________ of the pool?", "meaning": "깊이; 심도", "translation": "그 수영장의 깊이는 얼마인가요?" },
+        { "word": "surface", "sentence": "The moon's s________ is covered in dust.", "meaning": "표면; 수면, 지면", "translation": "달의 표면은 먼지로 덮여 있다." },
+        { "word": "surface", "sentence": "Don't judge a person by their s________ appearance.", "meaning": "겉, 외관", "translation": "사람을 겉모습만 보고 판단하지 마라." },
+        { "word": "surface", "sentence": "A submarine s________d nearby.", "meaning": "(수면으로) 떠오르다", "translation": "잠수함 한 척이 근처에서 수면으로 떠올랐다." },
+        { "word": "surface", "sentence": "Old tensions have s________d again.", "meaning": "(겉으로) 드러나다, 표면화되다", "translation": "오래된 긴장감이 다시 표면화되었다." },
+        { "word": "row", "sentence": "We sat in the front r________ of the theater.", "meaning": "(늘어서 있는) 줄, 열", "translation": "우리는 극장 앞줄에 앉았다." },
+        { "word": "row", "sentence": "He r________ed the boat across the lake.", "meaning": "(배를 노로) 젓다", "translation": "그는 호수를 가로질러 배의 노를 저었다." },
+        { "word": "horror", "sentence": "She screamed in h________ when she saw the spider.", "meaning": "공포(감)", "translation": "그녀는 거미를 보고 공포에 질려 비명을 질렀다." },
+        { "word": "curiosity", "sentence": "The cat looked at the box with c________.", "meaning": "호기심", "translation": "고양이가 호기심을 가지고 상자를 쳐다보았다." },
+        { "word": "novel", "sentence": "He is reading a mystery n________.", "meaning": "(장편) 소설", "translation": "그는 추리 소설을 읽고 있다." },
+        { "word": "novel", "sentence": "The company has a n________ approach to marketing.", "meaning": "새로운, 신기한", "translation": "그 회사는 마케팅에 새로운 접근법을 가지고 있다." },
+        { "word": "delight", "sentence": "The children shouted with d________.", "meaning": "기쁨, 즐거움", "translation": "아이들은 기쁨으로 소리쳤다." },
+        { "word": "delight", "sentence": "Her performance d________ed the audience.", "meaning": "기쁘게 하다", "translation": "그녀의 공연은 관객들을 기쁘게 했다." },
+        { "word": "sympathy", "sentence": "I have great s________ for the victims of the earthquake.", "meaning": "동정, 연민", "translation": "나는 지진 희생자들에게 큰 동정심을 느낀다." },
+        { "word": "sympathy", "sentence": "He is in s________ with their cause.", "meaning": "동조, 지지", "translation": "그는 그들의 대의에 동조한다." },
+        { "word": "loyalty", "sentence": "Dogs are known for their l________ to their owners.", "meaning": "충실, 충성; 충성심", "translation": "개는 주인에 대한 충성심으로 유명하다." },
+        { "word": "welfare", "sentence": "The government is concerned about the w________ of its citizens.", "meaning": "행복, 안녕(安寧); 복지", "translation": "정부는 시민들의 복지에 대해 염려한다." },
+        { "word": "policy", "sentence": "What is the company's p________ on smoking?", "meaning": "정책, 방침", "translation": "흡연에 대한 회사의 정책은 무엇인가요?" },
+        { "word": "policy", "sentence": "Honesty is the best p________.", "meaning": "방책, 수단", "translation": "정직이 최상의 방책이다." },
+        { "word": "neighborhood", "sentence": "I live in a quiet n________.", "meaning": "근처, 인근; 이웃 사람들", "translation": "나는 조용한 동네에 산다." },
+        { "word": "companion", "sentence": "He traveled with his loyal c________, his dog.", "meaning": "친구; 동료", "translation": "그는 그의 충실한 친구인 개와 함께 여행했다." },
+        { "word": "companion", "sentence": "She was a wonderful travel c________.", "meaning": "동반자; 동행", "translation": "그녀는 훌륭한 여행 동반자였다." },
+        { "word": "opponent", "sentence": "He beat his o________ in the tennis match.", "meaning": "(대회 등의) 상대; 반대자", "translation": "그는 테니스 시합에서 상대를 이겼다." }
+    ],
+    "unit5": [
+        { "word": "available", "sentence": "This information is a________ to the public.", "meaning": "이용할 수 있는, 구할 수 있는", "translation": "이 정보는 대중이 이용할 수 있습니다." },
+        { "word": "available", "sentence": "Are you a________ on Friday afternoon?", "meaning": "(만날) 시간이 있는", "translation": "금요일 오후에 시간 있으신가요?" },
+        { "word": "practical", "sentence": "We need a p________ solution to this problem.", "meaning": "실용적인; 현실적인", "translation": "우리는 이 문제에 대한 실용적인 해결책이 필요하다." },
+        { "word": "average", "sentence": "The a________ student studies two hours a day.", "meaning": "평균의", "translation": "평균적인 학생은 하루에 2시간 공부한다." },
+        { "word": "average", "sentence": "It was just an a________ weekend.", "meaning": "보통의, 일반적인", "translation": "그냥 보통의 주말이었어요." },
+        { "word": "average", "sentence": "The a________ of 3, 5, and 10 is 6.", "meaning": "평균", "translation": "3, 5, 10의 평균은 6이다." },
+        { "word": "average", "sentence": "His skills are above a________.", "meaning": "보통", "translation": "그의 기술은 보통 이상이다." },
+        { "word": "alike", "sentence": "The two brothers look very a________.", "meaning": "비슷한; 비슷하게; 동등하게", "translation": "그 두 형제는 매우 비슷하게 생겼다." },
+        { "word": "previous", "sentence": "The p________ owner of this house moved to Canada.", "meaning": "이전의", "translation": "이 집의 이전 주인은 캐나다로 이사 갔다." },
+        { "word": "former", "sentence": "He is a f________ president of the company.", "meaning": "예전의, 과거의", "translation": "그는 그 회사의 예전 사장이다." },
+        { "word": "former", "sentence": "Of the two options, I prefer the f________.", "meaning": "(둘 중에) 먼저의, 전자의; ((the -)) 전자", "translation": "두 가지 선택지 중, 나는 전자를 선호한다." },
+        { "word": "absent", "sentence": "She was a________ from school yesterday.", "meaning": "결석한; 없는, 부재의", "translation": "그녀는 어제 학교에 결석했다." },
+        { "word": "absent", "sentence": "He looked at me with an a________ expression.", "meaning": "멍한", "translation": "그는 멍한 표정으로 나를 쳐다봤다." },
+        { "word": "familiar", "sentence": "This street looks f________ to me.", "meaning": "익숙한, 친숙한", "translation": "이 거리는 나에게 익숙해 보인다." },
+        { "word": "obvious", "sentence": "It was o________ that he was lying.", "meaning": "분명한, 명백한", "translation": "그가 거짓말을 하고 있다는 것은 분명했다." },
+        { "word": "exact", "sentence": "Please tell me the e________ time of his arrival.", "meaning": "정확한; 정밀한", "translation": "그가 도착하는 정확한 시간을 알려주세요." },
+        { "word": "aware", "sentence": "Are you a________ of the risks?", "meaning": "알고 있는, 알아차린", "translation": "위험을 알고 있나요?" },
+        { "word": "notable", "sentence": "There is a n________ difference between the two.", "meaning": "주목할 만한, 눈에 띄는", "translation": "그 둘 사이에는 주목할 만한 차이가 있다." },
+        { "word": "notable", "sentence": "He is one of the most n________ writers of our time.", "meaning": "유명한", "translation": "그는 우리 시대의 가장 유명한 작가 중 한 명이다." },
+        { "word": "odd", "sentence": "He has an o________ habit of talking to himself.", "meaning": "이상한", "translation": "그는 혼잣말을 하는 이상한 버릇이 있다." },
+        { "word": "odd", "sentence": "3, 5, and 7 are o________ numbers.", "meaning": "홀수의", "translation": "3, 5, 7은 홀수이다." },
+        { "word": "odd", "sentence": "I found an o________ sock in the drawer.", "meaning": "짝이 맞지 않는", "translation": "나는 서랍에서 짝이 맞지 않는 양말 한 짝을 발견했다." },
+        { "word": "due", "sentence": "The delay was d________ to bad weather.", "meaning": "~로 인한, ~ 때문에", "translation": "지연은 악천후 때문이었다." },
+        { "word": "due", "sentence": "The train is d________ to arrive at 10 AM.", "meaning": "~하기로 예정된", "translation": "기차는 오전 10시에 도착할 예정이다." },
+        { "word": "due", "sentence": "The rent is d________ at the end of the month.", "meaning": "(돈을) 지불해야 하는", "translation": "월세는 월말에 지불해야 한다." },
+        { "word": "annual", "sentence": "The company holds an a________ meeting in December.", "meaning": "연례의, 매년의", "translation": "그 회사는 12월에 연례 회의를 개최한다." },
+        { "word": "annual", "sentence": "What is your a________ income?", "meaning": "연간의, 한 해의", "translation": "당신의 연간 소득은 얼마입니까?" },
+        { "word": "urgent", "sentence": "I have an u________ message for you.", "meaning": "긴급한; 다급한, 절박한", "translation": "당신에게 긴급한 메시지가 있습니다." },
+        { "word": "likely", "sentence": "It is l________ to rain this afternoon.", "meaning": "~할 것 같은; 가능성 있는", "translation": "오늘 오후에는 비가 올 것 같다." },
+        { "word": "capable", "sentence": "She is c________ of running a marathon.", "meaning": "~할 수 있는", "translation": "그녀는 마라톤을 뛸 수 있다." },
+        { "word": "capable", "sentence": "We need a c________ leader for this project.", "meaning": "유능한", "translation": "우리는 이 프로젝트를 위해 유능한 리더가 필요하다." },
+        { "word": "eager", "sentence": "The students were e________ to learn.", "meaning": "간절히 바라는; 열성적인", "translation": "학생들은 배우기를 간절히 바랐다." },
+        { "word": "firm", "sentence": "This mattress is too f________ for me.", "meaning": "딱딱한, 단단한", "translation": "이 매트리스는 나에게 너무 딱딱하다." },
+        { "word": "firm", "sentence": "She has a f________ belief in her religion.", "meaning": "단호한, 확고한", "translation": "그녀는 자신의 종교에 대한 확고한 믿음을 가지고 있다." },
+        { "word": "firm", "sentence": "He works for a law f________.", "meaning": "회사", "translation": "그는 법률 회사에서 일한다." },
+        { "word": "stable", "sentence": "The patient's condition is s________ now.", "meaning": "안정된; 차분한", "translation": "환자의 상태는 이제 안정적이다." },
+        { "word": "mature", "sentence": "She is very m________ for her age.", "meaning": "성숙한; 다 자란, (과일 등이) 익은", "translation": "그녀는 나이에 비해 매우 성숙하다." },
+        { "word": "mortal", "sentence": "All human beings are m________.", "meaning": "영원히 살 수 없는", "translation": "모든 인간은 영원히 살 수 없다." },
+        { "word": "mortal", "sentence": "The soldier received a m________ wound.", "meaning": "치명적인", "translation": "그 군인은 치명적인 상처를 입었다." },
+        { "word": "deadly", "sentence": "This is a d________ poison.", "meaning": "치명적인", "translation": "이것은 치명적인 독이다." },
+        { "word": "deadly", "sentence": "He was in d________ earnest.", "meaning": "완전한; 극도의", "translation": "그는 완전히 진지했다." },
+        { "word": "strict", "sentence": "My parents are very s________ about homework.", "meaning": "엄격한; 엄밀한", "translation": "우리 부모님은 숙제에 대해 매우 엄격하시다." },
+        { "word": "grateful", "sentence": "I am g________ for your help.", "meaning": "감사하는, 고맙게 여기는", "translation": "당신의 도움에 감사합니다." },
+        { "word": "intimate", "sentence": "They are i________ friends.", "meaning": "친밀한, 절친한", "translation": "그들은 친밀한 친구이다." },
+        { "word": "terrific", "sentence": "That's a t________ idea!", "meaning": "아주 좋은, 훌륭한", "translation": "그거 아주 좋은 생각이야!" },
+        { "word": "terrific", "sentence": "The storm caused a t________ amount of damage.", "meaning": "(양, 정도가) 엄청난", "translation": "폭풍이 엄청난 양의 피해를 야기했다." },
+        { "word": "incredible", "sentence": "The view from the top was i________.", "meaning": "믿을 수 없는, 놀라운", "translation": "정상에서 본 경치는 믿을 수 없을 만큼 훌륭했다." },
+        { "word": "fancy", "sentence": "She wore a f________ dress to the party.", "meaning": "화려한, 장식이 많은", "translation": "그녀는 파티에 화려한 드레스를 입고 갔다." },
+        { "word": "fancy", "sentence": "We stayed at a f________ hotel.", "meaning": "값비싼; 일류의", "translation": "우리는 값비싼 호텔에 묵었다." },
+        { "word": "fancy", "sentence": "He had a f________ that someone was watching him.", "meaning": "공상", "translation": "그는 누군가 자신을 지켜보고 있다는 공상을 했다." }
+    ],
+    "unit6": [
+        { "word": "entire", "sentence": "He ate the e________ pizza by himself.", "meaning": "전체의; 완전한, 온전한", "translation": "그는 피자 전체를 혼자 다 먹었다." },
+        { "word": "broad", "sentence": "He has b________ shoulders.", "meaning": "(폭)넓은", "translation": "그는 어깨가 넓다." },
+        { "word": "broad", "sentence": "The book covers a b________ range of topics.", "meaning": "전반적인, 대체적인", "translation": "그 책은 전반적인 범위의 주제를 다룬다." },
+        { "word": "brief", "sentence": "There was a b________ pause in the conversation.", "meaning": "(시간이) 짧은, 잠시 동안의", "translation": "대화 중에 잠시 짧은 중단이 있었다." },
+        { "word": "brief", "sentence": "Please keep your answer b________.", "meaning": "(말, 글이) 간단한", "translation": "답변을 간단하게 해주세요." },
+        { "word": "temporary", "sentence": "This is just a t________ solution to the problem.", "meaning": "일시적인, 순간의; 임시의", "translation": "이것은 그 문제에 대한 일시적인 해결책일 뿐이다." },
+        { "word": "frequent", "sentence": "He is a f________ visitor to this cafe.", "meaning": "자주 일어나는, 빈번한", "translation": "그는 이 카페의 빈번한 방문객이다." },
+        { "word": "random", "sentence": "The winner will be chosen at r________.", "meaning": "무작위의, 임의로 하는", "translation": "우승자는 무작위로 선정될 것이다." },
+        { "word": "infinite", "sentence": "The universe is i________.", "meaning": "무한한, 무한정의", "translation": "우주는 무한하다." },
+        { "word": "initial", "sentence": "My i________ plan was to travel by train.", "meaning": "처음의", "translation": "나의 처음 계획은 기차로 여행하는 것이었다." },
+        { "word": "initial", "sentence": "What does the i________ 'J' stand for?", "meaning": "(이름 등의) 머리글자, 첫 글자", "translation": "머리글자 'J'는 무엇을 의미하나요?" },
+        { "word": "valuable", "sentence": "Time is the most v________ thing we have.", "meaning": "소중한, 귀중한", "translation": "시간은 우리가 가진 가장 소중한 것이다." },
+        { "word": "valuable", "sentence": "She lost a v________ diamond necklace.", "meaning": "값비싼", "translation": "그녀는 값비싼 다이아몬드 목걸이를 잃어버렸다." },
+        { "word": "cautious", "sentence": "You should be c________ when crossing the street.", "meaning": "조심하는, 신중한", "translation": "길을 건널 때는 조심해야 한다." },
+        { "word": "consistent", "sentence": "Her actions are not c________ with her words.", "meaning": "일관된, 한결같은", "translation": "그녀의 행동은 그녀의 말과 일관되지 않는다." },
+        { "word": "consistent", "sentence": "The results are c________ with our theory.", "meaning": "일치하는", "translation": "그 결과는 우리의 이론과 일치한다." },
+        { "word": "efficient", "sentence": "Solar power is an e________ source of energy.", "meaning": "효율적인, 능률적인", "translation": "태양열은 효율적인 에너지원이다." },
+        { "word": "suitable", "sentence": "This movie is not s________ for children.", "meaning": "적합한, 어울리는", "translation": "이 영화는 아이들에게 적합하지 않다." },
+        { "word": "absolute", "sentence": "I have a________ trust in him.", "meaning": "완전한", "translation": "나는 그를 완전히 신뢰한다." },
+        { "word": "absolute", "sentence": "He rules the country with a________ power.", "meaning": "절대적인", "translation": "그는 절대적인 권력으로 나라를 통치한다." },
+        { "word": "adequate", "sentence": "The food was not a________ for everyone.", "meaning": "충분한, 적절한", "translation": "음식이 모든 사람에게 충분하지 않았다." },
+        { "word": "intermediate", "sentence": "This course is for i________ learners.", "meaning": "중간의", "translation": "이 과정은 중간 단계의 학습자들을 위한 것입니다." },
+        { "word": "intermediate", "sentence": "This class is for i________s in English.", "meaning": "중급의; 중급자", "translation": "이 수업은 영어 중급자들을 위한 것입니다." },
+        { "word": "precious", "sentence": "They found p________ metals in the mine.", "meaning": "귀중한, 값비싼", "translation": "그들은 광산에서 귀금속을 발견했다." },
+        { "word": "precious", "sentence": "Family is the most p________ thing in my life.", "meaning": "소중한", "translation": "가족은 내 인생에서 가장 소중한 것이다." },
+        { "word": "major", "sentence": "What is the m________ cause of air pollution?", "meaning": "주된, 중요한", "translation": "대기 오염의 주된 원인은 무엇입니까?" },
+        { "word": "major", "sentence": "What is your m________ in college?", "meaning": "전공", "translation": "대학에서 전공이 무엇인가요?" },
+        { "word": "major", "sentence": "She m________ed in history.", "meaning": "전공하다", "translation": "그녀는 역사를 전공했다." },
+        { "word": "corporate", "sentence": "He is a c________ lawyer.", "meaning": "기업의, 회사의; 법인의", "translation": "그는 기업 변호사이다." },
+        { "word": "corporate", "sentence": "The team made a c________ effort to finish the project.", "meaning": "공동의", "translation": "그 팀은 프로젝트를 끝내기 위해 공동의 노력을 했다." },
+        { "word": "private", "sentence": "This is my p________ property.", "meaning": "개인 소유의; 사적인", "translation": "이것은 나의 개인 사유 재산이다." },
+        { "word": "urban", "sentence": "More people are moving to u________ areas.", "meaning": "도시의", "translation": "더 많은 사람들이 도시 지역으로 이동하고 있다." },
+        { "word": "contrary", "sentence": "C________ to popular belief, tomatoes are fruits.", "meaning": "(~와는) 반대되는; 반대", "translation": "일반적인 믿음과는 반대로, 토마토는 과일이다." },
+        { "word": "single", "sentence": "She didn't say a s________ word.", "meaning": "단 하나의; 1인용의", "translation": "그녀는 단 한 마디도 하지 않았다." },
+        { "word": "single", "sentence": "He is s________ and lives alone.", "meaning": "독신인; 미혼의", "translation": "그는 미혼이며 혼자 산다." },
+        { "word": "solo", "sentence": "He made his s________ debut last year.", "meaning": "혼자서 하는, 단독의", "translation": "그는 작년에 단독으로 데뷔했다." },
+        { "word": "solo", "sentence": "She performed a beautiful piano s________.", "meaning": "독주의; 독주(곡), 독창(곡)", "translation": "그녀는 아름다운 피아노 독주를 선보였다." },
+        { "word": "equal", "sentence": "All people have e________ rights.", "meaning": "동일한", "translation": "모든 사람은 동일한 권리를 가진다." },
+        { "word": "equal", "sentence": "Men and women should be e________.", "meaning": "평등한", "translation": "남성과 여성은 평등해야 한다." },
+        { "word": "equal", "sentence": "No one can e________ him in speed.", "meaning": "대등한 것[사람]; 같다, 필적하다", "translation": "속도 면에서 아무도 그와 필적할 수 없다." },
+        { "word": "conservative", "sentence": "He has c________ views on education.", "meaning": "보수적인; 보수주의의", "translation": "그는 교육에 대해 보수적인 견해를 가지고 있다." },
+        { "word": "classic", "sentence": "This novel is a c________ of English literature.", "meaning": "일류의, 최고의", "translation": "이 소설은 영문학의 최고 고전이다." },
+        { "word": "classic", "sentence": "This is a c________ example of his work.", "meaning": "전형적인", "translation": "이것은 그의 작품의 전형적인 예이다." },
+        { "word": "classic", "sentence": "She prefers a c________ style of dress.", "meaning": "(스타일이) 고전적인, 유행을 안 타는", "translation": "그녀는 고전적인 스타일의 옷을 선호한다." },
+        { "word": "classic", "sentence": "This song is a c________.", "meaning": "고전, 명작", "translation": "이 노래는 명곡이다." },
+        { "word": "classic", "sentence": "The battle was a c________.", "meaning": "전형적인 것", "translation": "그 전투는 전형적인 것이었다." },
+        { "word": "typical", "sentence": "It was a t________ Monday morning.", "meaning": "전형적인, 대표적인", "translation": "전형적인 월요일 아침이었다." },
+        { "word": "unique", "sentence": "Everyone's fingerprints are u________.", "meaning": "독특한; 유일무이한", "translation": "모든 사람의 지문은 독특하다." },
+        { "word": "unique", "sentence": "This species is u________ to this island.", "meaning": "고유의, 특유의", "translation": "이 종은 이 섬 고유의 것이다." },
+        { "word": "particular", "sentence": "Is there a p________ restaurant you want to go to?", "meaning": "특정한", "translation": "가고 싶은 특정한 식당이 있나요?" },
+        { "word": "particular", "sentence": "She is very p________ about her food.", "meaning": "특별한, 각별한", "translation": "그녀는 음식에 대해 매우 까다롭다." }
+    ],
+    "unit7": [
+        { "word": "behave", "sentence": "He b________d very bravely in a difficult situation.", "meaning": "행동하다", "translation": "그는 어려운 상황에서 매우 용감하게 행동했다." },
+        { "word": "behave", "sentence": "Please b________ yourself at the party.", "meaning": "예의 바르게 행동하다", "translation": "파티에서 예의 바르게 행동해 주세요." },
+        { "word": "approach", "sentence": "Winter is a________ing.", "meaning": "다가오다[가다], 접근하다", "translation": "겨울이 다가오고 있다." },
+        { "word": "approach", "sentence": "We need a new a________ to this problem.", "meaning": "접근(법)", "translation": "우리는 이 문제에 대한 새로운 접근법이 필요하다." },
+        { "word": "transfer", "sentence": "He t________red to a new school.", "meaning": "이동하다; 전학하다", "translation": "그는 새 학교로 전학했다." },
+        { "word": "transfer", "sentence": "You need to t________ at the next station.", "meaning": "환승하다, 갈아타다", "translation": "다음 역에서 환승해야 합니다." },
+        { "word": "transfer", "sentence": "The t________ of power was peaceful.", "meaning": "이동; 전학", "translation": "권력 이동은 평화로웠다." },
+        { "word": "transfer", "sentence": "This ticket includes a t________ to the bus.", "meaning": "환승", "translation": "이 표는 버스 환승을 포함합니다." },
+        { "word": "sink", "sentence": "The ship s________ to the bottom of the sea.", "meaning": "가라앉다, 가라앉히다", "translation": "배는 바다 밑바닥으로 가라앉았다." },
+        { "word": "sink", "sentence": "Don't leave dirty dishes in the s________.", "meaning": "싱크대, 개수대", "translation": "싱크대에 더러운 접시를 두지 마세요." },
+        { "word": "swing", "sentence": "The monkey was s________ing from a branch.", "meaning": "(앞뒤, 좌우로) 흔들다, 흔들리다", "translation": "원숭이가 나뭇가지에 매달려 흔들리고 있었다." },
+        { "word": "swing", "sentence": "She made a big s________ with the golf club.", "meaning": "흔들림", "translation": "그녀는 골프채로 크게 휘둘렀다." },
+        { "word": "swing", "sentence": "The children are playing on the s________s.", "meaning": "그네", "translation": "아이들이 그네에서 놀고 있다." },
+        { "word": "bounce", "sentence": "The ball doesn't b________ well on grass.", "meaning": "튀어 오르다, 튀다; 뛰어 오르다", "translation": "공이 잔디 위에서는 잘 튀지 않는다." },
+        { "word": "burst", "sentence": "The balloon b________.", "meaning": "터지다, 파열하다", "translation": "풍선이 터졌다." },
+        { "word": "burst", "sentence": "She b________ into tears.", "meaning": "갑자기 ~하다", "translation": "그녀는 갑자기 울음을 터뜨렸다." },
+        { "word": "burst", "sentence": "A b________ in the pipe caused a flood.", "meaning": "파열, 폭발", "translation": "파이프가 파열되어 홍수가 났다." },
+        { "word": "slip", "sentence": "Be careful not to s________ on the wet floor.", "meaning": "미끄러지다", "translation": "젖은 바닥에서 미끄러지지 않도록 조심하세요." },
+        { "word": "slip", "sentence": "That was just a s________ of the tongue.", "meaning": "미끄러짐", "translation": "그것은 단지 말실수였습니다." },
+        { "word": "slip", "sentence": "It was a small s________, but it cost him the game.", "meaning": "(작은) 실수", "translation": "그것은 작은 실수였지만, 그것 때문에 그는 경기에서 졌다." },
+        { "word": "drag", "sentence": "Don't d________ your feet when you walk.", "meaning": "(질질) 끌다, 끌리다; 끌기", "translation": "걸을 때 발을 질질 끌지 마라." },
+        { "word": "bend", "sentence": "You should b________ your knees when you lift heavy things.", "meaning": "굽히다, 구부러지다", "translation": "무거운 것을 들 때는 무릎을 굽혀야 한다." },
+        { "word": "attach", "sentence": "Please a________ a recent photo to your application.", "meaning": "붙이다, 첨부하다", "translation": "지원서에 최근 사진을 첨부해 주세요." },
+        { "word": "capture", "sentence": "The police c________d the thief.", "meaning": "붙잡다", "translation": "경찰이 도둑을 붙잡았다." },
+        { "word": "capture", "sentence": "The movie c________d the audience's imagination.", "meaning": "(관심을) 사로잡다", "translation": "그 영화는 관객의 상상력을 사로잡았다." },
+        { "word": "capture", "sentence": "The photo c________d her smile perfectly.", "meaning": "(사진 등으로) 담아내다; 캡처하다", "translation": "그 사진은 그녀의 미소를 완벽하게 담아냈다." },
+        { "word": "capture", "sentence": "The c________ of the city was a turning point.", "meaning": "포획", "translation": "그 도시의 함락은 전환점이었다." },
+        { "word": "capture", "sentence": "This software is for screen c________.", "meaning": "캡처", "translation": "이 소프트웨어는 화면 캡처용입니다." },
+        { "word": "pack", "sentence": "Did you p________ your suitcase yet?", "meaning": "(짐을) 싸다; (물건을) 포장하다", "translation": "여행 가방은 이미 쌌니?" },
+        { "word": "pack", "sentence": "He bought a p________ of cigarettes.", "meaning": "포장 꾸러미; 배낭", "translation": "그는 담배 한 갑을 샀다." },
+        { "word": "wrap", "sentence": "She w________ped the present in gold paper.", "meaning": "포장하다, 싸다", "translation": "그녀는 선물을 금색 종이로 포장했다." },
+        { "word": "wrap", "sentence": "This gift w________ is beautiful.", "meaning": "포장지", "translation": "이 포장지는 아름답다." },
+        { "word": "fold", "sentence": "Please f________ your clothes neatly.", "meaning": "(종이나 천 등을) 접다", "translation": "옷을 깔끔하게 접어주세요." },
+        { "word": "fold", "sentence": "She f________ed the baby in a blanket.", "meaning": "감싸다", "translation": "그녀는 아기를 담요로 감쌌다." },
+        { "word": "twist", "sentence": "He t________ed his ankle while playing soccer.", "meaning": "비틀다, 구부리다", "translation": "그는 축구를 하다가 발목을 삐었다." },
+        { "word": "twist", "sentence": "The media t________ed his words.", "meaning": "(사실을) 왜곡하다", "translation": "언론이 그의 말을 왜곡했다." },
+        { "word": "twist", "sentence": "Give the lid a t________ to open it.", "meaning": "비틀기", "translation": "뚜껑을 비틀어서 여세요." },
+        { "word": "twist", "sentence": "The story has an unexpected t________.", "meaning": "(예상 밖의) 전개, 전환", "translation": "그 이야기에는 예상치 못한 전개가 있다." },
+        { "word": "spill", "sentence": "Be careful not to s________ the milk.", "meaning": "쏟다, 흘리다; 엎지름; 유출(물)", "translation": "우유를 쏟지 않도록 조심해라." },
+        { "word": "peel", "sentence": "Can you p________ these potatoes for me?", "meaning": "(껍질을) 벗기다", "translation": "이 감자들 껍질 좀 벗겨줄래?" },
+        { "word": "peel", "sentence": "Throw the banana p________ in the trash.", "meaning": "(과일, 채소의) 껍질", "translation": "바나나 껍질을 쓰레기통에 버려라." },
+        { "word": "blend", "sentence": "B________ the fruits and yogurt together.", "meaning": "섞다, 혼합하다", "translation": "과일과 요거트를 함께 섞으세요." },
+        { "word": "blend", "sentence": "Oil does not b________ with water.", "meaning": "섞이다", "translation": "기름은 물과 섞이지 않는다." },
+        { "word": "blend", "sentence": "This coffee is a b________ of beans from Brazil and Colombia.", "meaning": "혼합(물)", "translation": "이 커피는 브라질과 콜롬비아산 원두의 혼합물이다." },
+        { "word": "dye", "sentence": "She d________d her hair red.", "meaning": "염색하다", "translation": "그녀는 머리를 빨간색으로 염색했다." },
+        { "word": "dye", "sentence": "He used a blue d________ for the fabric.", "meaning": "염료", "translation": "그는 천에 파란색 염료를 사용했다." },
+        { "word": "toss", "sentence": "He t________ed the ball to his friend.", "meaning": "(가볍게) 던지다", "translation": "그는 친구에게 공을 가볍게 던졌다." },
+        { "word": "bury", "sentence": "They b________ed the treasure on the island.", "meaning": "묻다, 매장하다", "translation": "그들은 보물을 섬에 묻었다." },
+        { "word": "trap", "sentence": "They set a t________ to catch the mouse.", "meaning": "덫으로 잡다, 함정에 빠뜨리다", "translation": "그들은 쥐를 잡기 위해 덫을 놓았다." },
+        { "word": "trap", "sentence": "The explorers were t________ped in a cave.", "meaning": "(위험한 장소에) 가두다", "translation": "탐험가들은 동굴에 갇혔다." },
+        { "word": "trap", "sentence": "The hunter set a t________ for the rabbit.", "meaning": "덫, 함정", "translation": "사냥꾼은 토끼를 잡기 위해 덫을 놓았다." },
+        { "word": "convey", "sentence": "This pipe c________s water to the city.", "meaning": "운반하다, 수송하다", "translation": "이 파이프는 도시로 물을 운반한다." },
+        { "word": "convey", "sentence": "Words cannot c________ how happy I am.", "meaning": "전달하다", "translation": "말로 내가 얼마나 행복한지 전달할 수 없다." },
+        { "word": "load", "sentence": "Help me l________ the boxes into the truck.", "meaning": "(짐을) 싣다", "translation": "상자들을 트럭에 싣는 것 좀 도와줘." },
+        { "word": "load", "sentence": "The truck was carrying a heavy l________.", "meaning": "짐, 화물", "translation": "트럭이 무거운 짐을 싣고 있었다." },
+        { "word": "scratch", "sentence": "The cat s________ed me.", "meaning": "긁다; 할퀴다", "translation": "고양이가 나를 할퀴었다." },
+        { "word": "scratch", "sentence": "He had a deep s________ on his arm.", "meaning": "긁힌 자국; 찰과상", "translation": "그는 팔에 깊은 긁힌 자국이 있었다." },
+        { "word": "yell", "sentence": "Don't y________ at me!", "meaning": "소리치다, 외치다; 외침", "translation": "나한테 소리 지르지 마!" },
+        { "word": "yawn", "sentence": "He y________ed because he was sleepy.", "meaning": "하품하다; 하품", "translation": "그는 졸려서 하품했다." },
+        { "word": "bang", "sentence": "She b________ed her fist on the table.", "meaning": "(쾅 소리가 나게) 치다, 닫다", "translation": "그녀는 테이블에 주먹을 쾅 내리쳤다." },
+        { "word": "bang", "sentence": "I heard a loud b________.", "meaning": "(쾅 하는) 소리", "translation": "나는 쾅 하는 큰 소리를 들었다." },
+        { "word": "install", "sentence": "We need to i________ a new air conditioner.", "meaning": "설치하다, 설비하다", "translation": "우리는 새 에어컨을 설치해야 한다." }
+    ],
+    "unit8": [
+        { "word": "surround", "sentence": "The house is s________ed by a tall fence.", "meaning": "둘러싸다, 에워싸다", "translation": "그 집은 높은 울타리로 둘러싸여 있다." },
+        { "word": "resemble", "sentence": "She closely r________s her mother.", "meaning": "닮다, 유사하다", "translation": "그녀는 어머니를 매우 닮았다." },
+        { "word": "consist", "sentence": "The team c________s of ten members.", "meaning": "(~로) 이루어져 있다, 구성되다", "translation": "그 팀은 10명의 회원으로 이루어져 있다." },
+        { "word": "consist", "sentence": "Happiness c________s in being satisfied with what you have.", "meaning": "(~에) 있다, 존재하다", "translation": "행복은 당신이 가진 것에 만족하는 데 있다." },
+        { "word": "decline", "sentence": "The company's profits have d________d.", "meaning": "감소하다", "translation": "회사의 수익이 감소했다." },
+        { "word": "decline", "sentence": "He d________d my invitation to the party.", "meaning": "거절하다", "translation": "그는 파티에 대한 나의 초대를 거절했다." },
+        { "word": "decline", "sentence": "There has been a sharp d________ in sales.", "meaning": "감소", "translation": "매출이 급격히 감소했다." },
+        { "word": "shorten", "sentence": "Can you s________ these pants for me?", "meaning": "줄이다, 짧아지다", "translation": "이 바지 좀 줄여주시겠어요?" },
+        { "word": "debate", "sentence": "They d________d the issue for hours.", "meaning": "토론하다; 논쟁하다", "translation": "그들은 그 문제에 대해 몇 시간 동안 토론했다." },
+        { "word": "debate", "sentence": "There was a long d________ about the new law.", "meaning": "토론; 논쟁", "translation": "새 법에 대해 긴 토론이 있었다." },
+        { "word": "handle", "sentence": "She knows how to h________ difficult customers.", "meaning": "다루다, 처리하다", "translation": "그녀는 까다로운 고객을 다루는 법을 안다." },
+        { "word": "handle", "sentence": "The h________ of the cup is broken.", "meaning": "손잡이", "translation": "컵 손잡이가 부러졌다." },
+        { "word": "shift", "sentence": "He s________ed his position in the chair.", "meaning": "바꾸다, 바뀌다", "translation": "그는 의자에서 자세를 바꿨다." },
+        { "word": "shift", "sentence": "The factory s________ed its production to China.", "meaning": "(장소를) 이동하다", "translation": "그 공장은 생산 기지를 중국으로 이동했다." },
+        { "word": "shift", "sentence": "There has been a s________ in public opinion.", "meaning": "변화", "translation": "여론에 변화가 있었다." },
+        { "word": "shift", "sentence": "He works the night s________.", "meaning": "교대 근무 (시간)", "translation": "그는 야간 교대 근무를 한다." },
+        { "word": "guarantee", "sentence": "We g________ that you will be satisfied.", "meaning": "보장하다, 장담하다", "translation": "우리는 당신이 만족할 것을 보장합니다." },
+        { "word": "guarantee", "sentence": "This watch is g________d for two years.", "meaning": "품질 보증을 하다", "translation": "이 시계는 2년간 품질 보증이 됩니다." },
+        { "word": "guarantee", "sentence": "There is no g________ of success.", "meaning": "보장", "translation": "성공에 대한 보장은 없다." },
+        { "word": "guarantee", "sentence": "The product comes with a one-year g________.", "meaning": "보증서", "translation": "그 제품은 1년짜리 보증서가 함께 제공된다." },
+        { "word": "resist", "sentence": "He tried to r________ arrest.", "meaning": "저항하다, 반대하다", "translation": "그는 체포에 저항하려 했다." },
+        { "word": "resist", "sentence": "I can't r________ eating chocolate.", "meaning": "(하고 싶은 것을 하지 않고) 참다, 견디다", "translation": "나는 초콜릿을 먹고 싶은 것을 참을 수 없다." },
+        { "word": "resist", "sentence": "This material r________s heat well.", "meaning": "(손상 등에) 잘 견디다, 강하다", "translation": "이 소재는 열에 잘 견딘다." },
+        { "word": "recover", "sentence": "She is r________ing from her illness.", "meaning": "(건강 등을) 회복하다", "translation": "그녀는 병에서 회복 중이다." },
+        { "word": "recover", "sentence": "He r________ed his stolen wallet.", "meaning": "(손실 등을) 되찾다", "translation": "그는 도난당한 지갑을 되찾았다." },
+        { "word": "maintain", "sentence": "It is hard to m________ a balance between work and life.", "meaning": "유지하다, 지속하다", "translation": "일과 삶 사이의 균형을 유지하는 것은 어렵다." },
+        { "word": "maintain", "sentence": "He m________ed that he was innocent.", "meaning": "주장하다", "translation": "그는 자신이 무죄라고 주장했다." },
+        { "word": "deserve", "sentence": "You d________ a reward for your hard work.", "meaning": "(마땅히) ~을 받을 만하다; 가치가 있다", "translation": "당신은 당신의 노고에 대해 보상을 받을 만하다." },
+        { "word": "bet", "sentence": "I b________ $10 that my team would win.", "meaning": "(내기 등에) 돈을 걸다", "translation": "나는 우리 팀이 이길 것이라고 10달러를 걸었다." },
+        { "word": "bet", "sentence": "I b________ he'll be late.", "meaning": "틀림없다, 분명하다", "translation": "그는 틀림없이 늦을 거야." },
+        { "word": "bet", "sentence": "He lost the b________.", "meaning": "내기", "translation": "그는 내기에서 졌다." },
+        { "word": "monitor", "sentence": "Doctors m________ed the patient's heartbeat.", "meaning": "관찰하다; 감독하다, 감시하다", "translation": "의사들은 환자의 심장 박동을 관찰했다." },
+        { "word": "monitor", "sentence": "Please look at the computer m________.", "meaning": "화면, 모니터", "translation": "컴퓨터 화면을 보세요." },
+        { "word": "ruin", "sentence": "The rain r________ed our picnic.", "meaning": "망치다; 파괴하다", "translation": "비가 우리 소풍을 망쳤다." },
+        { "word": "ruin", "sentence": "We visited the ancient r________s of Rome.", "meaning": "유적, 폐허", "translation": "우리는 고대 로마의 유적을 방문했다." },
+        { "word": "ruin", "sentence": "Gambling led to his financial r________.", "meaning": "붕괴", "translation": "도박이 그의 재정적 붕괴를 초래했다." },
+        { "word": "cheat", "sentence": "He was caught c________ing on the exam.", "meaning": "(시험 등에서) 부정행위를 하다; 속이다, 사기 치다", "translation": "그는 시험에서 부정행위를 하다가 걸렸다." },
+        { "word": "calculate", "sentence": "Can you c________ the total cost?", "meaning": "계산하다", "translation": "총비용을 계산할 수 있나요?" },
+        { "word": "calculate", "sentence": "We c________d that the project would take 3 months.", "meaning": "추정하다, 추산하다", "translation": "우리는 프로젝트가 3개월 걸릴 것으로 추정했다." },
+        { "word": "estimate", "sentence": "I e________ that the repairs will cost $500.", "meaning": "추정하다, 추산하다", "translation": "나는 수리비가 500달러 들 것으로 추정한다." },
+        { "word": "estimate", "sentence": "Can you give me an e________ for the work?", "meaning": "추정, 추산", "translation": "그 일에 대한 추정치를 주실 수 있나요?" },
+        { "word": "evaluate", "sentence": "The teacher will e________ your performance.", "meaning": "(가치, 품질 등을) 평가하다, 감정하다", "translation": "선생님께서 당신의 수행을 평가할 것입니다." },
+        { "word": "highlight", "sentence": "You should h________ the most important points.", "meaning": "강조하다", "translation": "가장 중요한 점들을 강조해야 합니다." },
+        { "word": "highlight", "sentence": "The h________ of our trip was visiting the museum.", "meaning": "(사건, 이야기 등의) 주요 부분, 하이라이트", "translation": "우리 여행의 하이라이트는 박물관을 방문한 것이었다." },
+        { "word": "confirm", "sentence": "Please c________ your flight reservation.", "meaning": "(예약, 약속 등을) 확인하다, 확정하다", "translation": "항공편 예약을 확인해 주세요." },
+        { "word": "confirm", "sentence": "The data c________s his theory.", "meaning": "사실임을 보여주다", "translation": "그 데이터는 그의 이론이 사실임을 보여준다." },
+        { "word": "satisfy", "sentence": "The meal did not s________ my hunger.", "meaning": "만족시키다", "translation": "그 식사는 나의 배고픔을 만족시키지 못했다." },
+        { "word": "bother", "sentence": "I'm sorry to b________ you, but can I ask a question?", "meaning": "귀찮게 하다", "translation": "귀찮게 해드려 죄송합니다만, 질문 하나 해도 될까요?" },
+        { "word": "bother", "sentence": "Don't b________ to call me back.", "meaning": "신경 쓰다, 일부러 ~하다", "translation": "일부러 다시 전화할 필요 없어요." },
+        { "word": "terrify", "sentence": "The horror movie t________ed the children.", "meaning": "(몹시) 무섭게 하다, 겁먹게 하다", "translation": "그 공포 영화는 아이들을 몹시 무섭게 했다." },
+        { "word": "disappoint", "sentence": "His poor grades d________ed his parents.", "meaning": "실망시키다, 낙담시키다", "translation": "그의 낮은 성적은 부모님을 실망시켰다." },
+        { "word": "regret", "sentence": "I r________ not studying harder.", "meaning": "후회하다", "translation": "나는 더 열심히 공부하지 않은 것을 후회한다." },
+        { "word": "regret", "sentence": "We r________ to inform you that you failed.", "meaning": "유감으로 생각하다", "translation": "당신이 불합격했음을 알리게 되어 유감입니다." },
+        { "word": "regret", "sentence": "He expressed his r________ for what he had done.", "meaning": "후회", "translation": "그는 자신이 한 일에 대해 후회를 표현했다." },
+        { "word": "regret", "sentence": "Please accept my sincere r________s.", "meaning": "유감", "translation": "저의 진심 어린 유감을 받아주세요." },
+        { "word": "admire", "sentence": "I a________ him for his honesty.", "meaning": "존경하다; 칭찬하다", "translation": "나는 그의 정직함에 대해 그를 존경한다." },
+        { "word": "admire", "sentence": "We stopped to a________ the view.", "meaning": "감탄하다", "translation": "우리는 경치에 감탄하기 위해 멈춰 섰다." },
+        { "word": "adore", "sentence": "She a________s her little puppy.", "meaning": "매우 좋아하다, 사랑하다", "translation": "그녀는 자신의 작은 강아지를 매우 좋아한다." },
+        { "word": "blame", "sentence": "Don't b________ me for your mistake.", "meaning": "탓하다, (~의) 책임으로 보다", "translation": "네 실수를 내 탓으로 돌리지 마." },
+        { "word": "blame", "sentence": "Who is to b________ for the accident?", "meaning": "탓, 책임", "translation": "그 사고의 책임은 누구에게 있나요?" }
+    ],
+    "unit9": [
+        { "word": "community", "sentence": "He is a well-known member of the local c________.", "meaning": "(공통의 특징을 가진) 공동체; 지역 사회, 주민", "translation": "그는 지역 사회에서 잘 알려진 구성원이다." },
+        { "word": "material", "sentence": "Wood is a natural m________.", "meaning": "재료, 원료", "translation": "나무는 천연 재료이다." },
+        { "word": "material", "sentence": "The writer is gathering m________ for his new book.", "meaning": "(책 등의) 소재, 자료", "translation": "그 작가는 새 책을 위한 소재를 모으고 있다." },
+        { "word": "material", "sentence": "This is just m________ evidence.", "meaning": "물질의, 물리적인", "translation": "이것은 단지 물리적인 증거일 뿐이다." },
+        { "word": "material", "sentence": "He cares too much about m________ wealth.", "meaning": "물질적인, 세속적인", "translation": "그는 물질적인 부에 너무 많이 신경 쓴다." },
+        { "word": "region", "sentence": "This r________ is famous for its wine.", "meaning": "지역, 지방", "translation": "이 지역은 와인으로 유명하다." },
+        { "word": "region", "sentence": "He felt a pain in the lower r________ of his back.", "meaning": "(신체의) 부분", "translation": "그는 등의 아랫부분에 통증을 느꼈다." },
+        { "word": "edge", "sentence": "Be careful not to fall off the e________ of the cliff.", "meaning": "가장자리, 모서리", "translation": "절벽 가장자리에서 떨어지지 않도록 조심하세요." },
+        { "word": "edge", "sentence": "The knife has a sharp e________.", "meaning": "(칼 등의) 날", "translation": "그 칼은 날이 날카롭다." },
+        { "word": "edge", "sentence": "Our team has a slight e________ over the opponent.", "meaning": "우위, 유리함", "translation": "우리 팀이 상대보다 약간의 우위를 점하고 있다." },
+        { "word": "length", "sentence": "What is the l________ of this river?", "meaning": "길이", "translation": "이 강의 길이는 얼마인가요?" },
+        { "word": "length", "sentence": "The average l________ of a class is 50 minutes.", "meaning": "시간, 기간", "translation": "수업의 평균 시간은 50분이다." },
+        { "word": "plenty", "sentence": "We have p________ of time before the train leaves.", "meaning": "많음, 풍부함; 풍부한 양", "translation": "기차가 떠나기 전에 우리는 시간이 많다." },
+        { "word": "room", "sentence": "My r________ is on the second floor.", "meaning": "방, -실(室)", "translation": "내 방은 2층에 있다." },
+        { "word": "room", "sentence": "Is there enough r________ for my luggage?", "meaning": "공간, 자리", "translation": "제 짐을 놓을 충분한 공간이 있나요?" },
+        { "word": "room", "sentence": "There is no r________ for doubt.", "meaning": "여지", "translation": "의심의 여지가 없다." },
+        { "word": "accident", "sentence": "He was injured in a car a________.", "meaning": "(자동차) 사고", "translation": "그는 자동차 사고로 다쳤다." },
+        { "word": "accident", "sentence": "I met her by a________.", "meaning": "우연, 우연한 일", "translation": "나는 그녀를 우연히 만났다." },
+        { "word": "share", "sentence": "You must pay your s________ of the rent.", "meaning": "몫", "translation": "당신은 당신 몫의 집세를 내야 한다." },
+        { "word": "share", "sentence": "He bought s________s in the company.", "meaning": "주식; 지분", "translation": "그는 그 회사의 주식을 샀다." },
+        { "word": "share", "sentence": "I s________d my lunch with my friend.", "meaning": "함께 쓰다, 공유하다", "translation": "나는 친구와 점심을 나눠 먹었다." },
+        { "word": "share", "sentence": "We s________d the profit equally.", "meaning": "나누다", "translation": "우리는 이익을 똑같이 나누었다." },
+        { "word": "capital", "sentence": "Seoul is the c________ of South Korea.", "meaning": "(나라의) 수도", "translation": "서울은 대한민국의 수도이다." },
+        { "word": "capital", "sentence": "Start a sentence with a c________ letter.", "meaning": "대문자", "translation": "문장을 대문자로 시작하세요." },
+        { "word": "capital", "sentence": "You need c________ to start a business.", "meaning": "자본(금); 자산", "translation": "사업을 시작하려면 자본이 필요하다." },
+        { "word": "capital", "sentence": "The c________ city is very crowded.", "meaning": "주요한", "translation": "주요 도시는 매우 붐빈다." },
+        { "word": "capital", "sentence": "Write your name in c________ letters.", "meaning": "대문자의", "translation": "이름을 대문자로 쓰세요." },
+        { "word": "capital", "sentence": "This requires a large c________ investment.", "meaning": "자본의", "translation": "이것은 많은 자본 투자를 필요로 한다." },
+        { "word": "capital", "sentence": "Murder is a c________ crime.", "meaning": "사형의", "translation": "살인은 사형에 해당하는 범죄이다." },
+        { "word": "citizen", "sentence": "He is a c________ of the United States.", "meaning": "시민; 국민", "translation": "그는 미국의 시민이다." },
+        { "word": "acquaintance", "sentence": "He is just a business a________, not a close friend.", "meaning": "지인, 아는 사람; 친분", "translation": "그는 그냥 사업상 아는 사람이지, 친한 친구는 아니다." },
+        { "word": "acquaintance", "sentence": "I have some a________ with the subject.", "meaning": "지식", "translation": "나는 그 주제에 대해 약간의 지식이 있다." },
+        { "word": "colleague", "sentence": "I went to lunch with my c________s.", "meaning": "(직업상의) 동료", "translation": "나는 동료들과 점심 먹으러 갔다." },
+        { "word": "company", "sentence": "He works for a software c________.", "meaning": "회사", "translation": "그는 소프트웨어 회사에서 일한다." },
+        { "word": "company", "sentence": "I enjoy your c________.", "meaning": "친구; 일행", "translation": "나는 당신과 함께 있는 것이 즐겁습니다." },
+        { "word": "company", "sentence": "She kept me c________ while I was waiting.", "meaning": "함께 있음, 동반", "translation": "그녀는 내가 기다리는 동안 나와 함께 있어 주었다." },
+        { "word": "branch", "sentence": "A bird is sitting on a b________.", "meaning": "나뭇가지", "translation": "새가 나뭇가지에 앉아 있다." },
+        { "word": "branch", "sentence": "The bank has many b________es across the country.", "meaning": "분점, 지사", "translation": "그 은행은 전국에 많은 지점을 가지고 있다." },
+        { "word": "function", "sentence": "What is the f________ of this button?", "meaning": "기능, 작용; 역할", "translation": "이 버튼의 기능은 무엇인가요?" },
+        { "word": "function", "sentence": "The machine is not f________ing properly.", "meaning": "기능하다", "translation": "기계가 제대로 작동하지 않는다." },
+        { "word": "function", "sentence": "My computer is not f________ing.", "meaning": "(기계가) 작동하다", "translation": "내 컴퓨터가 작동하지 않는다." },
+        { "word": "option", "sentence": "You have two o________s: leave or stay.", "meaning": "선택(권)", "translation": "당신에게는 떠나거나 머무르는 두 가지 선택권이 있다." },
+        { "word": "option", "sentence": "This car model has many extra o________s.", "meaning": "(제품, 기기 등의) 옵션, 선택 사양", "translation": "이 차종은 추가 옵션이 많다." },
+        { "word": "tag", "sentence": "The price t________ is missing.", "meaning": "꼬리표; 가격표", "translation": "가격표가 없어졌다." },
+        { "word": "tag", "sentence": "Please t________ your luggage with your name.", "meaning": "꼬리표를 붙이다", "translation": "짐에 당신의 이름으로 꼬리표를 붙이세요." },
+        { "word": "license", "sentence": "Do you have a driver's l________?", "meaning": "면허(증), 자격(증); 허가", "translation": "운전 면허증 있으세요?" },
+        { "word": "license", "sentence": "The restaurant was l________d to sell alcohol.", "meaning": "(공식적으로) 허가하다", "translation": "그 식당은 주류 판매를 허가받았다." },
+        { "word": "route", "sentence": "What is the best r________ to the airport?", "meaning": "길; 노선; 항로", "translation": "공항으로 가는 가장 좋은 길은 무엇인가요?" },
+        { "word": "peak", "sentence": "We climbed to the p________ of the mountain.", "meaning": "(산의) 꼭대기", "translation": "우리는 산꼭대기까지 등반했다." },
+        { "word": "peak", "sentence": "He is at the p________ of his career.", "meaning": "절정, 최고조", "translation": "그는 그의 경력의 절정에 있다." },
+        { "word": "peak", "sentence": "Traffic is worst during p________ hours.", "meaning": "절정의, 최고조의", "translation": "교통은 최고조의 시간대에 가장 혼잡하다." },
+        { "word": "peak", "sentence": "Sales p________ed just before Christmas.", "meaning": "절정에 달하다", "translation": "매출은 크리스마스 직전에 절정에 달했다." },
+        { "word": "curve", "sentence": "The road has a sharp c________.", "meaning": "곡선, 커브; 곡선을 이루다", "translation": "그 길은 급커브가 있다." },
+        { "word": "dozen", "sentence": "She bought a d________ eggs.", "meaning": "12개", "translation": "그녀는 달걀 12개를 샀다." },
+        { "word": "dozen", "sentence": "I have a d________ things to do.", "meaning": "다수; 상당히 많음", "translation": "나는 할 일이 상당히 많다." },
+        { "word": "entry", "sentence": "E________ to the museum is free.", "meaning": "입장, 들어감", "translation": "박물관 입장은 무료입니다." },
+        { "word": "entry", "sentence": "The competition attracted over 500 e________ies.", "meaning": "참가(자); 출품(작)", "translation": "그 대회는 500개가 넘는 출품작을 모았다." },
+        { "word": "fee", "sentence": "What is the annual membership f________?", "meaning": "요금, 회비", "translation": "연회비는 얼마인가요?" },
+        { "word": "fee", "sentence": "The lawyer's f________ was very high.", "meaning": "(전문 서비스에 대한) 수수료", "translation": "변호사 수수료가 매우 비쌌다." },
+        { "word": "drug", "sentence": "This d________ can help your headache.", "meaning": "약(품)", "translation": "이 약은 당신의 두통에 도움이 될 수 있습니다." },
+        { "word": "drug", "sentence": "He was arrested for selling illegal d________s.", "meaning": "(불법적인) 약물, 마약", "translation": "그는 불법 약물을 판매하다 체포되었다." },
+        { "word": "poison", "sentence": "Rat p________ can be dangerous to pets.", "meaning": "독(약)", "translation": "쥐약은 애완동물에게 위험할 수 있다." },
+        { "word": "poison", "sentence": "He was p________ed by his enemies.", "meaning": "독살하다", "translation": "그는 적들에 의해 독살당했다." },
+        { "word": "poison", "sentence": "The factory p________ed the river with chemicals.", "meaning": "오염시키다", "translation": "그 공장은 화학물질로 강을 오염시켰다." },
+        { "word": "dirt", "sentence": "There was d________ all over the floor.", "meaning": "먼지, 때", "translation": "바닥 전체에 먼지가 있었다." },
+        { "word": "dirt", "sentence": "He planted the seeds in the d________.", "meaning": "흙", "translation": "그는 씨앗을 흙에 심었다." },
+        { "word": "element", "sentence": "Honesty is a key e________ of friendship.", "meaning": "(구성) 요소, 성분", "translation": "정직은 우정의 핵심 요소이다." },
+        { "word": "element", "sentence": "Water is composed of the e________s hydrogen and oxygen.", "meaning": "원소", "translation": "물은 수소와 산소 원소로 구성되어 있다." },
+        { "word": "balance", "sentence": "She lost her b________ and fell.", "meaning": "균형 (상태)", "translation": "그녀는 균형을 잃고 넘어졌다." },
+        { "word": "balance", "sentence": "I need to check my bank b________.", "meaning": "잔고, 잔액", "translation": "나는 내 은행 잔고를 확인해야 한다." },
+        { "word": "balance", "sentence": "He weighed the fruit on a b________.", "meaning": "저울", "translation": "그는 저울에 과일의 무게를 달았다." }
+    ],
+    "unit10": [
+        { "word": "wild", "sentence": "W________ animals live in the forest.", "meaning": "야생의", "translation": "야생 동물들은 숲에 산다." },
+        { "word": "wild", "sentence": "The storm was w________ last night.", "meaning": "거친, 사나운", "translation": "어젯밤 폭풍은 거셌다." },
+        { "word": "sharp", "sentence": "This knife is very s________.", "meaning": "날카로운, 예리한", "translation": "이 칼은 매우 날카롭다." },
+        { "word": "sharp", "sentence": "There was a s________ increase in prices.", "meaning": "(변화의 정도가) 급격한", "translation": "물가가 급격히 상승했다." },
+        { "word": "sharp", "sentence": "The meeting starts at 10 AM s________.", "meaning": "정각에", "translation": "회의는 오전 10시 정각에 시작한다." },
+        { "word": "tense", "sentence": "He felt t________ before the interview.", "meaning": "(사람이) 긴장한", "translation": "그는 면접 전에 긴장했다." },
+        { "word": "tense", "sentence": "The atmosphere in the room was t________.", "meaning": "(상황 등이) 긴박한", "translation": "방 안의 분위기는 긴박했다." },
+        { "word": "abstract", "sentence": "A________ art is difficult to understand.", "meaning": "추상적인", "translation": "추상 미술은 이해하기 어렵다." },
+        { "word": "abstract", "sentence": "They a________ oil from olives.", "meaning": "추출하다", "translation": "그들은 올리브에서 기름을 추출한다." },
+        { "word": "abstract", "sentence": "Please a________ this article.", "meaning": "요약하다", "translation": "이 기사를 요약해 주세요." },
+        { "word": "diverse", "sentence": "The city has a d________ population.", "meaning": "다양한, 가지각색의", "translation": "그 도시는 다양한 인구를 가지고 있다." },
+        { "word": "enormous", "sentence": "He lives in an e________ house.", "meaning": "거대한, 엄청난", "translation": "그는 거대한 집에 산다." },
+        { "word": "grand", "sentence": "The palace was g________ and beautiful.", "meaning": "웅장한, 장대한", "translation": "그 궁전은 웅장하고 아름다웠다." },
+        { "word": "grand", "sentence": "He has g________ plans for the future.", "meaning": "원대한", "translation": "그는 미래에 대한 원대한 계획을 가지고 있다." },
+        { "word": "maximum", "sentence": "The m________ speed limit is 100 km/h.", "meaning": "최대의, 최고의; 최대, 최고", "translation": "최대 속도 제한은 시속 100km이다." },
+        { "word": "convenient", "sentence": "The subway is a c________ way to travel.", "meaning": "편리한", "translation": "지하철은 편리한 이동 수단이다." },
+        { "word": "mobile", "sentence": "He runs a m________ library.", "meaning": "이동하는, 유동적인", "translation": "그는 이동 도서관을 운영한다." },
+        { "word": "neat", "sentence": "Her room is always n________ and tidy.", "meaning": "정돈된, 단정한; 깔끔한", "translation": "그녀의 방은 항상 정돈되어 있고 깔끔하다." },
+        { "word": "blank", "sentence": "Write your name on the b________ line.", "meaning": "(글자 등이 없는) 빈", "translation": "빈 줄에 당신의 이름을 쓰세요." },
+        { "word": "blank", "sentence": "He gave me a b________ look.", "meaning": "멍한, 무표정한", "translation": "그는 나를 멍한 표정으로 쳐다봤다." },
+        { "word": "blank", "sentence": "Leave a b________ for your signature.", "meaning": "빈칸", "translation": "서명을 위해 빈칸을 남겨두세요." },
+        { "word": "compact", "sentence": "She bought a c________ car.", "meaning": "소형의", "translation": "그녀는 소형차를 샀다." },
+        { "word": "compact", "sentence": "The apartment is c________ but comfortable.", "meaning": "(공간이) 작은", "translation": "그 아파트는 작지만 편안하다." },
+        { "word": "compact", "sentence": "The snow was c________ed into ice.", "meaning": "꽉 채우다, 압축하다", "translation": "눈이 압축되어 얼음이 되었다." },
+        { "word": "awesome", "sentence": "The view from the mountain was a________.", "meaning": "경탄할 만한; 엄청난", "translation": "산에서 본 경치는 경탄할 만했다." },
+        { "word": "costly", "sentence": "The project was too c________, so they canceled it.", "meaning": "비용이 많이 드는, 값비싼", "translation": "그 프로젝트는 비용이 너무 많이 들어서 취소했다." },
+        { "word": "costly", "sentence": "It was a c________ mistake.", "meaning": "대가가 큰", "translation": "그것은 대가가 큰 실수였다." },
+        { "word": "chilly", "sentence": "It's getting c________. You should wear a jacket.", "meaning": "쌀쌀한, 추운", "translation": "쌀쌀해지고 있어. 재킷을 입는 게 좋겠어." },
+        { "word": "chilly", "sentence": "She gave me a c________ stare.", "meaning": "쌀쌀맞은", "translation": "그녀는 나를 쌀쌀맞게 쳐다봤다." },
+        { "word": "dumb", "sentence": "That was a d________ question to ask.", "meaning": "바보 같은, 멍청한", "translation": "그것은 바보 같은 질문이었다." },
+        { "word": "delicate", "sentence": "This d________ china breaks easily.", "meaning": "정교한, 섬세한", "translation": "이 정교한 도자기는 쉽게 깨진다." },
+        { "word": "delicate", "sentence": "A baby's skin is very d________.", "meaning": "연약한, 여린", "translation": "아기의 피부는 매우 연약하다." },
+        { "word": "active", "sentence": "She is an a________ member of the club.", "meaning": "적극적인; 활동적인", "translation": "그녀는 그 동아리의 적극적인 회원이다." },
+        { "word": "lively", "sentence": "The party was l________ and full of music.", "meaning": "활발한, 활기 넘치는", "translation": "파티는 활발하고 음악으로 가득 찼다." },
+        { "word": "energetic", "sentence": "The children are always e________.", "meaning": "활동적인, 활기에 찬", "translation": "아이들은 항상 활동적이다." },
+        { "word": "dynamic", "sentence": "He is known for his d________ leadership.", "meaning": "활발한; 역동적인", "translation": "그는 그의 역동적인 리더십으로 알려져 있다." },
+        { "word": "desperate", "sentence": "He is d________ to find a job.", "meaning": "간절히 원하는; 필사적인", "translation": "그는 직업을 찾기를 간절히 원한다." },
+        { "word": "desperate", "sentence": "The refugees are in a d________ situation.", "meaning": "절망적인; 자포자기인", "translation": "난민들은 절망적인 상황에 처해 있다." },
+        { "word": "cruel", "sentence": "It was c________ to tease the small animal.", "meaning": "잔인한, 잔혹한", "translation": "그 작은 동물을 괴롭히는 것은 잔인했다." },
+        { "word": "timid", "sentence": "The t________ child hid behind his mother.", "meaning": "소심한; 겁이 많은", "translation": "소심한 아이가 엄마 뒤에 숨었다." },
+        { "word": "sentimental", "sentence": "She gets s________ when she listens to old songs.", "meaning": "감정적인; 감상적인", "translation": "그녀는 옛날 노래를 들으면 감상적이 된다." },
+        { "word": "thoughtful", "sentence": "It was t________ of you to bring flowers.", "meaning": "사려 깊은; 배려심 있는", "translation": "꽃을 가져오다니 당신은 사려가 깊군요." },
+        { "word": "thoughtful", "sentence": "He looked t________ as he read the letter.", "meaning": "생각에 잠긴", "translation": "그는 편지를 읽으며 생각에 잠긴 듯 보였다." },
+        { "word": "tender", "sentence": "He has a t________ heart.", "meaning": "다정한, 상냥한", "translation": "그는 다정한 마음을 가지고 있다." },
+        { "word": "tender", "sentence": "The steak was very t________ and juicy.", "meaning": "(음식이) 연한, 부드러운", "translation": "스테이크가 매우 연하고 육즙이 많았다." },
+        { "word": "tender", "sentence": "This plant has t________ green leaves.", "meaning": "연약한", "translation": "이 식물은 연약한 녹색 잎을 가지고 있다." },
+        { "word": "casual", "sentence": "He has a c________ attitude towards his work.", "meaning": "태평스러운; 무심한", "translation": "그는 자신의 일에 대해 태평스러운 태도를 가지고 있다." },
+        { "word": "casual", "sentence": "You can wear c________ clothes to the party.", "meaning": "평상시의", "translation": "파티에 평상복을 입고 와도 됩니다." },
+        { "word": "casual", "sentence": "We had a c________ meeting at the cafe.", "meaning": "우연한", "translation": "우리는 카페에서 우연히 만났다." },
+        { "word": "casual", "sentence": "She prefers to wear c________s on weekends.", "meaning": "평상복", "translation": "그녀는 주말에 평상복 입는 것을 선호한다." },
+        { "word": "dependent", "sentence": "He is still financially d________ on his parents.", "meaning": "의존하는, 의지하는", "translation": "그는 여전히 부모님께 재정적으로 의존한다." },
+        { "word": "dependent", "sentence": "Our plan is d________ on the weather.", "meaning": "(~에) 좌우되는", "translation": "우리의 계획은 날씨에 좌우된다." }
+    ]
+}
+    </script>
+    <script>
+        // Load quiz data from the JSON script tag
+        const quizDataElement = document.getElementById('quiz-data');
+        const quizData = JSON.parse(quizDataElement.textContent);
+
+        const unitSelectionScreen = document.getElementById('unit-selection-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        const quizTitle = document.getElementById('quiz-title');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const sentenceEl = document.getElementById('sentence');
+        const meaningEl = document.getElementById('meaning');
+        const answerForm = document.getElementById('answer-form');
+        const answerInput = document.getElementById('answer-input');
+
+        const scoreEl = document.getElementById('score');
+        const incorrectList = document.getElementById('incorrect-answers-list');
+        const copyBtn = document.getElementById('copy-results-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const copyFeedback = document.getElementById('copy-feedback');
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let incorrectAnswers = [];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startQuiz(mode) {
+            currentQuestionIndex = 0;
+            score = 0;
+            incorrectAnswers = [];
+            currentQuestions = [];
+
+            let title = '';
+
+            if (mode.startsWith('unit')) {
+                const unit = mode;
+                title = `Unit ${unit.replace('unit', '')}`;
+                currentQuestions = [...quizData[unit]];
+            } else if (mode.startsWith('review')) {
+                const [start, end] = mode.split('_')[1].split('-').map(Number);
+                title = `Unit ${start}-${end} 복습`;
+                let combined = [];
+                for (let i = start; i <= end; i++) {
+                    const unitKey = `unit${i}`;
+                    if (quizData[unitKey]) {
+                        combined.push(...quizData[unitKey]);
+                    }
+                }
+                shuffle(combined);
+                currentQuestions = combined.slice(0, 30); // Limit to 30 questions for review
+            } else if (mode.startsWith('all')) {
+                const [start, end] = mode.split('_')[1].split('-').map(Number);
+                title = `Unit ${start}-${end} 통합`;
+                let combined = [];
+                for (let i = start; i <= end; i++) {
+                    const unitKey = `unit${i}`;
+                    if (quizData[unitKey]) {
+                        combined.push(...quizData[unitKey]);
+                    }
+                }
+                currentQuestions = combined;
+            }
+
+            quizTitle.textContent = title;
+            shuffle(currentQuestions);
+
+            unitSelectionScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex < currentQuestions.length) {
+                const question = currentQuestions[currentQuestionIndex];
+                // Generate hint for the first letter and underscores
+                const hint = question.word.charAt(0) + '_'.repeat(question.word.length - 1);
+                
+                // Use a more specific regex to replace only the blanked word in the sentence
+                // This regex looks for the first letter followed by underscores or the full word
+                const regex = new RegExp(`\\b${question.word.charAt(0)}\\w*\\b`, 'i');
+                const highlightedSentence = question.sentence.replace(regex, `<span class="font-bold text-indigo-600">${hint}</span>`);
+                sentenceEl.innerHTML = highlightedSentence;
+                
+                meaningEl.textContent = question.translation; // Using 'translation' for the displayed meaning
+                progressIndicator.textContent = `${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+                answerInput.value = '';
+                answerInput.focus();
+            } else {
+                showResults();
+            }
+        }
+        
+        answerForm.addEventListener('submit', e => {
+            e.preventDefault();
+            checkAnswer();
+        });
+
+        function checkAnswer() {
+            const userAnswer = answerInput.value.trim().toLowerCase();
+            const correctAnswer = currentQuestions[currentQuestionIndex].word.toLowerCase();
+
+            if (userAnswer === correctAnswer) {
+                score++;
+            } else {
+                incorrectAnswers.push({
+                    question: currentQuestions[currentQuestionIndex],
+                    userAnswer: answerInput.value.trim()
+                });
+            }
+
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            quizTitle.textContent = '퀴즈 결과'; // Set result screen title explicitly
+            scoreEl.textContent = `총 ${currentQuestions.length}문제 중 ${score}문제 정답`;
+
+            incorrectList.innerHTML = '';
+            if (incorrectAnswers.length === 0) {
+                incorrectList.innerHTML = '<li class="text-green-600 font-semibold p-4 bg-green-50 rounded-lg">모든 문제를 맞혔습니다!</li>';
+            } else {
+                incorrectAnswers.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'p-4 border border-gray-200 rounded-lg bg-red-50';
+                    li.innerHTML = `
+                        <p class="text-gray-700 mb-2"><strong>문제:</strong> ${item.question.sentence.replace(item.question.word, `<strong class="text-indigo-600">${item.question.word}</strong>`)}</p>
+                        <p class="text-sm text-gray-500 mb-2"><strong>뜻:</strong> ${item.question.translation}</p>
+                        <p class="text-sm"><strong>정답:</strong> <span class="text-blue-600">${item.question.word}</span> | <strong>입력한 답:</strong> <span class="text-red-600">${item.userAnswer}</span></p>
+                    `;
+                    incorrectList.appendChild(li);
+                });
+            }
+        }
+
+        restartBtn.addEventListener('click', () => {
+            resultScreen.classList.add('hidden');
+            unitSelectionScreen.classList.remove('hidden');
+            copyFeedback.textContent = ''; // Clear copy feedback on restart
+        });
+
+        copyBtn.addEventListener('click', () => {
+            let resultText = `--- 퀴즈 결과 ---\n`;
+            resultText += `점수: ${score} / ${currentQuestions.length}\n\n`;
+            if (incorrectAnswers.length > 0) {
+                resultText += '--- 틀린 문제 ---\n';
+                incorrectAnswers.forEach(item => {
+                    resultText += `문제: ${item.question.sentence}\n`;
+                    resultText += `정답: ${item.question.word} (뜻: ${item.question.translation})\n`;
+                    resultText += `입력한 답: ${item.userAnswer}\n\n`;
+                });
+            } else {
+                resultText += '틀린 문제가 없습니다. 완벽해요!\n';
+            }
+
+            navigator.clipboard.writeText(resultText).then(() => {
+                copyFeedback.textContent = '클립보드에 복사되었습니다!';
+                setTimeout(() => {
+                    copyFeedback.textContent = '';
+                }, 2000);
+            }).catch(err => {
+                copyFeedback.textContent = '복사에 실패했습니다.';
+                console.error('Copy failed', err);
+            });
+        });
+    </script>
+</body>
+</html>
