@@ -1,0 +1,2241 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example Sentence Vocabulary Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #34495e;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .menu-button {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .menu-button:hover {
+            background-color: #2980b9;
+        }
+
+        .question-section {
+            margin-bottom: 25px;
+        }
+
+        .question-counter {
+            text-align: right;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .sentence {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            background-color: #eaf3f8;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+        }
+
+        .korean-hint {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            padding-left: 10px;
+            border-left: 3px solid #ccc;
+        }
+
+        #answerInput {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1.2em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        #answerInput:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        #checkAnswerButton {
+            background-color: #2ecc71;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        #checkAnswerButton:hover:not(:disabled) {
+            background-color: #27ae60;
+        }
+
+        #checkAnswerButton:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background-color: #95a5a6;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            flex-grow: 1;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #7f8c8d;
+        }
+
+        .nav-button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        #feedback {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            min-height: 25px; /* Prevent layout shift */
+        }
+        
+        .feedback-correct {
+            color: #2ecc71;
+        }
+        
+        .feedback-incorrect {
+            color: #e74c3c;
+        }
+
+        #scoreDisplay {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #f1f8e9; /* Light green background */
+            border-radius: 8px;
+            border: 1px solid #d4e7c8; /* Soft border */
+            color: #4CAF50; /* Green text */
+        }
+
+        #restartButton, #backToMenuButton {
+            background-color: #e67e22;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        #restartButton:hover, #backToMenuButton:hover {
+            background-color: #d35400;
+        }
+
+        @media (max-width: 600px) {
+            .main-menu {
+                grid-template-columns: 1fr;
+            }
+            .navigation-buttons {
+                flex-direction: column;
+            }
+            .nav-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Example Sentence Vocabulary Test</h1>
+
+        <div id="mainMenu" class="main-menu-container">
+            <h2>Select a Test Mode</h2>
+            <div class="main-menu">
+                <button class="menu-button" data-units="1">Unit 01 Test</button>
+                <button class="menu-button" data-units="2">Unit 02 Test</button>
+                <button class="menu-button" data-units="3">Unit 03 Test</button>
+                <button class="menu-button" data-units="4">Unit 04 Test</button>
+                <button class="menu-button" data-units="5">Unit 05 Test</button>
+                <button class="menu-button" data-units="6">Unit 06 Test</button>
+                <button class="menu-button" data-units="7">Unit 07 Test</button>
+                <button class="menu-button" data-units="8">Unit 08 Test</button>
+                <button class="menu-button" data-units="9">Unit 09 Test</button>
+                <button class="menu-button" data-units="10">Unit 10 Test</button>
+                <button class="menu-button" data-units="1,2,3,4,5" data-limit="30">Units 01-05 Combined (30 Qs)</button>
+                <button class="menu-button" data-units="6,7,8,9,10" data-limit="30">Units 06-10 Combined (30 Qs)</button>
+            </div>
+        </div>
+
+        <div id="quizContainer" style="display: none;">
+            <div class="question-counter">Question <span id="currentQNum">1</span> / <span id="totalQNum">X</span></div>
+            <div class="question-section">
+                <p class="sentence" id="englishSentenceDisplay"></p>
+                <p class="korean-hint" id="koreanSentenceDisplay"></p>
+            </div>
+            
+            <input type="text" id="answerInput" placeholder="Type the missing word here">
+            <button id="checkAnswerButton">Check Answer</button>
+
+            <div id="feedback" role="alert"></div>
+
+            <div class="navigation-buttons">
+                <button class="nav-button" id="prevButton" disabled>Previous</button>
+                <button class="nav-button" id="nextButton">Next</button>
+            </div>
+        </div>
+
+        <div id="resultsContainer" style="display: none;">
+            <p id="scoreDisplay">Your Score: <span id="finalScore">0</span> / <span id="totalQuestionsFinal">X</span></p>
+            <button class="nav-button" id="restartButton">Retake This Quiz</button>
+            <button class="nav-button" id="backToMenuButton">Back to Main Menu</button>
+        </div>
+    </div>
+
+    <script>
+        const initialRawInput = `
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	appearance	외모; 출현
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	image	이미지, 인상
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	alike	(아주) 비슷한
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	charm	매력; 부적; 매혹하다
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	lovely	사랑스러운
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	beauty	아름다움; 미인
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	pretty	예쁜; 매우, 꽤
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	cute	귀여운
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	handsome	잘생긴
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	plain	꾸미지 않은; 쉬운; 못생긴
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	ugly	못생긴, 미운
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	blond(e)	금발의
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	curly	곱슬곱슬한
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	beard	턱수염
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	spot	(피부의) 점, 반점; 장소
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	overweight	과체중의
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	tall	키가 큰; 높은
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	fat	뚱뚱한
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	thin	마른, 여윈; 얇은
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	slim	날씬한
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	strong	강한, 힘센
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	weak	약한
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	pale	창백한
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	young	젊은, 어린
+EXCELVOCA_중학어휘끝필수_unit01.xlsx	scent	향기, 냄새
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	emotion	(희로애락의) 감정, 정서
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	glad	기쁜
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	joy	기쁨, 즐거움
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	happiness	행복
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	funny	재미있는, 웃기는
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	laugh	(소리 내어) 웃다
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	smile	미소 짓다; 웃음, 미소
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	surprise	놀라게 하다; 놀라운 일
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	blue	파란, 푸른; 우울한; 파란색
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	cry	울다; 외치다
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	angry	화난, 성난
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	mad	미친, 정신 나간; 몹시 화가 난
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	upset	화가 난; 속상하게 하다
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	fear	공포, 무서움
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	afraid	두려워하는, 염려하는
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	proud	자랑스러운
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	respect	존경하다; 존경, 존중
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	thank	감사하다
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	hate	싫어하다, 미워하다
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	lonely	외로운
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	nervous	불안해하는, 초조한
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	worry	걱정하다, 걱정하게 만들다
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	serious	진지한; 심각한, 나쁜
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	sorry	미안한; 유감스러운
+EXCELVOCA_중학어휘끝필수_unit02.xlsx	excuse	용서하다; 변명
+EXCELVOCA_중학어휘끝필수_unit02.xlsx		
+EXCELVOCA_중학어휘끝필수_unit02.xlsx		
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	skin	피부
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	shoulder	어깨
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	head	머리, 고개; 향하다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	face	얼굴; 마주 보다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	lip	(위 또는 아래의) 입술
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	tooth	이, 치아
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	hair	머리카락; 털
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	neck	목
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	arm	팔
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	hand	손; 건네주다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	finger	손가락
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	nail	손톱, 발톱; 못; 못으로 고정하다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	leg	다리
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	heart	심장
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	brain	뇌; 지능
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	blood	피, 혈액
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	bone	뼈
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	breathe	숨 쉬다, 호흡하다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	hear	들리다, 듣다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	listen	(귀 기울여) 듣다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	sound	(귀에 들리는) 소리; ~인 것 같다, ~처럼 들리다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	voice	목소리
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	smell	냄새를 맡다; ~한 냄새가 나다; 냄새
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	touch	만지다; 감동시키다
+EXCELVOCA_중학어휘끝필수_unit03.xlsx	taste	맛; 맛이 나다
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	bore	(말을 많이 해서) 지루하게 하다
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	dull	따분한, 재미없는; (칼날 등이) 무딘
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	comfortable	편안한
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	crazy	미친; 열광하는
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	brave	용감한, 씩씩한
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	honest	정직한, 솔직한
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	calm	차분한, 침착한
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	shy	부끄러운, 수줍은
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	busy	바쁜
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	hurry	서두르다; 서두름, 급함
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	lazy	게으른
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	alone	혼자
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	wise	현명한, 지혜로운
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	clever	영리한, 똑똑한
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	sure	확신하는
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	stupid	어리석은
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	able	~할 수 있는
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	thirst	갈증
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	tire	피로해지다, 피곤하게 만들다
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	hungry	배고픈
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	alive	살아 있는
+EXCELVOCA_중학어휘끝필su_unit04.xlsx	lively	활기 넘치는, 활발한
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	alright	괜찮은
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	awake	잠들지 않은, 깨어 있는
+EXCELVOCA_중학어휘끝필수_unit04.xlsx	asleep	잠이 든
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	act	행동, 행위; 행동하다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	move	(몸 등이) 움직이다; 이사하다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	stand	서다, 서 있다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	sit	앉다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	lie	누워 있다; 거짓말하다; 거짓말
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	hide	감추다, 숨기다; 숨다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	jump	뛰다, 뛰어오르다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	step	(발)걸음; (발걸음을 떼서) 움직이다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	follow	따라오다, 따라가다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	enter	들어가다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	pass	지나가다; 건네주다; 합격하다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	turn	돌다, 돌리다; 차례
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	shout	소리 지르다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	bite	물다, 깨물다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	hit	치다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	break	깨다, 부수다; 고장 내다; (짧은) 휴식
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	catch	잡다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	hold	잡고 있다, 들다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	carry	나르다, 운반하다; 가지고 다니다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	set	차리다; ~을 두다, 놓다; 한 벌[조], 세트
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	close	닫다 (↔ open 열다); 가까운
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	cover	덮다, 씌우다, 가리다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	tear	찢다, 뜯다; 눈물
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	pull	잡아당기다
+EXCELVOCA_중학어휘끝필수_unit05.xlsx	push	밀다; 누르다
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	household	가정, 집안 식구
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	family	가족, 가정
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	husband	남편
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	wife	아내, 부인
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	parent	부모, 어버이, (-s) 양친
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	infant	유아, 아기
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	child	아이, 어린이; 자식
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	kid	아이, 자녀; 농담하다
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	daughter	딸
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	son	아들
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	grandparent	조부모, (-s) 조부모님
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	grandfather	할아버지, 외할아버지
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	grandmother	할머니, 외할머니
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	grandchild	손주, 외손주
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	birth	탄생, 출생
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	care	염려하다, 마음을 쓰다; 돌보다; 주의, 조심, 배려; 돌봄; 걱정, 근심
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	marry	결혼하다
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	adopt	입양하다; (특정한 방식이나 태도를) 택하다
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	elder	(가족 관계인 두 사람 중에서) 나이가 더 많은, 손윗사람인 (↔ younger 손아래의, 어린 쪽의)
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	twin	쌍둥이; 쌍둥이의
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	relative	친척; 비교상의, 상대적인
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	aunt	이모, 고모, 숙모, 외숙모
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	cousin	사촌
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	nephew	(남자) 조카
+EXCELVOCA_중학어휘끝필수_unit06.xlsx	niece	(여자) 조카
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	tool	연장, 도구, 공구
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	needle	바늘
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	pin	(옷 등을 고정시키는 데 쓰는) 핀; (핀 등으로) 꽂다, 고정시키다
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	brush	닦다; 붓, 솔
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	chain	사슬, 쇠줄; (상점 등의) 체인점
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	hammer	망치; 망치로 치다
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	scissors	가위
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	basket	바구니
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	frame	틀, 액자; (건물 등의) 뼈대
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	match	경기; 성냥; 어울리다
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	net	그물, 망, 골문
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	rope	밧줄, 로프
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	battery	건전지, 배터리
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	board	판자, -판; 위원회, 이사회; 탑승하다
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	bookshelf	책꽂이, 책장
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	calendar	달력
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	sheet	침대 시트; (종이) 한 장
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	soap	비누
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	towel	수건, 타월
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	mirror	거울; (거울처럼) 잘 보여주다, 반영하다
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	alarm	경보(음), 경보기; 자명종
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	lamp	램프, 등
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	candle	양초
+EXCELVOCA_중학어휘끝필su_unit07.xlsx	television	텔레비전
+EXCELVOCA_중학어휘끝필수_unit07.xlsx	umbrella	우산, 양산
+EXCELVOCA_중학어휘끝필수_unit07.xlsx		
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	kitchen	부엌, 주방
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	bottle	병
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	bowl	그릇, 사발
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	dish	접시, 그릇; 요리
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	glass	유리; 유리잔
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	jar	(잼·꿀 등을 담아 두는) 병
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	pan	(손잡이가 달린 얕은) 냄비, 팬
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	pot	냄비, 솥, 항아리
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	knife	칼, 나이프
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	meat	고기
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	beef	소고기
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	pork	돼지고기
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	vegetable	채소, 야채
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	noodle	국수, 면
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	bean	콩
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	cabbage	양배추
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	nut	견과; 너트, 암나사
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	honey	꿀, 벌꿀; <호칭> 여보, 자기
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	powder	가루, 분말
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	pepper	후추; 고추, 피망
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	bake	(빵 등을) 굽다
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	boil	끓다, 끓이다
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	burn	(불이) 타오르다; 데다, 타다, 태우다
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	fry	튀기다, (기름에) 굽다, 부치다
+EXCELVOCA_중학어휘끝필수_unit08.xlsx	mix	섞다, 혼합하다; 섞인 것, 혼합 가루
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	usual	일반적인, 일상의
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	ordinary	평범한, 보통의
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	regular	규칙적인, 정기적인; 보통의, 평상시의, 표준 크기의
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	routine	일과; 일상적인
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	drive	운전하다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	exercise	운동, 연습; 운동하다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	contact	연락; 접촉; 연락하다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	habit	습관, 버릇
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	diary	일기
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	bath	목욕; 욕조
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	shower	샤워, 샤워기; 소나기; 샤워를 하다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	wash	씻다, 세탁하다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	laundry	세탁물, 빨래
+EXCELVOCA_중학어휘끝필su_unit09.xlsx	iron	다림질하다; 철, 쇠
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	lock	잠그다; 자물쇠
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	tie	(끈 등을) 묶다, 매다; 끈, 매듭; 넥타이
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	fix	고치다; 고정하다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	repair	고치다, 수리하다; 수리
+EXCELVOCA_중학어휘끝필su_unit09.xlsx	trash	쓰레기
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	wipe	닦다, 가볍게 문지르다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	sweep	쓸다, 청소하다
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	rest	쉬다, 휴식을 취하다; 휴식, 수면
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	nap	낮잠
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	sleep	자다; 잠
+EXCELVOCA_중학어휘끝필수_unit09.xlsx	wake	(잠에서) 깨다, 깨우다
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	단어(영문)	단어(한글)
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	fashion	패션; 유행
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	design	디자인하다, 고안하다; 디자인
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	model	모델; (보통 실물보다 작게 만든) 모형
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	style	스타일; 방식
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	item	항목; 물품, 품목
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	brand	상표, 브랜드
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	magazine	잡지, 매거진
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	clothes	옷, 의복
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	dress	드레스, 원피스
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	jacket	재킷, (짧은) 상의
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	pants	바지
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	jeans	청바지
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	shirt	셔츠
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	cotton	면, 솜; 목화
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	pocket	주머니
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	button	단추
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	scarf	스카프
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	purse	(여성용) 지갑
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	wallet	지갑
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	ring	고리; 반지; (종 등을) 울리다
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	glove(s)	장갑
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	socks	양말
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	shoes	신발
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	boot(s)	목이 긴 신발[구두], 부츠
+EXCELVOCA_중학어휘끝필수_unit10.xlsx	wear	입고[신고·쓰고] 있다
+`;
+        
+        const vocabularyByUnit = {};
+        let currentUnitNum = null;
+
+        initialRawInput.trim().split('\n').forEach(line => {
+            const parts = line.split('\t');
+            if (parts.length < 3) return; 
+
+            const fileName = parts[0];
+            const unitMatch = fileName.match(/unit(\d+)\.xlsx/);
+
+            if (unitMatch) {
+                currentUnitNum = parseInt(unitMatch[1]);
+            }
+
+            if (currentUnitNum && parts[1] !== '단어(영문)' && parts[1].trim() !== '') {
+                const englishWord = parts[1].replace('(e)', '').trim(); 
+                const koreanDefinitionString = parts[2].trim();
+
+                const koreanMeaningGroups = [];
+                const semicolonSplit = koreanDefinitionString.split(';');
+                semicolonSplit.forEach(group => {
+                    group = group.trim();
+                    if (group) {
+                        const numberedMatch = group.match(/^(\d+\.\s*)(.*)/);
+                        if (numberedMatch) {
+                            koreanMeaningGroups.push(numberedMatch[1].trim() + numberedMatch[2].trim()); 
+                        } else {
+                            koreanMeaningGroups.push(group);
+                        }
+                    }
+                });
+
+                if (!vocabularyByUnit[currentUnitNum]) {
+                    vocabularyByUnit[currentUnitNum] = [];
+                }
+                vocabularyByUnit[currentUnitNum].push({
+                    english: englishWord,
+                    koreanMeanings: koreanMeaningGroups
+                });
+            }
+        });
+
+        // This sentence map includes both English and Korean sentences for each meaning group
+        const sentenceMap = {
+            "appearance-외모": {
+                english: "Her elegant appearance made a strong first impression at the event.",
+                korean: "그녀의 우아한 외모가 행사에서 강한 첫인상을 남겼다."
+            },
+            "appearance-출현": {
+                english: "The sudden appearance of a rare comet excited astronomers worldwide.",
+                korean: "희귀 혜성의 갑작스러운 출현은 전 세계 천문학자들을 흥분시켰다."
+            },
+            "image-이미지, 인상": {
+                english: "The company worked hard to improve its public image after the scandal.",
+                korean: "회사는 스캔들 이후 대중적 이미지 개선을 위해 노력했다."
+            },
+            "alike-(아주) 비슷한": {
+                english: "The twin sisters looked so much alike, it was hard to tell them apart.",
+                korean: "그 쌍둥이 자매들은 너무 비슷해서 구분하기 어려웠다."
+            },
+            "charm-매력": {
+                english: "He used his natural charm to win over the audience with his stories.",
+                korean: "그는 타고난 매력을 이용해 이야기로 청중을 사로잡았다."
+            },
+            "charm-부적": {
+                english: "She wore a small silver charm around her neck for good luck during the exam.",
+                korean: "그녀는 시험 중 행운을 빌며 목에 작은 은 부적을 걸었다."
+            },
+            "charm-매혹하다": {
+                english: "The magician's tricks never failed to charm the children, leaving them spellbound.",
+                korean: "마술사의 마술은 항상 아이들을 매혹하여 마법에 걸린 듯하게 했다."
+            },
+            "lovely-사랑스러운": {
+                english: "The garden was full of lovely flowers and fragrant roses, a true delight.",
+                korean: "정원은 사랑스러운 꽃들과 향기로운 장미로 가득하여 진정한 즐거움을 주었다."
+            },
+            "beauty-아름다움": {
+                english: "The sunset painted the sky with incredible beauty, a breathtaking natural spectacle.",
+                korean: "석양은 믿을 수 없는 아름다움으로 하늘을 물들였고, 숨 막히는 자연의 장관이었다."
+            },
+            "beauty-미인": {
+                english: "She was known as a great beauty in her youth, admired by many.",
+                korean: "그녀는 젊은 시절 많은 사람들에게 칭송받는 미인으로 알려졌다."
+            },
+            "pretty-예쁜": {
+                english: "She received a pretty bouquet of roses for her birthday, a thoughtful gift.",
+                korean: "그녀는 생일 선물로 예쁜 장미꽃다발을 받았다."
+            },
+            "pretty-매우, 꽤": {
+                english: "It's pretty cold outside today, so you should wear a warm coat and gloves.",
+                korean: "오늘 밖이 꽤 추우니 따뜻한 코트와 장갑을 껴야 한다."
+            },
+            "cute-귀여운": {
+                english: "The puppy with its big eyes and fluffy tail was incredibly cute, melting everyone's hearts.",
+                korean: "크고 복슬복슬한 꼬리를 가진 강아지는 너무 귀여워서 모두의 마음을 녹였다."
+            },
+            "handsome-잘생긴": {
+                english: "He was a tall, dark, and handsome man, attracting many admirers.",
+                korean: "그는 키 크고, 피부가 검고, 잘생긴 남자였고, 많은 칭찬을 받았다."
+            },
+            "plain-꾸미지 않은": {
+                english: "She preferred a plain dress without any patterns or embellishments for the simple ceremony.",
+                korean: "그녀는 소박한 의식을 위해 무늬나 장식이 없는 꾸미지 않은 드레스를 선호했다."
+            },
+            "plain-쉬운": {
+                english: "The instructions for assembling the furniture were surprisingly plain, even for a novice.",
+                korean: "가구 조립 설명서는 초보자에게도 놀랄 만큼 쉬웠다."
+            },
+            "plain-못생긴": {
+                english: "He felt like a plain duckling compared to his graceful siblings, but later grew confident.",
+                korean: "그는 우아한 형제자매들에 비해 못생긴 오리 새끼 같다고 느꼈지만, 나중에는 자신감을 얻었다."
+            },
+            "ugly-못생긴, 미운": {
+                english: "The abandoned building was an ugly blot on the beautiful landscape of the park.",
+                korean: "버려진 건물은 공원의 아름다운 풍경에 못생긴 오점이었다."
+            },
+            "blond-금발의": {
+                english: "She had long, wavy blond hair that cascaded down her shoulders.",
+                korean: "그녀는 어깨까지 흘러내리는 길고 물결치는 금발 머리를 가지고 있었다."
+            },
+            "curly-곱슬곱슬한": {
+                english: "Her natural curly hair framed her face beautifully, giving her a distinctive look.",
+                korean: "그녀의 자연 곱슬곱슬한 머리는 그녀의 얼굴을 아름답게 감싸 독특한 모습을 연출했다."
+            },
+            "beard-턱수염": {
+                english: "His thick, dark beard made him look older than he was, adding to his mature appearance.",
+                korean: "그의 짙고 검은 턱수염은 그를 실제보다 나이 들어 보이게 했고, 성숙한 외모를 더했다."
+            },
+            "spot-(피부의) 점, 반점": {
+                english: "He had a small brown spot on his arm that he'd had since birth.",
+                korean: "그는 태어날 때부터 팔에 작은 갈색 점이 있었다."
+            },
+            "spot-장소": {
+                english: "This is the perfect spot for a picnic with a great view of the lake.",
+                korean: "이곳은 호수의 멋진 경치를 감상하며 피크닉하기에 완벽한 장소이다."
+            },
+            "overweight-과체중의": {
+                english: "The doctor advised him to lose weight as he was slightly overweight for his height.",
+                korean: "의사는 그가 키에 비해 약간 과체중이어서 살을 빼라고 조언했다."
+            },
+            "tall-키가 큰": {
+                english: "The basketball player was incredibly tall, easily reaching the hoop.",
+                korean: "그 농구 선수는 키가 정말 커서 쉽게 골대에 닿았다."
+            },
+            "tall-높은": {
+                english: "They climbed to the top of the tall mountain, enjoying the panoramic view.",
+                korean: "그들은 높은 산꼭대기까지 올라가 탁 트인 경치를 즐겼다."
+            },
+            "fat-뚱뚱한": {
+                english: "The cat grew quite fat after eating too much and not exercising.",
+                korean: "그 고양이는 너무 많이 먹고 운동하지 않아 꽤 뚱뚱해졌다."
+            },
+            "thin-마른, 여윈": {
+                english: "After being sick for a week, he became quite thin and weak.",
+                korean: "일주일 동안 아픈 후에 그는 꽤 마르고 약해졌다."
+            },
+            "thin-얇은": {
+                english: "The book had a thin cover made of soft paper, easily bent.",
+                korean: "그 책은 부드러운 종이로 만들어진 얇은 표지를 가지고 있어서 쉽게 구부러졌다."
+            },
+            "slim-날씬한": {
+                english: "She maintained a slim figure through regular exercise and a healthy diet.",
+                korean: "그녀는 규칙적인 운동과 건강한 식단을 통해 날씬한 몸매를 유지했다."
+            },
+            "strong-강한, 힘센": {
+                english: "The boxer had a very strong punch that could knock out his opponent.",
+                korean: "그 복서는 상대를 쓰러뜨릴 수 있는 매우 강한 펀치를 가지고 있었다."
+            },
+            "weak-약한": {
+                english: "He felt weak and dizzy after not eating all day, lacking energy.",
+                korean: "하루 종일 아무것도 먹지 않아 기운이 없고 어지러웠다."
+            },
+            "pale-창백한": {
+                english: "After seeing the ghost, her face turned pale, drained of color.",
+                korean: "유령을 본 후 그녀의 얼굴은 창백해졌고, 핏기가 가셨다."
+            },
+            "young-젊은, 어린": {
+                english: "The young generation is very tech-savvy and quick to adopt new technologies.",
+                korean: "젊은 세대는 기술에 능숙하고 새로운 기술을 빠르게 받아들인다."
+            },
+            "scent-향기, 냄새": {
+                english: "The sweet scent of roses filled the air, making the garden delightful.",
+                korean: "장미의 달콤한 향기가 공기를 가득 채웠고, 정원을 즐겁게 만들었다."
+            },
+            "emotion-(희로애락의) 감정, 정서": {
+                english: "It's important to understand and manage your own emotion effectively.",
+                korean: "자신의 감정을 효과적으로 이해하고 관리하는 것이 중요하다."
+            },
+            "glad-기쁜": {
+                english: "I'm so glad to hear that you passed your exam!",
+                korean: "네가 시험에 합격했다니 정말 기쁘다!"
+            },
+            "joy-기쁨, 즐거움": {
+                english: "The birth of their first child brought them immense joy.",
+                korean: "첫아이의 탄생은 그들에게 엄청난 기쁨을 가져다주었다."
+            },
+            "happiness-행복": {
+                english: "True happiness comes from within, not from external possessions.",
+                korean: "진정한 행복은 외부의 소유물에서 오는 것이 아니라 내면에서 온다."
+            },
+            "funny-재미있는, 웃기는": {
+                english: "The comedian told a very funny joke that made everyone laugh.",
+                korean: "그 코미디언은 모두를 웃게 만든 아주 재미있는 농담을 했다."
+            },
+            "laugh-(소리 내어) 웃다": {
+                english: "She couldn't help but laugh out loud at the unexpected situation.",
+                korean: "그녀는 예상치 못한 상황에 소리 내어 웃을 수밖에 없었다."
+            },
+            "smile-미소 짓다": {
+                english: "He tried to smile to show he was friendly, even though he was nervous.",
+                korean: "그는 긴장했지만 친근함을 보이기 위해 미소 지으려 노력했다."
+            },
+            "smile-웃음, 미소": {
+                english: "Her warm smile made everyone feel welcome and at ease.",
+                korean: "그녀의 따뜻한 미소는 모두를 환영받고 편안하게 느끼게 했다."
+            },
+            "surprise-놀라게 하다": {
+                english: "The sudden loud noise didn't just startle, it managed to genuinely surprise her.",
+                korean: "갑작스러운 큰 소리는 그저 놀라게 한 것이 아니라, 그녀를 진심으로 놀라게 했다."
+            },
+            "surprise-놀라운 일": {
+                english: "It was a wonderful surprise to see all her friends at the party.",
+                korean: "파티에서 그녀의 모든 친구들을 만나서 정말 놀라운 일이었다."
+            },
+            "blue-파란, 푸른": {
+                english: "The sky was a beautiful clear blue after the rain.",
+                korean: "비가 온 후 하늘은 아름답고 맑은 파란색이었다."
+            },
+            "blue-우울한": {
+                english: "He felt a little blue on a rainy day, preferring sunshine.",
+                korean: "비 오는 날에는 햇살을 선호해서 조금 우울했다."
+            },
+            "blue-파란색": {
+                english: "Her favorite color is blue, so she decorated her room in shades of it.",
+                korean: "그녀가 가장 좋아하는 색은 파란색이어서, 방을 그 색조로 꾸몄다."
+            },
+            "cry-울다": {
+                english: "The baby started to cry loudly when it got hungry.",
+                korean: "아기는 배가 고프자 크게 울기 시작했다."
+            },
+            "cry-외치다": {
+                english: "He had to cry for help when he realized he was lost in the woods.",
+                korean: "그는 숲에서 길을 잃었다는 것을 깨달았을 때 도움을 외쳐야 했다."
+            },
+            "angry-화난, 성난": {
+                english: "She was very angry about the disrespectful comment.",
+                korean: "그녀는 무례한 발언에 대해 매우 화가 났다."
+            },
+            "mad-미친, 정신 나간": {
+                english: "The old man seemed completely mad when he talked to himself in the park.",
+                korean: "그 노인은 공원에서 혼잣말을 할 때 완전히 미친 것처럼 보였다."
+            },
+            "mad-몹시 화가 난": {
+                english: "Don't make your mother mad; she'll ground you.",
+                korean: "어머니를 몹시 화나게 하지 마라; 혼날 것이다."
+            },
+            "upset-화가 난": {
+                english: "He was very upset when his plans were suddenly canceled.",
+                korean: "그는 갑자기 계획이 취소되자 매우 화가 났다."
+            },
+            "upset-속상하게 하다": {
+                english: "Her unkind words really upset him for the rest of the day.",
+                korean: "그녀의 불친절한 말은 그날 내내 그를 정말 속상하게 했다."
+            },
+            "fear-공포, 무서움": {
+                english: "His greatest fear was speaking in front of a large audience.",
+                korean: "그의 가장 큰 공포는 많은 청중 앞에서 연설하는 것이었다."
+            },
+            "afraid-두려워하는, 염려하는": {
+                english: "She was afraid of walking alone at night.",
+                korean: "그녀는 밤에 혼자 걷는 것을 두려워했다."
+            },
+            "proud-자랑스러운": {
+                english: "Her parents were incredibly proud of her academic achievements.",
+                korean: "그녀의 부모님은 그녀의 학업 성취를 정말 자랑스러워했다."
+            },
+            "respect-존경하다": {
+                english: "I truly respect people who work hard and achieve their goals.",
+                korean: "나는 열심히 일하고 목표를 달성하는 사람들을 진정으로 존경한다."
+            },
+            "respect-존경, 존중": {
+                english: "Children should show respect to their elders.",
+                korean: "아이들은 어른들에게 존경심을 보여야 한다."
+            },
+            "thank-감사하다": {
+                english: "I want to thank you for all your help and support.",
+                korean: "당신의 모든 도움과 지원에 감사하고 싶다."
+            },
+            "hate-싫어하다, 미워하다": {
+                english: "Many people hate doing chores, but they have to be done.",
+                korean: "많은 사람들이 집안일을 싫어하지만, 해야만 한다."
+            },
+            "lonely-외로운": {
+                english: "After moving to a new city, she felt quite lonely for a while.",
+                korean: "새로운 도시로 이사한 후, 그녀는 한동안 꽤 외로움을 느꼈다."
+            },
+            "nervous-불안해하는, 초조한": {
+                english: "He was nervous about his job interview, pacing back and forth.",
+                korean: "그는 면접 때문에 불안해하며 왔다 갔다 했다."
+            },
+            "worry-걱정하다, 걱정하게 만들다": {
+                english: "Don't worry about the small details; focus on the main task.",
+                korean: "작은 세부 사항에 대해 걱정하지 마세요; 주요 작업에 집중하세요."
+            },
+            "serious-진지한": {
+                english: "He has a very serious attitude towards his studies.",
+                korean: "그는 학업에 대해 매우 진지한 태도를 가지고 있다."
+            },
+            "serious-심각한, 나쁜": {
+                english: "The doctor told him his condition was serious and required immediate attention.",
+                korean: "의사는 그의 상태가 심각하며 즉각적인 주의가 필요하다고 말했다."
+            },
+            "sorry-미안한": {
+                english: "I'm so sorry for breaking your vase; it was an accident.",
+                korean: "꽃병을 깨뜨려서 정말 미안해; 실수였어."
+            },
+            "sorry-유감스러운": {
+                english: "I'm sorry to hear about your loss; please accept my condolences.",
+                korean: "부고를 듣게 되어 유감스럽습니다; 부디 위로를 받으십시오."
+            },
+            "excuse-용서하다": {
+                english: "Please excuse my messy room; I haven't had time to clean.",
+                korean: "내 지저분한 방을 용서해 줘; 청소할 시간이 없었어."
+            },
+            "excuse-변명": {
+                english: "He always has some excuse for being late to meetings.",
+                korean: "그는 회의에 늦는 것에 대해 항상 변명이 있다."
+            },
+            "skin-피부": {
+                english: "Protect your skin from the sun by wearing sunscreen.",
+                korean: "선크림을 발라 피부를 햇볕으로부터 보호하세요."
+            },
+            "shoulder-어깨": {
+                english: "He carried the heavy bag on his shoulder.",
+                korean: "그는 무거운 가방을 어깨에 메고 있었다."
+            },
+            "head-머리, 고개": {
+                english: "She nodded her head in agreement.",
+                korean: "그녀는 동의하며 고개를 끄덕였다."
+            },
+            "head-향하다": {
+                english: "We need to head north to reach our destination.",
+                korean: "우리는 목적지에 도착하기 위해 북쪽으로 향해야 한다."
+            },
+            "face-얼굴": {
+                english: "Her face lit up with a smile when she saw him.",
+                korean: "그녀의 얼굴은 그를 보자 미소로 환해졌다."
+            },
+            "face-마주 보다": {
+                english: "We decided to face the problem directly instead of avoiding it.",
+                korean: "우리는 문제를 피하는 대신 직접 마주 보기로 결정했다."
+            },
+            "lip-(위 또는 아래의) 입술": {
+                english: "She bit her lip thoughtfully as she considered the proposal.",
+                korean: "그녀는 제안을 고려하며 입술을 생각에 잠겨 깨물었다."
+            },
+            "tooth-이, 치아": {
+                english: "You should brush your teeth twice a day to keep them healthy.",
+                korean: "건강한 이를 위해 하루에 두 번 양치질을 해야 한다."
+            },
+            "hair-머리카락": {
+                english: "She brushed her long, dark hair every morning.",
+                korean: "그녀는 매일 아침 길고 검은 머리카락을 빗었다."
+            },
+            "hair-털": {
+                english: "The cat's soft hair felt smooth to the touch.",
+                korean: "고양이의 부드러운 털은 만졌을 때 매끄러웠다."
+            },
+            "neck-목": {
+                english: "He wore a scarf around his neck to keep warm.",
+                korean: "그는 따뜻하게 하기 위해 목에 스카프를 둘렀다."
+            },
+            "arm-팔": {
+                english: "She held the baby gently in her arms.",
+                korean: "그녀는 아기를 팔에 부드럽게 안았다."
+            },
+            "hand-손": {
+                english: "Please give me your hand so I can help you up.",
+                korean: "일어나는 것을 도와줄 수 있도록 손을 내밀어 주세요."
+            },
+            "hand-건네주다": {
+                english: "Could you hand me that book, please?",
+                korean: "저 책 좀 건네주실 수 있나요?"
+            },
+            "finger-손가락": {
+                english: "He pointed his finger at the star in the sky.",
+                korean: "그는 하늘의 별을 손가락으로 가리켰다."
+            },
+            "nail-손톱, 발톱": {
+                english: "She painted her nails a bright red color.",
+                korean: "그녀는 손톱을 밝은 빨간색으로 칠했다."
+            },
+            "nail-못": {
+                english: "He used a hammer to drive the nail into the wood.",
+                korean: "그는 못을 나무에 박기 위해 망치를 사용했다."
+            },
+            "nail-못으로 고정하다": {
+                english: "They tried to nail the loose board back onto the fence.",
+                korean: "그들은 헐거워진 판자를 울타리에 다시 못으로 고정하려고 했다."
+            },
+            "leg-다리": {
+                english: "He broke his leg playing soccer and had to use crutches.",
+                korean: "그는 축구를 하다가 다리를 부러뜨려서 목발을 사용해야 했다."
+            },
+            "heart-심장": {
+                english: "Your heart pumps blood throughout your body.",
+                korean: "당신의 심장은 온몸에 피를 공급한다."
+            },
+            "brain-뇌": {
+                english: "The human brain is a complex organ responsible for thought and memory.",
+                korean: "인간의 뇌는 사고와 기억을 담당하는 복잡한 기관이다."
+            },
+            "brain-지능": {
+                english: "She has a brilliant brain and easily solves difficult puzzles.",
+                korean: "그녀는 뛰어난 지능을 가지고 있어서 어려운 퍼즐을 쉽게 푼다."
+            },
+            "blood-피, 혈액": {
+                english: "Donating blood can save lives.",
+                korean: "헌혈은 생명을 구할 수 있다."
+            },
+            "bone-뼈": {
+                english: "Calcium is important for strong bones.",
+                korean: "칼슘은 튼튼한 뼈에 중요하다."
+            },
+            "breathe-숨 쉬다, 호흡하다": {
+                english: "Take a deep breath and then slowly breathe out.",
+                korean: "깊게 숨을 들이쉬고 천천히 내쉬세요."
+            },
+            "hear-들리다, 듣다": {
+                english: "I can barely hear you over the noise.",
+                korean: "소음 때문에 당신 말이 거의 들리지 않는다."
+            },
+            "listen-(귀 기울여) 듣다": {
+                english: "Please listen carefully to the instructions.",
+                korean: "지시 사항을 주의 깊게 들어주세요."
+            },
+            "sound-(귀에 들리는) 소리": {
+                english: "The sudden sound of thunder startled everyone.",
+                korean: "갑작스러운 천둥소리에 모두가 깜짝 놀랐다."
+            },
+            "sound-~인 것 같다, ~처럼 들리다": {
+                english: "That plan sounds like a good idea to me.",
+                korean: "그 계획은 나에게 좋은 생각처럼 들린다."
+            },
+            "voice-목소리": {
+                english: "Her singing voice was clear and beautiful.",
+                korean: "그녀의 노래 목소리는 맑고 아름다웠다."
+            },
+            "smell-냄새를 맡다": {
+                english: "I can smell something burning in the kitchen.",
+                korean: "부엌에서 뭔가 타는 냄새를 맡을 수 있다."
+            },
+            "smell-~한 냄새가 나다": {
+                english: "The flowers smell wonderful in the garden.",
+                korean: "정원의 꽃들은 냄새가 아주 좋다."
+            },
+            "smell-냄새": {
+                english: "There was a strange smell coming from the old box.",
+                korean: "오래된 상자에서 이상한 냄새가 났다."
+            },
+            "touch-만지다": {
+                english: "Please don't touch the exhibits in the museum.",
+                korean: "박물관의 전시물을 만지지 마세요."
+            },
+            "touch-감동시키다": {
+                english: "His heartfelt speech deeply touched the audience.",
+                korean: "그의 진심 어린 연설은 청중을 깊이 감동시켰다."
+            },
+            "taste-맛": {
+                english: "This soup has a rich and delicious taste.",
+                korean: "이 수프는 풍부하고 맛있는 맛이 난다."
+            },
+            "taste-맛이 나다": {
+                english: "This cake tastes like chocolate and vanilla.",
+                korean: "이 케이크는 초콜릿과 바닐라 맛이 난다."
+            },
+            "bore-(말을 많이 해서) 지루하게 하다": {
+                english: "His long, rambling stories would always bore the guests.",
+                korean: "그의 길고 두서없는 이야기는 항상 손님들을 지루하게 했다."
+            },
+            "dull-따분한, 재미없는": {
+                english: "The lecture was so dull that some students fell asleep.",
+                korean: "강의가 너무 따분해서 몇몇 학생들은 잠들었다."
+            },
+            "dull-(칼날 등이) 무딘": {
+                english: "This knife is too dull to cut the vegetables properly.",
+                korean: "이 칼은 채소를 제대로 자르기에는 너무 무디다."
+            },
+            "comfortable-편안한": {
+                english: "The new sofa is very comfortable to sit on.",
+                korean: "새 소파는 앉기에 매우 편안하다."
+            },
+            "crazy-미친": {
+                english: "The heat was so intense, it was enough to drive anyone crazy.",
+                korean: "열기가 너무 강해서 누구든 미치게 할 정도였다."
+            },
+            "crazy-열광하는": {
+                english: "Fans went crazy when their favorite band came on stage.",
+                korean: "팬들은 좋아하는 밴드가 무대에 오르자 열광했다."
+            },
+            "brave-용감한, 씩씩한": {
+                english: "The firefighter was incredibly brave in rescuing the cat from the burning building.",
+                korean: "소방관은 불타는 건물에서 고양이를 구조하는 데 엄청나게 용감했다."
+            },
+            "honest-정직한, 솔직한": {
+                english: "It's important to be honest even when it's difficult.",
+                korean: "어려울 때라도 정직하는 것이 중요하다."
+            },
+            "calm-차분한, 침착한": {
+                english: "Despite the chaos, she remained perfectly calm and handled the situation.",
+                korean: "혼돈 속에서도 그녀는 완벽하게 차분함을 유지하며 상황을 처리했다."
+            },
+            "shy-부끄러운, 수줍은": {
+                english: "The new student was very shy and avoided eye contact.",
+                korean: "새 학생은 매우 부끄러워해서 눈을 마주치는 것을 피했다."
+            },
+            "busy-바쁜": {
+                english: "I'm too busy right now; can we talk later?",
+                korean: "지금 너무 바쁘니 나중에 이야기할 수 있을까?"
+            },
+            "hurry-서두르다": {
+                english: "We need to hurry if we want to catch the train.",
+                korean: "기차를 타려면 서둘러야 한다."
+            },
+            "hurry-서두름, 급함": {
+                english: "In her hurry, she forgot her keys at home.",
+                korean: "그녀는 서두름 때문에 집에 열쇠를 두고 왔다."
+            },
+            "lazy-게으른": {
+                english: "He spent the whole day being lazy and watching TV.",
+                korean: "그는 하루 종일 게으르게 TV를 보며 시간을 보냈다."
+            },
+            "alone-혼자": {
+                english: "She preferred to study alone in the library where it was quiet.",
+                korean: "그녀는 조용한 도서관에서 혼자 공부하는 것을 선호했다."
+            },
+            "wise-현명한, 지혜로운": {
+                english: "The old woman offered some wise advice to the young couple.",
+                korean: "그 노부인은 젊은 부부에게 현명한 조언을 해주었다."
+            },
+            "clever-영리한, 똑똑한": {
+                english: "He's a very clever boy who always gets good grades.",
+                korean: "그는 항상 좋은 성적을 받는 아주 영리한 소년이다."
+            },
+            "sure-확신하는": {
+                english: "I'm sure that I locked the door before I left.",
+                korean: "떠나기 전에 문을 잠갔다고 확신한다."
+            },
+            "stupid-어리석은": {
+                english: "It was a stupid mistake to leave the keys in the car.",
+                korean: "차 안에 열쇠를 두고 온 것은 어리석은 실수였다."
+            },
+            "able-~할 수 있는": {
+                english: "He is able to speak three languages fluently.",
+                korean: "그는 세 가지 언어를 유창하게 말할 수 있다."
+            },
+            "thirst-갈증": {
+                english: "After running the marathon, his thirst was intense.",
+                korean: "마라톤을 뛴 후, 그의 갈증은 매우 심했다."
+            },
+            "tire-피로해지다, 피곤하게 만들다": {
+                english: "The long journey will tire us out, so we should rest.",
+                korean: "긴 여행은 우리를 피로하게 할 것이니 쉬어야 한다."
+            },
+            "hungry-배고픈": {
+                english: "I'm so hungry I could eat a horse!",
+                korean: "너무 배고파서 뭐든 먹을 수 있을 것 같다!"
+            },
+            "alive-살아 있는": {
+                english: "Despite the storm, the plant was still alive and growing.",
+                korean: "폭풍에도 불구하고 식물은 여전히 살아 있고 자라고 있었다."
+            },
+            "lively-활기 넘치는, 활발한": {
+                english: "The party was very lively with music and dancing.",
+                korean: "파티는 음악과 춤으로 매우 활기 넘쳤다."
+            },
+            "alright-괜찮은": {
+                english: "Are you alright? You look a bit pale.",
+                korean: "괜찮아요? 좀 창백해 보여요."
+            },
+            "awake-잠들지 않은, 깨어 있는": {
+                english: "She was still awake late at night, unable to sleep.",
+                korean: "그녀는 밤늦게까지 잠들지 않고 깨어 있었다."
+            },
+            "asleep-잠이 든": {
+                english: "The baby was fast asleep in its crib.",
+                korean: "아기는 요람에서 곤히 잠이 들었다."
+            },
+            "act-행동, 행위": {
+                english: "His selfless act of kindness touched everyone.",
+                korean: "그의 이타적인 행동은 모든 사람을 감동시켰다."
+            },
+            "act-행동하다": {
+                english: "It's time to stop talking and start acting.",
+                korean: "말만 할 때가 아니라 행동할 때다."
+            },
+            "move-(몸 등이) 움직이다": {
+                english: "Please don't move; stay still so I can take your picture.",
+                korean: "움직이지 마세요; 제가 사진을 찍을 수 있도록 가만히 계세요."
+            },
+            "move-이사하다": {
+                english: "They decided to move to a bigger house next month.",
+                korean: "그들은 다음 달에 더 큰 집으로 이사하기로 결정했다."
+            },
+            "stand-서다, 서 있다": {
+                english: "Please stand up when the national anthem plays.",
+                korean: "국가가 연주될 때 일어나 주십시오."
+            },
+            "sit-앉다": {
+                english: "She asked him to sit down and tell her what was wrong.",
+                korean: "그녀는 그에게 앉아서 무엇이 문제인지 말해달라고 부탁했다."
+            },
+            "lie-누워 있다": {
+                english: "He likes to lie on the sofa and read a book.",
+                korean: "그는 소파에 누워 책 읽는 것을 좋아한다."
+            },
+            "lie-거짓말하다": {
+                english: "It's wrong to lie to your friends.",
+                korean: "친구들에게 거짓말하는 것은 잘못이다."
+            },
+            "lie-거짓말": {
+                english: "I knew it was a lie because his story didn't make sense.",
+                korean: "그의 이야기가 말이 되지 않아서 거짓말이라는 것을 알았다."
+            },
+            "hide-감추다, 숨기다": {
+                english: "She tried to hide the present from her children.",
+                korean: "그녀는 자녀들로부터 선물을 감추려 했다."
+            },
+            "hide-숨다": {
+                english: "The children loved to play hide and seek in the garden.",
+                korean: "아이들은 정원에서 숨바꼭질하는 것을 좋아했다."
+            },
+            "jump-뛰다, 뛰어오르다": {
+                english: "The cat tried to jump onto the counter.",
+                korean: "고양이는 카운터 위로 뛰어오르려고 했다."
+            },
+            "step-(발)걸음": {
+                english: "He took a cautious step forward on the slippery ice.",
+                korean: "그는 미끄러운 얼음 위에서 조심스러운 발걸음을 내디뎠다."
+            },
+            "step-(발걸음을 떼서) 움직이다": {
+                english: "Please step aside so I can pass.",
+                korean: "제가 지나갈 수 있도록 옆으로 비켜주세요."
+            },
+            "follow-따라오다, 따라가다": {
+                english: "The dog would follow its owner everywhere he went.",
+                korean: "그 개는 주인이 가는 곳마다 따라다녔다."
+            },
+            "enter-들어가다": {
+                english: "Please knock before you enter the room.",
+                korean: "방에 들어가기 전에 노크해주세요."
+            },
+            "pass-지나가다": {
+                english: "A big truck just passed us on the highway.",
+                korean: "방금 큰 트럭이 고속도로에서 우리를 지나갔다."
+            },
+            "pass-건네주다": {
+                english: "Could you pass me the salt, please?",
+                korean: "소금 좀 건네주실 수 있나요?"
+            },
+            "pass-합격하다": {
+                english: "She studied hard to pass her driving test.",
+                korean: "그녀는 운전면허 시험에 합격하기 위해 열심히 공부했다."
+            },
+            "turn-돌다, 돌리다": {
+                english: "The car began to turn left at the intersection.",
+                korean: "차는 교차로에서 좌회전하기 시작했다."
+            },
+            "turn-차례": {
+                english: "It's your turn to deal the cards.",
+                korean: "카드를 돌릴 차례다."
+            },
+            "shout-소리 지르다": {
+                english: "He had to shout to be heard over the loud music.",
+                korean: "그는 큰 음악 소리 때문에 소리 질러야 했다."
+            },
+            "bite-물다, 깨물다": {
+                english: "The dog was trained not to bite people.",
+                korean: "그 개는 사람을 물지 않도록 훈련받았다."
+            },
+            "hit-치다": {
+                english: "He accidentally hit his thumb with the hammer.",
+                korean: "그는 실수로 망치로 엄지손가락을 쳤다."
+            },
+            "break-깨다, 부수다": {
+                english: "Be careful not to break the delicate glass vase.",
+                korean: "섬세한 유리 꽃병을 깨지 않도록 조심하세요."
+            },
+            "break-고장 내다": {
+                english: "My old car keeps breaking down.",
+                korean: "내 낡은 차는 계속 고장 난다."
+            },
+            "break-(짧은) 휴식": {
+                english: "Let's take a short break for coffee.",
+                korean: "커피 마시러 잠시 휴식하자."
+            },
+            "catch-잡다": {
+                english: "The baseball player made an amazing catch in the outfield.",
+                korean: "그 야구 선수는 외야에서 놀라운 캐치를 했다."
+            },
+            "hold-잡고 있다, 들다": {
+                english: "Can you hold this bag for me for a moment?",
+                korean: "잠시 이 가방 좀 잡아줄 수 있나요?"
+            },
+            "carry-나르다, 운반하다": {
+                english: "The porter helped to carry our luggage to the room.",
+                korean: "짐꾼이 우리의 짐을 방으로 나르는 것을 도왔다."
+            },
+            "carry-가지고 다니다": {
+                english: "I always carry a water bottle with me when I hike.",
+                korean: "나는 하이킹할 때 항상 물병을 가지고 다닌다."
+            },
+            "set-차리다": {
+                english: "Please help me set the table for dinner.",
+                korean: "저녁 식사를 위해 상 차리는 것을 도와주세요."
+            },
+            "set-~을 두다, 놓다": {
+                english: "He carefully set the glass down on the table.",
+                korean: "그는 조심스럽게 유리잔을 테이블 위에 놓았다."
+            },
+            "set-한 벌[조], 세트": {
+                english: "She bought a new dinnerware set for her kitchen.",
+                korean: "그녀는 부엌을 위해 새 식기 세트를 샀다."
+            },
+            "close-닫다 (↔ open 열다)": {
+                english: "Please close the door when you leave.",
+                korean: "떠날 때 문을 닫아주세요."
+            },
+            "close-가까운": {
+                english: "The store is very close to my house, just a five-minute walk.",
+                korean: "그 가게는 우리 집에서 아주 가까워서 걸어서 5분 거리이다."
+            },
+            "cover-덮다, 씌우다, 가리다": {
+                english: "Please cover the food to keep it warm.",
+                korean: "음식을 따뜻하게 유지하기 위해 덮어주세요."
+            },
+            "tear-찢다, 뜯다": {
+                english: "He carefully began to tear open the gift wrapping.",
+                korean: "그는 조심스럽게 선물 포장을 찢어 열기 시작했다."
+            },
+            "tear-눈물": {
+                english: "A single tear rolled down her cheek.",
+                korean: "한 줄기 눈물이 그녀의 뺨을 타고 흘러내렸다."
+            },
+            "pull-잡아당기다": {
+                english: "He had to pull hard to open the stubborn drawer.",
+                korean: "그는 뻑뻑한 서랍을 열기 위해 세게 잡아당겨야 했다."
+            },
+            "push-밀다": {
+                english: "Please push the door open; it's not locked.",
+                korean: "문을 밀어 여세요; 잠겨 있지 않아요."
+            },
+            "push-누르다": {
+                english: "Push the button to start the machine.",
+                korean: "기계를 시작하려면 버튼을 누르세요."
+            },
+            "household-가정, 집안 식구": {
+                english: "Managing a large household can be a challenging task.",
+                korean: "대가족을 관리하는 것은 어려운 일일 수 있다."
+            },
+            "family-가족, 가정": {
+                english: "They are a close-knit family who always support each other.",
+                korean: "그들은 항상 서로를 지지하는 단란한 가족이다."
+            },
+            "husband-남편": {
+                english: "Her husband surprised her with flowers on their anniversary.",
+                korean: "그녀의 남편은 기념일에 꽃으로 그녀를 놀라게 했다."
+            },
+            "wife-아내, 부인": {
+                english: "His wife is a talented artist.",
+                korean: "그의 아내는 재능 있는 예술가이다."
+            },
+            "parent-부모, 어버이, (-s) 양친": {
+                english: "Every child needs loving parents who care for them.",
+                korean: "모든 아이는 자신을 돌봐주는 사랑하는 부모가 필요하다."
+            },
+            "infant-유아, 아기": {
+                english: "The infant slept peacefully in its crib.",
+                korean: "유아가 요람에서 평화롭게 잠들었다."
+            },
+            "child-아이, 어린이": {
+                english: "The park was full of children playing happily.",
+                korean: "공원은 행복하게 노는 아이들로 가득했다."
+            },
+            "child-자식": {
+                english: "She loved her children more than anything in the world.",
+                korean: "그녀는 세상의 어떤 것보다 자식들을 더 사랑했다."
+            },
+            "kid-아이, 자녀": {
+                english: "The kids were excited about going to the amusement park.",
+                korean: "아이들은 놀이공원에 가는 것에 들떠 있었다."
+            },
+            "kid-농담하다": {
+                english: "Are you serious, or are you just kidding?",
+                korean: "진심이니, 아니면 농담하는 거니?"
+            },
+            "daughter-딸": {
+                english: "Their eldest daughter is going to college next year.",
+                korean: "그들의 큰 딸은 내년에 대학에 갈 예정이다."
+            },
+            "son-아들": {
+                english: "He was proud of his son for winning the championship.",
+                korean: "그는 아들이 챔피언십에서 우승한 것을 자랑스러워했다."
+            },
+            "grandparent-조부모, (-s) 조부모님": {
+                english: "My grandparents live in the countryside and have a beautiful garden.",
+                korean: "우리 조부모님은 시골에 사시며 아름다운 정원을 가지고 계시다."
+            },
+            "grandfather-할아버지, 외할아버지": {
+                english: "My grandfather taught me how to fish when I was young.",
+                korean: "나의 할아버지는 내가 어렸을 때 낚시하는 법을 가르쳐주셨다."
+            },
+            "grandmother-할머니, 외할머니": {
+                english: "My grandmother bakes the best apple pie.",
+                korean: "우리 할머니는 가장 맛있는 애플파이를 구우신다."
+            },
+            "grandchild-손주, 외손주": {
+                english: "She enjoys spending time with her grandchildren on weekends.",
+                korean: "그녀는 주말에 손주들과 시간을 보내는 것을 즐긴다."
+            },
+            "birth-탄생, 출생": {
+                english: "The birth of a new star is a spectacular cosmic event.",
+                korean: "새로운 별의 탄생은 장관을 이루는 우주 현상이다."
+            },
+            "care-염려하다, 마음을 쓰다": {
+                english: "I don't care what others think; I'll do what's right.",
+                korean: "다른 사람들이 어떻게 생각하든 염려하지 않아; 나는 옳은 일을 할 거야."
+            },
+            "care-돌보다": {
+                english: "She had to care for her sick mother.",
+                korean: "그녀는 아픈 어머니를 돌봐야 했다."
+            },
+            "care-주의, 조심, 배려": {
+                english: "Handle the fragile vase with care.",
+                korean: "깨지기 쉬운 꽃병을 조심스럽게 다루세요."
+            },
+            "care-돌봄": {
+                english: "The elderly often require special care and attention.",
+                korean: "노인들은 종종 특별한 돌봄과 주의를 필요로 한다."
+            },
+            "care-걱정, 근심": {
+                english: "He was full of care about his upcoming exam.",
+                korean: "그는 다가오는 시험 때문에 걱정으로 가득했다."
+            },
+            "marry-결혼하다": {
+                english: "They plan to marry next summer in a small ceremony.",
+                korean: "그들은 다음 여름에 작은 결혼식으로 결혼할 계획이다."
+            },
+            "adopt-입양하다": {
+                english: "The couple decided to adopt a child from the orphanage.",
+                korean: "그 부부는 고아원에서 아이를 입양하기로 결정했다."
+            },
+            "adopt-(특정한 방식이나 태도를) 택하다": {
+                english: "Many companies are beginning to adopt more sustainable business practices.",
+                korean: "많은 회사들이 더 지속 가능한 사업 관행을 택하기 시작하고 있다."
+            },
+            "elder-(가족 관계인 두 사람 중에서) 나이가 더 많은, 손윗사람인 (↔ younger 손아래의, 어린 쪽의)": {
+                english: "My elder sister always looked out for me when we were kids.",
+                korean: "언니는 우리가 어렸을 때 항상 나를 보살펴주었다."
+            },
+            "twin-쌍둥이": {
+                english: "The identical twins always wore matching outfits.",
+                korean: "일란성 쌍둥이는 항상 같은 옷을 입었다."
+            },
+            "twin-쌍둥이의": {
+                english: "They had twin beds in their shared bedroom.",
+                korean: "그들은 함께 쓰는 침실에 쌍둥이 침대가 있었다."
+            },
+            "relative-친척": {
+                english: "We invited all our relatives to the family reunion.",
+                korean: "우리는 가족 상봉에 모든 친척들을 초대했다."
+            },
+            "relative-비교상의, 상대적인": {
+                english: "The cost is relatively low compared to other options.",
+                korean: "다른 옵션들과 비교하여 비용은 상대적으로 낮다."
+            },
+            "aunt-이모, 고모, 숙모, 외숙모": {
+                english: "My aunt always brings the best desserts to holiday gatherings.",
+                korean: "우리 이모는 항상 명절 모임에 가장 맛있는 디저트를 가져오신다."
+            },
+            "cousin-사촌": {
+                english: "I spent my summer holidays playing with my cousins at the beach.",
+                korean: "나는 사촌들과 해변에서 여름휴가를 보냈다."
+            },
+            "nephew-(남자) 조카": {
+                english: "My sister's son is my nephew.",
+                korean: "내 여동생의 아들이 나의 조카이다."
+            },
+            "niece-(여자) 조카": {
+                english: "My brother's daughter is my niece.",
+                korean: "내 오빠의 딸이 나의 조카이다."
+            },
+            "tool-연장, 도구, 공구": {
+                english: "He has a box full of tools for repairing things around the house.",
+                korean: "그는 집 안팎의 물건을 수리하는 데 필요한 연장들로 가득 찬 상자를 가지고 있다."
+            },
+            "needle-바늘": {
+                english: "She threaded the needle carefully to sew the button.",
+                korean: "그녀는 단추를 꿰매기 위해 조심스럽게 바늘에 실을 꿰었다."
+            },
+            "pin-(옷 등을 고정시키는 데 쓰는) 핀": {
+                english: "She used a pin to fasten the fabric in place.",
+                korean: "그녀는 옷감을 제자리에 고정하기 위해 핀을 사용했다."
+            },
+            "pin-(핀 등으로) 꽂다, 고정시키다": {
+                english: "He decided to pin the notice to the bulletin board.",
+                korean: "그는 게시판에 공지를 핀으로 고정하기로 결정했다."
+            },
+            "brush-닦다": {
+                english: "You should brush your teeth twice a day.",
+                korean: "하루에 두 번 이를 닦아야 한다."
+            },
+            "brush-붓, 솔": {
+                english: "She used a paint brush to add color to her canvas.",
+                korean: "그녀는 붓을 사용하여 캔버스에 색을 더했다."
+            },
+            "chain-사슬, 쇠줄": {
+                english: "The dog was tied to a post with a heavy metal chain.",
+                korean: "개는 무거운 금속 사슬로 기둥에 묶여 있었다."
+            },
+            "chain-(상점 등의) 체인점": {
+                english: "This coffee shop is part of a large international chain.",
+                korean: "이 커피숍은 대규모 국제 체인점 중 하나이다."
+            },
+            "hammer-망치": {
+                english: "He used a hammer to hit the nail.",
+                korean: "그는 못을 박기 위해 망치를 사용했다."
+            },
+            "hammer-망치로 치다": {
+                english: "You need to hammer the metal piece into shape.",
+                korean: "금속 조각을 망치로 쳐서 모양을 만들어야 한다."
+            },
+            "scissors-가위": {
+                english: "I need a pair of scissors to cut this paper.",
+                korean: "이 종이를 자르려면 가위가 필요하다."
+            },
+            "basket-바구니": {
+                english: "She filled the basket with fresh fruit and vegetables.",
+                korean: "그녀는 바구니를 신선한 과일과 채소로 채웠다."
+            },
+            "frame-틀, 액자": {
+                english: "He put his diploma in a nice wooden frame.",
+                korean: "그는 졸업장을 멋진 나무 액자에 넣었다."
+            },
+            "frame-(건물 등의) 뼈대": {
+                english: "The steel frame of the new skyscraper was visible from miles away.",
+                korean: "새로운 고층 빌딩의 강철 뼈대가 몇 마일 밖에서도 보였다."
+            },
+            "match-경기": {
+                english: "We watched an exciting soccer match yesterday.",
+                korean: "어제 흥미진진한 축구 경기를 봤다."
+            },
+            "match-성냥": {
+                english: "Do you have a match to light the candle?",
+                korean: "양초를 켤 성냥이 있나요?"
+            },
+            "match-어울리다": {
+                english: "That blue shirt really matches your eyes.",
+                korean: "그 파란색 셔츠는 당신의 눈과 정말 잘 어울린다."
+            },
+            "net-그물, 망, 골문": {
+                english: "The fisherman cast his net into the sea.",
+                korean: "어부는 바다에 그물을 던졌다."
+            },
+            "rope-밧줄, 로프": {
+                english: "They used a thick rope to tie the boat to the dock.",
+                korean: "그들은 배를 부두에 묶기 위해 두꺼운 밧줄을 사용했다."
+            },
+            "battery-건전지, 배터리": {
+                english: "My remote control needs a new battery.",
+                korean: "내 리모컨은 새 건전지가 필요하다."
+            },
+            "board-판자, -판": {
+                english: "The carpenter cut a long wooden board for the shelf.",
+                korean: "목수는 선반을 위해 긴 나무 판자를 잘랐다."
+            },
+            "board-위원회, 이사회": {
+                english: "The school board decided to extend the winter break.",
+                korean: "학교 이사회는 겨울 방학을 연장하기로 결정했다."
+            },
+            "board-탑승하다": {
+                english: "Passengers are now asked to board the plane for flight 301.",
+                korean: "이제 승객들은 301편 비행기에 탑승하라는 요청을 받는다."
+            },
+            "bookshelf-책꽂이, 책장": {
+                english: "She arranged her favorite novels neatly on the bookshelf.",
+                korean: "그녀는 좋아하는 소설들을 책꽂이에 깔끔하게 정리했다."
+            },
+            "calendar-달력": {
+                english: "I marked my birthday on the calendar.",
+                korean: "나는 달력에 내 생일을 표시했다."
+            },
+            "sheet-침대 시트": {
+                english: "I need to change the bed sheets today.",
+                korean: "오늘 침대 시트를 갈아야 한다."
+            },
+            "sheet-(종이) 한 장": {
+                english: "Please take one sheet of paper from the pile.",
+                korean: "더미에서 종이 한 장을 가져가세요."
+            },
+            "soap-비누": {
+                english: "Wash your hands thoroughly with soap and water.",
+                korean: "비누와 물로 손을 깨끗이 씻으세요."
+            },
+            "towel-수건, 타월": {
+                english: "Please dry your hands with a clean towel.",
+                korean: "깨끗한 수건으로 손을 닦으세요."
+            },
+            "mirror-거울": {
+                english: "She looked at herself in the mirror before leaving the house.",
+                korean: "그녀는 집을 나서기 전에 거울에 비친 자신의 모습을 보았다."
+            },
+            "mirror-(거울처럼) 잘 보여주다, 반영하다": {
+                english: "The novel aims to mirror the realities of modern urban life.",
+                korean: "그 소설은 현대 도시 생활의 현실을 반영하는 것을 목표로 한다."
+            },
+            "alarm-경보(음), 경보기": {
+                english: "The smoke alarm went off, signaling a fire.",
+                korean: "화재 경보가 울려 화재를 알렸다."
+            },
+            "alarm-자명종": {
+                english: "I set my alarm for 6 AM to wake up early.",
+                korean: "일찍 일어나기 위해 오전 6시로 자명종을 맞췄다."
+            },
+            "lamp-램프, 등": {
+                english: "He turned on the bedside lamp to read his book.",
+                korean: "그는 책을 읽기 위해 침대 옆 램프를 켰다."
+            },
+            "candle-양초": {
+                english: "The power went out, so we lit some candles.",
+                korean: "정전이 되어 우리는 양초를 몇 개 켰다."
+            },
+            "television-텔레비전": {
+                english: "We watched the news on television every evening.",
+                korean: "우리는 매일 저녁 텔레비전으로 뉴스를 봤다."
+            },
+            "umbrella-우산, 양산": {
+                english: "Don't forget your umbrella today; it's going to rain.",
+                korean: "오늘 우산 잊지 마세요; 비가 올 거예요."
+            },
+            "kitchen-부엌, 주방": {
+                english: "She spends a lot of time cooking in the kitchen.",
+                korean: "그녀는 부엌에서 요리하며 많은 시간을 보낸다."
+            },
+            "bottle-병": {
+                english: "He drank a whole bottle of water after his run.",
+                korean: "그는 달리기를 마친 후 물 한 병을 통째로 마셨다."
+            },
+            "bowl-그릇, 사발": {
+                english: "She filled the bowl with hot soup.",
+                korean: "그녀는 그릇에 뜨거운 수프를 가득 채웠다."
+            },
+            "dish-접시, 그릇": {
+                english: "Please put your dirty dishes in the sink.",
+                korean: "더러운 접시들을 싱크대에 넣어주세요."
+            },
+            "dish-요리": {
+                english: "This restaurant is famous for its pasta dish.",
+                korean: "이 식당은 파스타 요리로 유명하다."
+            },
+            "glass-유리": {
+                english: "The window was made of clear glass.",
+                korean: "창문은 투명한 유리로 만들어졌다."
+            },
+            "glass-유리잔": {
+                english: "Could I have a glass of water, please?",
+                korean: "물 한 잔 주시겠어요?"
+            },
+            "jar-(잼·꿀 등을 담아 두는) 병": {
+                english: "She keeps homemade jam in a large jar.",
+                korean: "그녀는 직접 만든 잼을 큰 병에 보관한다."
+            },
+            "pan-(손잡이가 달린 얕은) 냄비, 팬": {
+                english: "Heat the oil in a frying pan before adding the ingredients.",
+                korean: "재료를 넣기 전에 프라이팬에 기름을 데우세요."
+            },
+            "pot-냄비, 솥, 항아리": {
+                english: "She cooked the stew in a large pot on the stove.",
+                korean: "그녀는 스토브 위에 큰 냄비에 스튜를 끓였다."
+            },
+            "knife-칼, 나이프": {
+                english: "Be careful when using a sharp knife in the kitchen.",
+                korean: "부엌에서 날카로운 칼을 사용할 때는 조심하세요."
+            },
+            "meat-고기": {
+                english: "Many people enjoy eating meat as part of their diet.",
+                korean: "많은 사람들이 식단의 일부로 고기를 즐겨 먹는다."
+            },
+            "beef-소고기": {
+                english: "He ordered a grilled beef steak at the restaurant.",
+                korean: "그는 식당에서 구운 소고기 스테이크를 주문했다."
+            },
+            "pork-돼지고기": {
+                english: "They decided to have roasted pork for dinner.",
+                korean: "그들은 저녁으로 구운 돼지고기를 먹기로 결정했다."
+            },
+            "vegetable-채소, 야채": {
+                english: "Eating plenty of fresh vegetables is good for your health.",
+                korean: "신선한 채소를 충분히 섭취하는 것은 건강에 좋다."
+            },
+            "noodle-국수, 면": {
+                english: "He prepared a delicious bowl of ramen noodles.",
+                korean: "그는 맛있는 라면 한 그릇을 준비했다."
+            },
+            "bean-콩": {
+                english: "Green beans are a healthy side dish.",
+                korean: "녹두는 건강한 반찬이다."
+            },
+            "cabbage-양배추": {
+                english: "She used fresh cabbage to make coleslaw.",
+                korean: "그녀는 신선한 양배추로 코울슬로를 만들었다."
+            },
+            "nut-견과": {
+                english: "Almonds and walnuts are healthy nuts.",
+                korean: "아몬드와 호두는 건강에 좋은 견과류이다."
+            },
+            "nut-너트, 암나사": {
+                english: "He tightened the bolt with a wrench and a nut.",
+                korean: "그는 렌치와 너트로 볼트를 조였다."
+            },
+            "honey-꿀, 벌꿀": {
+                english: "She added a spoonful of honey to her tea.",
+                korean: "그녀는 차에 꿀 한 스푼을 넣었다."
+            },
+            "honey-여보, 자기": {
+                english: "Could you pass me the remote, honey?",
+                korean: "여보, 리모컨 좀 건네줄 수 있나요?"
+            },
+            "powder-가루, 분말": {
+                english: "She used face powder to reduce shine.",
+                korean: "그녀는 번들거림을 줄이기 위해 얼굴 가루를 사용했다."
+            },
+            "pepper-후추": {
+                english: "Please pass the salt and pepper.",
+                korean: "소금과 후추 좀 건네주세요."
+            },
+            "pepper-고추, 피망": {
+                english: "He added some spicy chili pepper to the soup.",
+                korean: "그는 수프에 매운 고추를 조금 넣었다."
+            },
+            "bake-(빵 등을) 굽다": {
+                english: "She loves to bake cakes and cookies on weekends.",
+                korean: "그녀는 주말에 케이크와 쿠키 굽는 것을 좋아한다."
+            },
+            "boil-끓다, 끓이다": {
+                english: "The water began to boil in the kettle.",
+                korean: "주전자에서 물이 끓기 시작했다."
+            },
+            "burn-(불이) 타오르다": {
+                english: "The logs continued to burn brightly in the fireplace.",
+                korean: "장작들은 벽난로에서 계속 밝게 타올랐다."
+            },
+            "burn-데다, 타다, 태우다": {
+                english: "Be careful not to burn yourself on the hot stove.",
+                korean: "뜨거운 스토브에 데이지 않도록 조심하세요."
+            },
+            "fry-튀기다, (기름에) 굽다, 부치다": {
+                english: "He decided to fry some eggs for breakfast.",
+                korean: "그는 아침 식사로 달걀을 좀 튀기기로 했다."
+            },
+            "mix-섞다, 혼합하다": {
+                english: "Mix all the ingredients thoroughly in a large bowl.",
+                korean: "큰 그릇에 모든 재료를 철저히 섞으세요."
+            },
+            "mix-섞인 것, 혼합 가루": {
+                english: "The trail mix contained nuts, dried fruit, and chocolate chips.",
+                korean: "그 트레일 믹스에는 견과류, 말린 과일, 초콜릿 칩이 들어 있었다."
+            },
+            "usual-일반적인, 일상의": {
+                english: "It was the usual routine: wake up, have coffee, go to work.",
+                korean: "그것은 일반적인 일상이었다: 일어나서 커피를 마시고 출근한다."
+            },
+            "ordinary-평범한, 보통의": {
+                english: "He was just an ordinary man leading a simple life.",
+                korean: "그는 단순한 삶을 사는 그저 평범한 남자였다."
+            },
+            "regular-규칙적인, 정기적인": {
+                english: "She maintains a regular exercise schedule to stay healthy.",
+                korean: "그녀는 건강을 유지하기 위해 규칙적인 운동 일정을 지킨다."
+            },
+            "regular-보통의, 평상시의, 표준 크기의": {
+                english: "I'll have a regular coffee, please, not a large one.",
+                korean: "보통 커피로 주세요, 큰 것 말고."
+            },
+            "routine-일과": {
+                english: "Her morning routine includes jogging and meditation.",
+                korean: "그녀의 아침 일과는 조깅과 명상이다."
+            },
+            "routine-일상적인": {
+                english: "It was a routine check-up, nothing serious.",
+                korean: "그것은 일상적인 건강 검진이었고, 심각한 것은 없었다."
+            },
+            "drive-운전하다": {
+                english: "He learned to drive a car when he was eighteen.",
+                korean: "그는 18살 때 차 운전하는 법을 배웠다."
+            },
+            "exercise-운동, 연습": {
+                english: "Daily exercise is important for physical health.",
+                korean: "매일 운동하는 것은 신체 건강에 중요하다."
+            },
+            "exercise-운동하다": {
+                english: "I try to exercise for at least 30 minutes every day.",
+                korean: "나는 매일 최소 30분 동안 운동하려고 노력한다."
+            },
+            "contact-연락": {
+                english: "I lost contact with my old friends after moving away.",
+                korean: "이사한 후 옛 친구들과 연락이 끊겼다."
+            },
+            "contact-접촉": {
+                english: "Avoid direct contact with the chemical.",
+                korean: "화학 물질과의 직접적인 접촉을 피하세요."
+            },
+            "contact-연락하다": {
+                english: "Please contact me if you have any questions.",
+                korean: "질문이 있으시면 저에게 연락하세요."
+            },
+            "habit-습관, 버릇": {
+                english: "He has a habit of biting his nails when he's nervous.",
+                korean: "그는 긴장하면 손톱을 물어뜯는 습관이 있다."
+            },
+            "diary-일기": {
+                english: "She wrote about her day's events in her personal diary.",
+                korean: "그녀는 개인 일기에 그날의 사건들을 기록했다."
+            },
+            "bath-목욕": {
+                english: "I enjoy taking a warm bath after a long day.",
+                korean: "긴 하루를 보낸 후 따뜻한 목욕을 즐긴다."
+            },
+            "bath-욕조": {
+                english: "The bathroom has a large clawfoot bath.",
+                korean: "욕실에는 큰 발톱형 욕조가 있다."
+            },
+            "shower-샤워, 샤워기": {
+                english: "I take a quick shower every morning.",
+                korean: "나는 매일 아침 간단히 샤워한다."
+            },
+            "shower-소나기": {
+                english: "We got caught in a sudden shower on our walk.",
+                korean: "산책 중에 갑작스러운 소나기를 만났다."
+            },
+            "shower-샤워를 하다": {
+                english: "He needs to shower before he goes out tonight.",
+                korean: "오늘 밤 나가기 전에 샤워를 해야 한다."
+            },
+            "wash-씻다, 세탁하다": {
+                english: "Please help me wash the dishes after dinner.",
+                korean: "저녁 식사 후에 설거지하는 것을 도와주세요."
+            },
+            "laundry-세탁물, 빨래": {
+                english: "I have a huge pile of laundry to do this weekend.",
+                korean: "이번 주말에 해야 할 빨래가 산더미 같다."
+            },
+            "iron-다림질하다": {
+                english: "I need to iron my shirt before the meeting.",
+                korean: "회의 전에 셔츠를 다림질해야 한다."
+            },
+            "iron-철, 쇠": {
+                english: "The old gate was made of wrought iron.",
+                korean: "오래된 문은 단철로 만들어졌다."
+            },
+            "lock-잠그다": {
+                english: "Always remember to lock the door when you leave.",
+                korean: "떠날 때 항상 문을 잠그는 것을 기억하세요."
+            },
+            "lock-자물쇠": {
+                english: "He put a new lock on his bicycle.",
+                korean: "그는 자전거에 새 자물쇠를 달았다."
+            },
+            "tie-(끈 등을) 묶다, 매다": {
+                english: "She helped him tie his shoelaces.",
+                korean: "그녀는 그가 신발 끈을 묶는 것을 도왔다."
+            },
+            "tie-끈, 매듭": {
+                english: "He fastened the package with a strong tie.",
+                korean: "그는 강한 끈으로 소포를 묶었다."
+            },
+            "tie-넥타이": {
+                english: "He wore a blue shirt and a matching red tie.",
+                korean: "그는 파란 셔츠와 어울리는 빨간 넥타이를 맸다."
+            },
+            "fix-고치다": {
+                english: "Can you help me fix my broken bicycle?",
+                korean: "내 고장 난 자전거를 고치는 것을 도와줄 수 있니?"
+            },
+            "fix-고정하다": {
+                english: "He used glue to fix the broken pieces together.",
+                korean: "그는 부러진 조각들을 접착제로 고정시켰다."
+            },
+            "repair-고치다, 수리하다": {
+                english: "The mechanic will repair the engine next week.",
+                korean: "정비사가 다음 주에 엔진을 수리할 것이다."
+            },
+            "repair-수리": {
+                english: "The car needed extensive repairs after the accident.",
+                korean: "그 차는 사고 후에 광범위한 수리가 필요했다."
+            },
+            "trash-쓰레기": {
+                english: "Please put your trash in the bin.",
+                korean: "쓰레기를 쓰레기통에 넣어주세요."
+            },
+            "wipe-닦다, 가볍게 문지르다": {
+                english: "Please wipe the table clean after dinner.",
+                korean: "저녁 식사 후에 테이블을 깨끗이 닦아주세요."
+            },
+            "sweep-쓸다, 청소하다": {
+                english: "She used a broom to sweep the floor.",
+                korean: "그녀는 빗자루로 바닥을 쓸었다."
+            },
+            "rest-쉬다, 휴식을 취하다": {
+                english: "After a long walk, it's good to rest your legs.",
+                korean: "긴 산책 후에는 다리를 쉬게 하는 것이 좋다."
+            },
+            "rest-휴식, 수면": {
+                english: "I need some rest after working all day.",
+                korean: "하루 종일 일한 후에 휴식이 필요하다."
+            },
+            "nap-낮잠": {
+                english: "He likes to take a short nap in the afternoon.",
+                korean: "그는 오후에 짧은 낮잠을 자는 것을 좋아한다."
+            },
+            "sleep-자다": {
+                english: "I need to sleep for at least eight hours tonight.",
+                korean: "오늘 밤에는 최소 8시간은 자야 한다."
+            },
+            "sleep-잠": {
+                english: "He fell into a deep sleep as soon as his head hit the pillow.",
+                korean: "그는 베개에 머리를 대자마자 깊은 잠에 빠졌다."
+            },
+            "wake-(잠에서) 깨다, 깨우다": {
+                english: "The loud thunder made her wake up suddenly.",
+                korean: "시끄러운 천둥소리가 그녀를 갑자기 잠에서 깨웠다."
+            },
+            "fashion-패션": {
+                english: "Paris is known as a global capital of fashion.",
+                korean: "파리는 세계 패션의 수도로 알려져 있다."
+            },
+            "fashion-유행": {
+                english: "Bell bottoms were a popular fashion in the 70s.",
+                korean: "나팔바지는 70년대에 유행하는 패션이었다."
+            },
+            "design-디자인하다, 고안하다": {
+                english: "She will design a new logo for the company.",
+                korean: "그녀는 회사를 위한 새로운 로고를 디자인할 것이다."
+            },
+            "design-디자인": {
+                english: "The architect presented his design for the new building.",
+                korean: "건축가는 새 건물에 대한 자신의 디자인을 제시했다."
+            },
+            "model-모델": {
+                english: "The car manufacturer unveiled its latest model.",
+                korean: "자동차 제조업체는 최신 모델을 공개했다."
+            },
+            "model-(보통 실물보다 작게 만든) 모형": {
+                english: "He built a detailed model of a famous ship.",
+                korean: "그는 유명한 배의 상세한 모형을 만들었다."
+            },
+            "style-스타일": {
+                english: "She has a very elegant sense of style.",
+                korean: "그녀는 매우 우아한 스타일 감각을 가지고 있다."
+            },
+            "style-방식": {
+                english: "Everyone has their own unique style of learning.",
+                korean: "모든 사람에게는 자신만의 독특한 학습 방식이 있다."
+            },
+            "item-항목": {
+                english: "Please check each item on the list carefully.",
+                korean: "목록의 각 항목을 주의 깊게 확인하세요."
+            },
+            "item-물품, 품목": {
+                english: "This store sells various household items.",
+                korean: "이 상점은 다양한 가정용 물품을 판매한다."
+            },
+            "brand-상표, 브랜드": {
+                english: "Which brand of coffee do you prefer?",
+                korean: "어떤 브랜드의 커피를 선호하세요?"
+            },
+            "magazine-잡지, 매거진": {
+                english: "She enjoys reading fashion magazines in her free time.",
+                korean: "그녀는 여가 시간에 패션 잡지를 읽는 것을 즐긴다."
+            },
+            "clothes-옷, 의복": {
+                english: "He packed his clothes in a suitcase for the trip.",
+                korean: "그는 여행을 위해 옷을 여행 가방에 쌌다."
+            },
+            "dress-드레스, 원피스": {
+                english: "She wore a beautiful blue dress to the party.",
+                korean: "그녀는 파티에 아름다운 파란색 드레스를 입었다."
+            },
+            "jacket-재킷, (짧은) 상의": {
+                english: "It's cold outside, so wear your jacket.",
+                korean: "밖이 추우니 재킷을 입으세요."
+            },
+            "pants-바지": {
+                english: "He bought a new pair of jeans pants.",
+                korean: "그는 청바지 바지 한 벌을 새로 샀다."
+            },
+            "jeans-청바지": {
+                english: "She usually wears blue jeans and a T-shirt.",
+                korean: "그녀는 보통 파란색 청바지와 티셔츠를 입는다."
+            },
+            "shirt-셔츠": {
+                english: "He put on a clean white shirt for the interview.",
+                korean: "그는 면접을 위해 깨끗한 흰 셔츠를 입었다."
+            },
+            "cotton-면, 솜": {
+                english: "These towels are made of 100% pure cotton.",
+                korean: "이 수건들은 100% 순면으로 만들어졌다."
+            },
+            "cotton-목화": {
+                english: "The fields were full of blooming cotton plants.",
+                korean: "들판은 꽃 피는 목화 식물로 가득했다."
+            },
+            "pocket-주머니": {
+                english: "He kept his keys in his front pocket.",
+                korean: "그는 열쇠를 앞 주머니에 넣어두었다."
+            },
+            "button-단추": {
+                english: "One of the buttons on his shirt came off.",
+                korean: "그의 셔츠 단추 중 하나가 떨어져 나갔다."
+            },
+            "scarf-스카프": {
+                english: "She wrapped a warm scarf around her neck in winter.",
+                korean: "그녀는 겨울에 따뜻한 스카프를 목에 둘렀다."
+            },
+            "purse-(여성용) 지갑": {
+                english: "She carried her money and cards in her small purse.",
+                korean: "그녀는 작은 지갑에 돈과 카드를 넣어 다녔다."
+            },
+            "wallet-지갑": {
+                english: "He keeps his credit cards and cash in his wallet.",
+                korean: "그는 신용카드와 현금을 지갑에 넣어둔다."
+            },
+            "ring-고리": {
+                english: "The key was attached to a metal ring.",
+                korean: "열쇠는 금속 고리에 달려 있었다."
+            },
+            "ring-반지": {
+                english: "She wore a beautiful diamond ring on her finger.",
+                korean: "그녀는 손가락에 아름다운 다이아몬드 반지를 끼고 있었다."
+            },
+            "ring-(종 등을) 울리다": {
+                english: "The church bells began to ring at noon.",
+                korean: "정오에 교회 종이 울리기 시작했다."
+            },
+            "gloves-장갑": {
+                english: "You should wear gloves to keep your hands warm in the snow.",
+                korean: "눈 속에서 손을 따뜻하게 하려면 장갑을 껴야 한다."
+            },
+            "socks-양말": {
+                english: "He put on a fresh pair of socks before his run.",
+                korean: "그는 달리러 가기 전에 새 양말을 신었다."
+            },
+            "shoes-신발": {
+                english: "She bought new running shoes for her marathon training.",
+                korean: "그녀는 마라톤 훈련을 위해 새 러닝화를 샀다."
+            },
+            "boots-목이 긴 신발[구두], 부츠": {
+                english: "He wore waterproof boots for hiking in the muddy trails.",
+                korean: "그는 진흙길 하이킹을 위해 방수 부츠를 신었다."
+            },
+            "wear-입고[신고·쓰고] 있다": {
+                english: "She likes to wear bright colors in the summer.",
+                korean: "그녀는 여름에 밝은 색 옷을 입는 것을 좋아한다."
+            }
+        };
+
+        const allQuizQuestions = [];
+
+        for (const unit in vocabularyByUnit) {
+            vocabularyByUnit[unit].forEach(wordEntry => {
+                wordEntry.koreanMeanings.forEach(meaning => {
+                    const key = `${wordEntry.english}-${meaning}`;
+                    const sentenceData = sentenceMap[key];
+                    if (sentenceData) {
+                        allQuizQuestions.push({
+                            unit: parseInt(unit),
+                            word: wordEntry.english,
+                            englishSentence: sentenceData.english.replace(wordEntry.english, '_____'),
+                            koreanSentence: sentenceData.korean.replace(wordEntry.english, '_____'),
+                            correctOption: wordEntry.english
+                        });
+                    } else {
+                        console.warn(`No sentence data found for: ${key} in unit ${unit}`);
+                    }
+                });
+            });
+        }
+        
+        let currentQuestions = []; 
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = []; 
+        let currentQuizType = null; // Stores { units: [], limit: null } to allow restarting
+
+        const mainMenu = document.getElementById('mainMenu');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        const englishSentenceDisplay = document.getElementById('englishSentenceDisplay');
+        const koreanSentenceDisplay = document.getElementById('koreanSentenceDisplay');
+        const answerInput = document.getElementById('answerInput');
+        const checkAnswerButton = document.getElementById('checkAnswerButton');
+        const currentQNum = document.getElementById('currentQNum');
+        const totalQNum = document.getElementById('totalQNum');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const feedbackDisplay = document.getElementById('feedback');
+        const finalScoreDisplay = document.getElementById('finalScore');
+        const totalQuestionsFinalDisplay = document.getElementById('totalQuestionsFinal');
+        const restartButton = document.getElementById('restartButton');
+        const backToMenuButton = document.getElementById('backToMenuButton');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz(units, limit = null) {
+            mainMenu.style.display = 'none';
+            quizContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+
+            currentQuizType = { units: units, limit: limit };
+
+            let filteredQuestions = allQuizQuestions.filter(q => units.includes(q.unit));
+            
+            if (limit && filteredQuestions.length > limit) {
+                filteredQuestions = shuffleArray(filteredQuestions).slice(0, limit);
+            } else {
+                filteredQuestions = shuffleArray(filteredQuestions);
+            }
+            currentQuestions = filteredQuestions;
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if (currentQuestionIndex >= currentQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const question = currentQuestions[currentQuestionIndex];
+            englishSentenceDisplay.textContent = question.englishSentence;
+            koreanSentenceDisplay.textContent = question.koreanSentence; 
+            currentQNum.textContent = currentQuestionIndex + 1;
+            totalQNum.textContent = currentQuestions.length;
+            feedbackDisplay.textContent = '';
+            feedbackDisplay.className = '';
+
+            answerInput.value = '';
+            answerInput.disabled = false;
+            checkAnswerButton.disabled = false;
+            
+            // If already answered, populate input and disable
+            if (userAnswers[currentQuestionIndex]) {
+                answerInput.value = userAnswers[currentQuestionIndex].selected;
+                answerInput.disabled = true;
+                checkAnswerButton.disabled = true;
+                applySavedAnswerStyle();
+            } else {
+                answerInput.focus();
+            }
+
+            updateNavigationButtons();
+        }
+
+        function checkAnswer() {
+            const userAnswer = answerInput.value.trim();
+            const question = currentQuestions[currentQuestionIndex];
+            let isCorrect = (userAnswer.toLowerCase() === question.correctOption.toLowerCase());
+
+            // Update userAnswers and score
+            const previousAnswer = userAnswers[currentQuestionIndex];
+            if (previousAnswer) { 
+                if (previousAnswer.correct && !isCorrect) {
+                    score--; 
+                } else if (!previousAnswer.correct && isCorrect) {
+                    score++; 
+                }
+            } else { 
+                if (isCorrect) {
+                    score++;
+                }
+            }
+            userAnswers[currentQuestionIndex] = { selected: userAnswer, correct: isCorrect };
+
+            // Apply style and feedback
+            answerInput.disabled = true;
+            checkAnswerButton.disabled = true;
+
+            if (isCorrect) {
+                feedbackDisplay.textContent = 'Correct!';
+                feedbackDisplay.classList.add('feedback-correct');
+                feedbackDisplay.classList.remove('feedback-incorrect');
+            } else {
+                feedbackDisplay.textContent = `Incorrect. The correct answer was "${question.correctOption}".`;
+                feedbackDisplay.classList.add('feedback-incorrect');
+                feedbackDisplay.classList.remove('feedback-correct');
+            }
+            updateNavigationButtons();
+        }
+
+        function applySavedAnswerStyle() {
+            const savedAnswer = userAnswers[currentQuestionIndex];
+            if (savedAnswer) {
+                answerInput.value = savedAnswer.selected;
+                answerInput.disabled = true;
+                checkAnswerButton.disabled = true;
+
+                if (savedAnswer.correct) {
+                    feedbackDisplay.textContent = 'Correct!';
+                    feedbackDisplay.classList.add('feedback-correct');
+                    feedbackDisplay.classList.remove('feedback-incorrect');
+                } else {
+                    feedbackDisplay.textContent = `Incorrect. The correct answer was "${currentQuestions[currentQuestionIndex].correctOption}".`;
+                    feedbackDisplay.classList.add('feedback-incorrect');
+                    feedbackDisplay.classList.remove('feedback-correct');
+                }
+            }
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentQuestionIndex === 0;
+            // Next button is disabled if the current question hasn't been answered yet,
+            // or if it's the last question and hasn't been answered.
+            nextButton.disabled = userAnswers[currentQuestionIndex] === null;
+
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                 nextButton.textContent = "Finish Quiz";
+                 if (userAnswers[currentQuestionIndex] === null) {
+                    nextButton.disabled = true; 
+                 } else {
+                    nextButton.disabled = false;
+                 }
+            } else {
+                nextButton.textContent = "Next";
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else if (currentQuestionIndex === currentQuestions.length - 1 && userAnswers[currentQuestionIndex] !== null) {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function showResults() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            finalScoreDisplay.textContent = score;
+            totalQuestionsFinalDisplay.textContent = currentQuestions.length;
+        }
+
+        function restartCurrentQuiz() {
+            if (currentQuizType) {
+                startQuiz(currentQuizType.units, currentQuizType.limit);
+            } else {
+                console.error("No quiz type recorded to restart. Returning to main menu.");
+                showMainMenu();
+            }
+        }
+
+        function showMainMenu() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+            mainMenu.style.display = 'grid';
+        }
+
+        // Event listeners
+        document.querySelectorAll('.menu-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const units = button.dataset.units.split(',').map(Number);
+                const limit = button.dataset.limit ? parseInt(button.dataset.limit) : null;
+                startQuiz(units, limit);
+            });
+        });
+
+        checkAnswerButton.addEventListener('click', checkAnswer);
+        answerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !answerInput.disabled) {
+                checkAnswer();
+            }
+        });
+        prevButton.addEventListener('click', prevQuestion);
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', restartCurrentQuiz);
+        backToMenuButton.addEventListener('click', showMainMenu);
+
+        // Initial state
+        showMainMenu();
+    </script>
+</body>
+</html>
