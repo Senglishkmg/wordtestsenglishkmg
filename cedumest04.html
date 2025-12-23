@@ -1,57 +1,24 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예문 단어시험 웹앱 (Units 31-40)</title>
+    <title>어휘끝 중학필수 예문시험 (U31-40)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            transition: all 0.3s ease-in-out;
-        }
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            background-color: #4f46e5;
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #4338ca;
-        }
-        .btn-secondary {
-            background-color: #6b7280;
-        }
-        .btn-secondary:hover {
-            background-color: #4b5563;
-        }
-        .btn-review {
-            background-color: #16a34a;
-        }
-        .btn-review:hover {
-            background-color: #15803d;
-        }
-        .hidden {
-            display: none;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 1.5rem; transition: all 0.3s ease-in-out; }
+        .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 0.5rem; background-color: #4f46e5; color: white; font-weight: 600; text-align: center; cursor: pointer; }
+        .btn:hover { background-color: #4338ca; }
+        .btn-secondary { background-color: #6b7280; }
+        .btn-review { background-color: #16a34a; }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
     <div id="app-container" class="w-full max-w-2xl mx-auto">
-        <!-- Unit Selection Screen -->
         <div id="unit-selection-screen" class="card">
             <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">어휘끝 중학필수 예문시험</h1>
             <p class="text-center text-gray-600 mb-8">학습할 유닛을 선택하세요. (Units 31-40)</p>
@@ -62,19 +29,16 @@
                 <button onclick="startQuiz('unit33')" class="btn">Unit 33</button>
                 <button onclick="startQuiz('unit34')" class="btn">Unit 34</button>
                 <button onclick="startQuiz('unit35')" class="btn">Unit 35</button>
-                
                 <button onclick="startQuiz('review_36-40')" class="btn btn-review col-span-1 md:col-span-2 mt-4">Unit 36-40 복습 (30문제)</button>
                 <button onclick="startQuiz('unit36')" class="btn">Unit 36</button>
                 <button onclick="startQuiz('unit37')" class="btn">Unit 37</button>
                 <button onclick="startQuiz('unit38')" class="btn">Unit 38</button>
                 <button onclick="startQuiz('unit39')" class="btn">Unit 39</button>
                 <button onclick="startQuiz('unit40')" class="btn">Unit 40</button>
-
                 <button onclick="startQuiz('all_31-40')" class="btn btn-secondary col-span-1 md:col-span-2 mt-4">Unit 31-40 통합 학습</button>
             </div>
         </div>
 
-        <!-- Quiz Screen -->
         <div id="quiz-screen" class="card hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 id="quiz-title" class="text-2xl font-bold text-gray-800">Quiz</h2>
@@ -85,12 +49,11 @@
                 <p id="meaning" class="text-md text-indigo-600"></p>
             </div>
             <form id="answer-form">
-                <input type="text" id="answer-input" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="정답을 입력하세요...">
+                <input type="text" id="answer-input" autocomplete="off" class="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-indigo-500" placeholder="정답을 입력하세요...">
                 <button type="submit" class="w-full btn mt-4">제출</button>
             </form>
         </div>
 
-        <!-- Result Screen -->
         <div id="result-screen" class="card hidden">
             <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">퀴즈 결과</h2>
             <p id="score" class="text-2xl text-center font-semibold text-indigo-600 mb-8"></p>
@@ -107,359 +70,358 @@
     </div>
 
     <script>
+        // 사용자님이 주신 모든 데이터를 빠짐없이 넣었습니다.
         const quizData = {
             'unit31': [
-                { word: 'nature', sentence: 'We must protect n____e for future generations.', meaning: '자연', translation: '우리는 미래 세대를 위해 자연을 보호해야 한다.' },
-                { word: 'nature', sentence: 'It is in his n____e to be kind to everyone.', meaning: '천성, 본성', translation: '모든 사람에게 친절한 것은 그의 천성이다.' },
-                { word: 'save', sentence: 'The lifeguard s___d the drowning child.', meaning: '(위험에서) 구하다', translation: '인명 구조원이 물에 빠진 아이를 구했다.' },
-                { word: 'save', sentence: 'I am trying to s__e money for a new bike.', meaning: '(돈을) 모으다, 저축하다', translation: '나는 새 자전거를 사기 위해 돈을 모으고 있다.' },
-                { word: 'cloud', sentence: 'A white c___d floated in the blue sky.', meaning: '구름', translation: '파란 하늘에 흰 구름이 떠다녔다.' },
-                { word: 'drop', sentence: 'A single d__p of rain fell on my hand.', meaning: '(액체의) 방울', translation: '빗방울 하나가 내 손에 떨어졌다.' },
-                { word: 'drop', sentence: 'Be careful not to d__p that glass.', meaning: '떨어뜨리다, 떨어지다', translation: '그 유리잔을 떨어뜨리지 않도록 조심하세요.' },
-                { word: 'light', sentence: 'The l___t from the sun is very bright in the morning.', meaning: '빛', translation: '아침에는 태양으로부터 오는 빛이 매우 밝다.' },
-                { word: 'light', sentence: 'Please turn on the l___t; it\'s dark in here.', meaning: '전등', translation: '여기 어두우니 전등을 켜주세요.' },
-                { word: 'light', sentence: 'The room was l___t and airy.', meaning: '밝은', translation: '그 방은 밝고 통풍이 잘 되었다.' },
-                { word: 'light', sentence: 'She wore a l___t blue dress to the party.', meaning: '(색이) 연한', translation: '그녀는 파티에 연한 파란색 드레스를 입고 갔다.' },
-                { word: 'light', sentence: 'This box is l___t enough for me to carry.', meaning: '가벼운', translation: '이 상자는 내가 들기에 충분히 가볍다.' },
-                { word: 'shadow', sentence: 'The tree cast a long s____w in the afternoon.', meaning: '그림자, 그늘', translation: '그 나무는 오후에 긴 그림자를 드리웠다.' },
-                { word: 'sunlight', sentence: 'Plants need s______t to grow.', meaning: '햇빛, 햇살', translation: '식물은 자라기 위해 햇빛이 필요하다.' },
-                { word: 'heat', sentence: 'I can feel the h__t from the fireplace.', meaning: '열기, 열', translation: '나는 벽난로에서 나오는 열기를 느낄 수 있다.' },
-                { word: 'heat', sentence: 'I can\'t stand this summer h__t.', meaning: '더위', translation: '나는 이 여름 더위를 견딜 수 없다.' },
-                { word: 'smoke', sentence: 'Black s___e rose from the chimney.', meaning: '연기', translation: '굴뚝에서 검은 연기가 피어올랐다.' },
-                { word: 'smoke', sentence: 'You should not s___e in here.', meaning: '(연기, 담배 등을) 피우다', translation: '여기서 담배를 피우면 안 됩니다.' },
-                { word: 'land', sentence: 'After weeks at sea, they finally saw l__d.', meaning: '육지, 땅', translation: '바다에서 몇 주를 보낸 후, 그들은 마침내 육지를 보았다.' },
-                { word: 'ground', sentence: 'The keys fell on the g____d.', meaning: '땅, 토양', translation: '열쇠가 땅에 떨어졌다.' },
-                { word: 'island', sentence: 'Jeju-do is a beautiful i____d.', meaning: '섬', translation: '제주도는 아름다운 섬이다.' },
-                { word: 'desert', sentence: 'It is very hot and dry in the d____t.', meaning: '사막', translation: '사막은 매우 덥고 건조하다.' },
-                { word: 'field', sentence: 'The cows are grazing in the f___d.', meaning: '들판, 밭', translation: '소들이 들판에서 풀을 뜯고 있다.' },
-                { word: 'field', sentence: 'He is an expert in the f___d of science.', meaning: '분야', translation: '그는 과학 분야의 전문가이다.' },
-                { word: 'mountain', sentence: 'We climbed the high m______n yesterday.', meaning: '산', translation: '우리는 어제 높은 산을 올랐다.' },
-                { word: 'hill', sentence: 'The house is on top of a small h__l.', meaning: '(나지막한) 산, 언덕', translation: '그 집은 작은 언덕 위에 있다.' },
-                { word: 'valley', sentence: 'The river flows through a deep v____y.', meaning: '계곡, 골짜기', translation: '그 강은 깊은 계곡을 통과해 흐른다.' },
-                { word: 'cave', sentence: 'The bear lives in that c__e.', meaning: '동굴', translation: '그 곰은 저 동굴에 산다.' },
-                { word: 'hole', sentence: 'He dug a h__e in the ground to plant a tree.', meaning: '구덩이; 구멍', translation: '그는 나무를 심기 위해 땅에 구덩이를 팠다.' },
-                { word: 'ocean', sentence: 'The Pacific O___n is the largest in the world.', meaning: '대양, 큰 바다', translation: '태평양은 세계에서 가장 큰 대양이다.' },
-                { word: 'bay', sentence: 'We sailed our boat around the b_y.', meaning: '만(灣)', translation: '우리는 만 주변에서 보트를 탔다.' },
-                { word: 'river', sentence: 'The Han R___r flows through Seoul.', meaning: '강', translation: '한강은 서울을 가로질러 흐른다.' },
-                { word: 'lake', sentence: 'We went fishing at the l__e.', meaning: '호수', translation: '우리는 호수에서 낚시를 갔다.' },
-                { word: 'pond', sentence: 'Ducks are swimming in the p__d.', meaning: '연못', translation: '오리들이 연못에서 수영하고 있다.' },
-                { word: 'wave', sentence: 'The w___s at the beach were very high.', meaning: '파도, 물결', translation: '해변의 파도가 매우 높았다.' },
-                { word: 'wave', sentence: 'He w__d goodbye to his friends.', meaning: '흔들다', translation: '그는 친구들에게 손을 흔들어 작별 인사를 했다.' }
+                { word: 'nature', sentence: 'We must protect nature for future generations.', meaning: '자연', translation: '우리는 미래 세대를 위해 자연을 보호해야 한다.' },
+                { word: 'nature', sentence: 'It is in his nature to be kind to everyone.', meaning: '천성, 본성', translation: '모든 사람에게 친절한 것은 그의 천성이다.' },
+                { word: 'save', sentence: 'The lifeguard saved the drowning child.', meaning: '(위험에서) 구하다', translation: '인명 구조원이 물에 빠진 아이를 구했다.' },
+                { word: 'save', sentence: 'I am trying to save money for a new bike.', meaning: '(돈을) 모으다, 저축하다', translation: '나는 새 자전거를 사기 위해 돈을 모으고 있다.' },
+                { word: 'cloud', sentence: 'A white cloud floated in the blue sky.', meaning: '구름', translation: '파란 하늘에 흰 구름이 떠다녔다.' },
+                { word: 'drop', sentence: 'A single drop of rain fell on my hand.', meaning: '(액체의) 방울', translation: '빗방울 하나가 내 손에 떨어졌다.' },
+                { word: 'drop', sentence: 'Be careful not to drop that glass.', meaning: '떨어뜨리다, 떨어지다', translation: '그 유리잔을 떨어뜨리지 않도록 조심하세요.' },
+                { word: 'light', sentence: 'The light from the sun is very bright in the morning.', meaning: '빛', translation: '아침에는 태양으로부터 오는 빛이 매우 밝다.' },
+                { word: 'light', sentence: 'Please turn on the light; it\'s dark in here.', meaning: '전등', translation: '여기 어두우니 전등을 켜주세요.' },
+                { word: 'light', sentence: 'The room was light and airy.', meaning: '밝은', translation: '그 방은 밝고 통풍이 잘 되었다.' },
+                { word: 'light', sentence: 'She wore a light blue dress to the party.', meaning: '(색이) 연한', translation: '그녀는 파티에 연한 파란색 드레스를 입고 갔다.' },
+                { word: 'light', sentence: 'This box is light enough for me to carry.', meaning: '가벼운', translation: '이 상자는 내가 들기에 충분히 가볍다.' },
+                { word: 'shadow', sentence: 'The tree cast a long shadow in the afternoon.', meaning: '그림자, 그늘', translation: '그 나무는 오후에 긴 그림자를 드리웠다.' },
+                { word: 'sunlight', sentence: 'Plants need sunlight to grow.', meaning: '햇빛, 햇살', translation: '식물은 자라기 위해 햇빛이 필요하다.' },
+                { word: 'heat', sentence: 'I can feel the heat from the fireplace.', meaning: '열기, 열', translation: '나는 벽난로에서 나오는 열기를 느낄 수 있다.' },
+                { word: 'heat', sentence: 'I can\'t stand this summer heat.', meaning: '더위', translation: '나는 이 여름 더위를 견딜 수 없다.' },
+                { word: 'smoke', sentence: 'Black smoke rose from the chimney.', meaning: '연기', translation: '굴뚝에서 검은 연기가 피어올랐다.' },
+                { word: 'smoke', sentence: 'You should not smoke in here.', meaning: '(연기, 담배 등을) 피우다', translation: '여기서 담배를 피우면 안 됩니다.' },
+                { word: 'land', sentence: 'After weeks at sea, they finally saw land.', meaning: '육지, 땅', translation: '바다에서 몇 주를 보낸 후, 그들은 마침내 육지를 보았다.' },
+                { word: 'ground', sentence: 'The keys fell on the ground.', meaning: '땅, 토양', translation: '열쇠가 땅에 떨어졌다.' },
+                { word: 'island', sentence: 'Jeju-do is a beautiful island.', meaning: '섬', translation: '제주도는 아름다운 섬이다.' },
+                { word: 'desert', sentence: 'It is very hot and dry in the desert.', meaning: '사막', translation: '사막은 매우 덥고 건조하다.' },
+                { word: 'field', sentence: 'The cows are grazing in the field.', meaning: '들판, 밭', translation: '소들이 들판에서 풀을 뜯고 있다.' },
+                { word: 'field', sentence: 'He is an expert in the field of science.', meaning: '분야', translation: '그는 과학 분야의 전문가이다.' },
+                { word: 'mountain', sentence: 'We climbed the high mountain yesterday.', meaning: '산', translation: '우리는 어제 높은 산을 올랐다.' },
+                { word: 'hill', sentence: 'The house is on top of a small hill.', meaning: '(나지막한) 산, 언덕', translation: '그 집은 작은 언덕 위에 있다.' },
+                { word: 'valley', sentence: 'The river flows through a deep valley.', meaning: '계곡, 골짜기', translation: '그 강은 깊은 계곡을 통과해 흐른다.' },
+                { word: 'cave', sentence: 'The bear lives in that cave.', meaning: '동굴', translation: '그 곰은 저 동굴에 산다.' },
+                { word: 'hole', sentence: 'He dug a hole in the ground to plant a tree.', meaning: '구덩이; 구멍', translation: '그는 나무를 심기 위해 땅에 구덩이를 팠다.' },
+                { word: 'ocean', sentence: 'The Pacific Ocean is the largest in the world.', meaning: '대양, 큰 바다', translation: '태양평은 세계에서 가장 큰 대양이다.' },
+                { word: 'bay', sentence: 'We sailed our boat around the bay.', meaning: '만(灣)', translation: '우리는 만 주변에서 보트를 탔다.' },
+                { word: 'river', sentence: 'The Han River flows through Seoul.', meaning: '강', translation: '한강은 서울을 가로질러 흐른다.' },
+                { word: 'lake', sentence: 'We went fishing at the lake.', meaning: '호수', translation: '우리는 호수에서 낚시를 갔다.' },
+                { word: 'pond', sentence: 'Ducks are swimming in the pond.', meaning: '연못', translation: '오리들이 연못에서 수영하고 있다.' },
+                { word: 'wave', sentence: 'The waves at the beach were very high.', meaning: '파도, 물결', translation: '해변의 파도가 매우 높았다.' },
+                { word: 'wave', sentence: 'He waved goodbye to his friends.', meaning: '흔들다', translation: '그는 친구들에게 손을 흔들어 작별 인사를 했다.' }
             ],
             'unit32': [
-                { word: 'forest', sentence: 'A deer ran through the f____t.', meaning: '숲, 삼림', translation: '사슴 한 마리가 숲을 가로질러 달려갔다.' },
-                { word: 'wood', sentence: 'This chair is made of w__d.', meaning: '나무, 목재', translation: '이 의자는 나무로 만들어졌다.' },
-                { word: 'woods', sentence: 'We went for a walk in the w___s.', meaning: '(-s) 숲', translation: '우리는 숲속으로 산책을 갔다.' },
-                { word: 'rainforest', sentence: 'The Amazon r________t is home to many species.', meaning: '열대 우림', translation: '아마존 열대 우림은 많은 종의 서식지이다.' },
-                { word: 'grass', sentence: 'The sheep are eating g___s in the field.', meaning: '풀, 잔디', translation: '양들이 들판에서 풀을 먹고 있다.' },
-                { word: 'grow', sentence: 'Plants g__w taller in the sunlight.', meaning: '자라다, 성장하다, 크다', translation: '식물은 햇빛 속에서 더 크게 자란다.' },
-                { word: 'rock', sentence: 'He threw a r__k into the water.', meaning: '암석; 바위, 바윗돌', translation: '그는 물속으로 바위를 던졌다.' },
-                { word: 'stone', sentence: 'She picked up a smooth s___e from the beach.', meaning: '돌, 돌멩이', translation: '그녀는 해변에서 매끄러운 돌멩이 하나를 주웠다.' },
-                { word: 'pebble', sentence: 'I found a pretty p____e by the river.', meaning: '조약돌, 자갈', translation: '나는 강가에서 예쁜 조약돌을 발견했다.' },
-                { word: 'sand', sentence: 'Children love playing in the s__d.', meaning: '모래', translation: '아이들은 모래 속에서 노는 것을 좋아한다.' },
-                { word: 'sands', sentence: 'The Sahara is one of the largest hot s___s in the world.', meaning: '(-s) 사막', translation: '사하라는 세계에서 가장 큰 뜨거운 사막 중 하나이다.' },
-                { word: 'soil', sentence: 'Plants get nutrients from the s__l.', meaning: '토양, 흙', translation: '식물은 흙으로부터 영양분을 얻는다.' },
-                { word: 'mud', sentence: 'His boots were covered in m_d.', meaning: '진흙', translation: '그의 부츠는 진흙으로 덮여 있었다.' },
-                { word: 'environment', sentence: 'We need to protect the natural e_________t.', meaning: '환경', translation: '우리는 자연 환경을 보호해야 한다.' },
-                { word: 'pollute', sentence: 'Factories can p_____e the air and water.', meaning: '오염시키다', translation: '공장들은 공기와 물을 오염시킬 수 있다.' },
-                { word: 'flood', sentence: 'The heavy rain caused a f___d in the town.', meaning: '홍수', translation: '폭우로 인해 마을에 홍수가 났다.' },
-                { word: 'damage', sentence: 'The storm caused serious d____e to the houses.', meaning: '손상, 피해', translation: '폭풍이 집들에 심각한 손상을 입혔다.' },
-                { word: 'damage', sentence: 'Smoking can d____e your health.', meaning: '손상을 주다, 피해를 입히다', translation: '흡연은 당신의 건강에 손상을 줄 수 있다.' },
-                { word: 'destroy', sentence: 'The earthquake d______ed many buildings.', meaning: '파괴하다', translation: '그 지진은 많은 건물을 파괴했다.' },
-                { word: 'wild', sentence: 'W__d animals live in the forest.', meaning: '야생의', translation: '야생 동물들이 숲에 산다.' },
-                { word: 'wild', sentence: 'This area is a w__d and beautiful place.', meaning: '자연 그대로의', translation: '이 지역은 자연 그대로의 아름다운 장소이다.' },
-                { word: 'wild', sentence: 'The w__d dog was barking aggressively.', meaning: '사나운, 거친', translation: '그 사나운 개는 공격적으로 짖고 있었다.' },
-                { word: 'form', sentence: 'Clouds f__m when water vapor cools.', meaning: '형성되다, 형성시키다', translation: '구름은 수증기가 식을 때 형성된다.' },
-                { word: 'form', sentence: 'What f__m of exercise do you prefer?', meaning: '종류, 형태', translation: '어떤 종류의 운동을 선호하시나요?' },
-                { word: 'waste', sentence: 'Don\'t w___e your time playing games all day.', meaning: '낭비하다', translation: '하루 종일 게임을 하며 시간을 낭비하지 마라.' },
-                { word: 'waste', sentence: 'It\'s a w___e of money to buy things you don\'t need.', meaning: '낭비, 허비', translation: '필요 없는 물건을 사는 것은 돈 낭비이다.' },
-                { word: 'waste', sentence: 'Please put your w___e in the trash can.', meaning: '쓰레기, 폐기물', translation: '쓰레기는 쓰레기통에 버려주세요.' },
-                { word: 'plastic', sentence: 'We should reduce the use of p_____c bags.', meaning: '플라스틱', translation: '우리는 비닐봉지 사용을 줄여야 한다.' },
-                { word: 'oil', sentence: 'We use o_l for cooking.', meaning: '기름, 석유', translation: '우리는 요리를 위해 기름을 사용한다.' },
-                { word: 'survive', sentence: 'Not many plants can s_____e in the desert.', meaning: '살아남다, 생존하다', translation: '사막에서 살아남을 수 있는 식물은 많지 않다.' },
-                { word: 'protect', sentence: 'Parents always want to p_____t their children from danger.', meaning: '보호하다', translation: '부모는 항상 자녀를 위험으로부터 보호하기를 원한다.' },
-                { word: 'reduce', sentence: 'We need to r____e the amount of trash we produce.', meaning: '줄이다, 축소하다', translation: '우리는 우리가 배출하는 쓰레기의 양을 줄여야 한다.' },
-                { word: 'reduce', sentence: 'The store r____d the price of the shirt.', meaning: '(가격을) 낮추다', translation: '그 가게는 셔츠의 가격을 낮췄다.' },
-                { word: 'recycle', sentence: 'We r_____e glass bottles and paper.', meaning: '재활용하다, 재생하다', translation: '우리는 유리병과 종이를 재활용한다.' }
+                { word: 'forest', sentence: 'A deer ran through the forest.', meaning: '숲, 삼림', translation: '사슴 한 마리가 숲을 가로질러 달려갔다.' },
+                { word: 'wood', sentence: 'This chair is made of wood.', meaning: '나무, 목재', translation: '이 의자는 나무로 만들어졌다.' },
+                { word: 'woods', sentence: 'We went for a walk in the woods.', meaning: '(-s) 숲', translation: '우리는 숲속으로 산책을 갔다.' },
+                { word: 'rainforest', sentence: 'The Amazon rainforest is home to many species.', meaning: '열대 우림', translation: '아마존 열대 우림은 많은 종의 서식지이다.' },
+                { word: 'grass', sentence: 'The sheep are eating grass in the field.', meaning: '풀, 잔디', translation: '양들이 들판에서 풀을 먹고 있다.' },
+                { word: 'grow', sentence: 'Plants grow taller in the sunlight.', meaning: '자라다, 성장하다, 크다', translation: '식물은 햇빛 속에서 더 크게 자란다.' },
+                { word: 'rock', sentence: 'He threw a rock into the water.', meaning: '암석; 바위, 바윗돌', translation: '그는 물속으로 바위를 던졌다.' },
+                { word: 'stone', sentence: 'She picked up a smooth stone from the beach.', meaning: '돌, 돌멩이', translation: '그녀는 해변에서 매끄러운 돌멩이 하나를 주웠다.' },
+                { word: 'pebble', sentence: 'I found a pretty pebble by the river.', meaning: '조약돌, 자갈', translation: '나는 강가에서 예쁜 조약돌을 발견했다.' },
+                { word: 'sand', sentence: 'Children love playing in the sand.', meaning: '모래', translation: '아이들은 모래 속에서 노는 것을 좋아한다.' },
+                { word: 'sands', sentence: 'The Sahara is one of the largest hot sands in the world.', meaning: '(-s) 사막', translation: '사하라는 세계에서 가장 큰 뜨거운 사막 중 하나이다.' },
+                { word: 'soil', sentence: 'Plants get nutrients from the soil.', meaning: '토양, 흙', translation: '식물은 흙으로부터 영양분을 얻는다.' },
+                { word: 'mud', sentence: 'His boots were covered in mud.', meaning: '진흙', translation: '그의 부츠는 진흙으로 덮여 있었다.' },
+                { word: 'environment', sentence: 'We need to protect the natural environment.', meaning: '환경', translation: '우리는 자연 환경을 보호해야 한다.' },
+                { word: 'pollute', sentence: 'Factories can pollute the air and water.', meaning: '오염시키다', translation: '공장들은 공기와 물을 오염시킬 수 있다.' },
+                { word: 'flood', sentence: 'The heavy rain caused a flood in the town.', meaning: '홍수', translation: '폭우로 인해 마을에 홍수가 났다.' },
+                { word: 'damage', sentence: 'The storm caused serious damage to the houses.', meaning: '손상, 피해', translation: '폭풍이 집들에 심각한 손상을 입혔다.' },
+                { word: 'damage', sentence: 'Smoking can damage your health.', meaning: '손상을 주다, 피해를 입히다', translation: '흡연은 당신의 건강에 손상을 줄 수 있다.' },
+                { word: 'destroy', sentence: 'The earthquake destroyed many buildings.', meaning: '파괴하다', translation: '그 지진은 많은 건물을 파괴했다.' },
+                { word: 'wild', sentence: 'Wild animals live in the forest.', meaning: '야생의', translation: '야생 동물들이 숲에 산다.' },
+                { word: 'wild', sentence: 'This area is a wild and beautiful place.', meaning: '자연 그대로의', translation: '이 지역은 자연 그대로의 아름다운 장소이다.' },
+                { word: 'wild', sentence: 'The wild dog was barking aggressively.', meaning: '사나운, 거친', translation: '그 사나운 개는 공격적으로 짖고 있었다.' },
+                { word: 'form', sentence: 'Clouds form when water vapor cools.', meaning: '형성되다, 형성시키다', translation: '구름은 수증기가 식을 때 형성된다.' },
+                { word: 'form', sentence: 'What form of exercise do you prefer?', meaning: '종류, 형태', translation: '어떤 종류의 운동을 선호하시나요?' },
+                { word: 'waste', sentence: 'Don\'t waste your time playing games all day.', meaning: '낭비하다', translation: '하루 종일 게임을 하며 시간을 낭비하지 마라.' },
+                { word: 'waste', sentence: 'It\'s a waste of money to buy things you don\'t need.', meaning: '낭비, 허비', translation: '필요 없는 물건을 사는 것은 돈 낭비이다.' },
+                { word: 'waste', sentence: 'Please put your waste in the trash can.', meaning: '쓰레기, 폐기물', translation: '쓰레기는 쓰레기통에 버려주세요.' },
+                { word: 'plastic', sentence: 'We should reduce the use of plastic bags.', meaning: '플라스틱', translation: '우리는 비닐봉지 사용을 줄여야 한다.' },
+                { word: 'oil', sentence: 'We use oil for cooking.', meaning: '기름, 석유', translation: '우리는 요리를 위해 기름을 사용한다.' },
+                { word: 'survive', sentence: 'Not many plants can survive in the desert.', meaning: '살아남다, 생존하다', translation: '사막에서 살아남을 수 있는 식물은 많지 않다.' },
+                { word: 'protect', sentence: 'Parents always want to protect their children from danger.', meaning: '보호하다', translation: '부모는 항상 자녀를 위험으로부터 보호하기를 원한다.' },
+                { word: 'reduce', sentence: 'We need to reduce the amount of trash we produce.', meaning: '줄이다, 축소하다', translation: '우리는 우리가 배출하는 쓰레기의 양을 줄여야 한다.' },
+                { word: 'reduce', sentence: 'The store reduced the price of the shirt.', meaning: '(가격을) 낮추다', translation: '그 가게는 셔츠의 가격을 낮췄다.' },
+                { word: 'recycle', sentence: 'We recycle glass bottles and paper.', meaning: '재활용하다, 재생하다', translation: '우리는 유리병과 종이를 재활용한다.' }
             ],
             'unit33': [
-                { word: 'beast', sentence: 'The lion is a powerful b___t.', meaning: '(특히 덩치가 크고 위험한) 짐승, 야수', translation: '사자는 강력한 짐승이다.' },
-                { word: 'pet', sentence: 'Do you have any p__s at home?', meaning: '애완동물', translation: '집에 애완동물이 있나요?' },
-                { word: 'feed', sentence: 'Did you f__d the dog this morning?', meaning: '먹이를 주다', translation: '오늘 아침에 개에게 먹이를 주었나요?' },
-                { word: 'feed', sentence: 'This bag contains animal f__d.', meaning: '(동물의) 먹이', translation: '이 가방에는 동물 먹이가 들어있다.' },
-                { word: 'hunt', sentence: 'The lion will h__t for its prey.', meaning: '사냥하다', translation: '사자는 먹이를 사냥할 것이다.' },
-                { word: 'hunt', sentence: 'I\'m h__ting for my lost keys.', meaning: '찾다, 뒤지다', translation: '나는 잃어버린 열쇠를 찾고 있다.' },
-                { word: 'bark', sentence: 'The dog started to b__k at the stranger.', meaning: '(개가) 짖다', translation: '그 개는 낯선 사람을 보고 짖기 시작했다.' },
-                { word: 'whale', sentence: 'A w___e is the largest mammal in the ocean.', meaning: '고래', translation: '고래는 바다에서 가장 큰 포유류이다.' },
-                { word: 'dolphin', sentence: 'The d_____n jumped out of the water.', meaning: '돌고래', translation: '돌고래가 물 밖으로 점프했다.' },
-                { word: 'elephant', sentence: 'An e______t has a very long trunk.', meaning: '코끼리', translation: '코끼리는 매우 긴 코를 가지고 있다.' },
-                { word: 'giraffe', sentence: 'The g_____e is known for its long neck.', meaning: '기린', translation: '기린은 긴 목으로 알려져 있다.' },
-                { word: 'bull', sentence: 'The farmer has a large b__l.', meaning: '황소', translation: '그 농부는 큰 황소를 가지고 있다.' },
-                { word: 'sheep', sentence: 'Farmers raise s___p for wool and meat.', meaning: '양', translation: '농부들은 양모와 고기를 얻기 위해 양을 기른다.' },
-                { word: 'camel', sentence: 'A c___l can travel long distances in the desert.', meaning: '낙타', translation: '낙타는 사막에서 장거리를 이동할 수 있다.' },
-                { word: 'kangaroo', sentence: 'A k______o carries its baby in a pouch.', meaning: '캥거루', translation: '캥거루는 새끼를 주머니에 넣고 다닌다.' },
-                { word: 'fur', sentence: 'This coat is made of warm f_r.', meaning: '털, 모피', translation: '이 코트는 따뜻한 털로 만들어졌다.' },
-                { word: 'tail', sentence: 'The dog is wagging its t__l.', meaning: '꼬리', translation: '그 개가 꼬리를 흔들고 있다.' },
-                { word: 'chicken', sentence: 'We raise c_____n for eggs.', meaning: '닭', translation: '우리는 달걀을 얻기 위해 닭을 기른다.' },
-                { word: 'owl', sentence: 'An o_l can see very well in the dark.', meaning: '올빼미, 부엉이', translation: '올빼미는 어둠 속에서도 아주 잘 볼 수 있다.' },
-                { word: 'parrot', sentence: 'The p____t repeated everything I said.', meaning: '앵무새', translation: '그 앵무새는 내가 말한 모든 것을 따라 했다.' },
-                { word: 'wing', sentence: 'The bird spread its w__s and flew away.', meaning: '(새·곤충의) 날개; (비행기의) 날개', translation: '그 새는 날개를 펴고 날아갔다.' },
-                { word: 'feather', sentence: 'A peacock has beautiful f_____r.', meaning: '털, 깃털', translation: '공작은 아름다운 깃털을 가지고 있다.' },
-                { word: 'nest', sentence: 'The bird built its n__t in the tree.', meaning: '둥지; 집, 보금자리', translation: '새가 나무에 둥지를 틀었다.' },
-                { word: 'cage', sentence: 'The tiger was kept in a strong c__e.', meaning: '우리, 새장', translation: '그 호랑이는 튼튼한 우리에 갇혀 있었다.' },
-                { word: 'snake', sentence: 'A s___e slithered across the path.', meaning: '뱀', translation: '뱀 한 마리가 길을 가로질러 스르르 기어갔다.' },
-                { word: 'lizard', sentence: 'The l____d was sunbathing on a rock.', meaning: '도마뱀', translation: '도마뱀이 바위 위에서 일광욕을 하고 있었다.' },
-                { word: 'shark', sentence: 'The s___k is a dangerous predator in the sea.', meaning: '상어', translation: '상어는 바다의 위험한 포식자이다.' }
+                { word: 'beast', sentence: 'The lion is a powerful beast.', meaning: '짐승, 야수', translation: '사자는 강력한 짐승이다.' },
+                { word: 'pet', sentence: 'Do you have any pets at home?', meaning: '애완동물', translation: '집에 애완동물이 있나요?' },
+                { word: 'feed', sentence: 'Did you feed the dog this morning?', meaning: '먹이를 주다', translation: '오늘 아침에 개에게 먹이를 주었나요?' },
+                { word: 'feed', sentence: 'This bag contains animal feed.', meaning: '먹이', translation: '이 가방에는 동물 먹이가 들어있다.' },
+                { word: 'hunt', sentence: 'The lion will hunt for its prey.', meaning: '사냥하다', translation: '사자는 먹이를 사냥할 것이다.' },
+                { word: 'hunt', sentence: 'I\'m hunting for my lost keys.', meaning: '찾다, 뒤지다', translation: '나는 잃어버린 열쇠를 찾고 있다.' },
+                { word: 'bark', sentence: 'The dog started to bark at the stranger.', meaning: '(개가) 짖다', translation: '그 개는 낯선 사람을 보고 짖기 시작했다.' },
+                { word: 'whale', sentence: 'A whale is the largest mammal in the ocean.', meaning: '고래', translation: '고래는 바다에서 가장 큰 포유류이다.' },
+                { word: 'dolphin', sentence: 'The dolphin jumped out of the water.', meaning: '돌고래', translation: '돌고래가 물 밖으로 점프했다.' },
+                { word: 'elephant', sentence: 'An elephant has a very long trunk.', meaning: '코끼리', translation: '코끼리는 매우 긴 코를 가지고 있다.' },
+                { word: 'giraffe', sentence: 'The giraffe is known for its long neck.', meaning: '기린', translation: '기린은 긴 목으로 알려져 있다.' },
+                { word: 'bull', sentence: 'The farmer has a large bull.', meaning: '황소', translation: '그 농부는 큰 황소를 가지고 있다.' },
+                { word: 'sheep', sentence: 'Farmers raise sheep for wool and meat.', meaning: '양', translation: '농부들은 양모와 고기를 얻기 위해 양을 기른다.' },
+                { word: 'camel', sentence: 'A camel can travel long distances in the desert.', meaning: '낙타', translation: '낙타는 사막에서 장거리를 이동할 수 있다.' },
+                { word: 'kangaroo', sentence: 'A kangaroo carries its baby in a pouch.', meaning: '캥거루', translation: '캥거루는 새끼를 주머니에 넣고 다닌다.' },
+                { word: 'fur', sentence: 'This coat is made of warm fur.', meaning: '털, 모피', translation: '이 코트는 따뜻한 털로 만들어졌다.' },
+                { word: 'tail', sentence: 'The dog is wagging its tail.', meaning: '꼬리', translation: '그 개가 꼬리를 흔들고 있다.' },
+                { word: 'chicken', sentence: 'We raise chicken for eggs.', meaning: '닭', translation: '우리는 달걀을 얻기 위해 닭을 기른다.' },
+                { word: 'owl', sentence: 'An owl can see very well in the dark.', meaning: '올빼미', translation: '올빼미는 어둠 속에서도 아주 잘 볼 수 있다.' },
+                { word: 'parrot', sentence: 'The parrot repeated everything I said.', meaning: '앵무새', translation: '그 앵무새는 내가 말한 모든 것을 따라 했다.' },
+                { word: 'wing', sentence: 'The bird spread its wings and flew away.', meaning: '날개', translation: '그 새는 날개를 펴고 날아갔다.' },
+                { word: 'feather', sentence: 'A peacock has beautiful feathers.', meaning: '깃털', translation: '공작은 아름다운 깃털을 가지고 있다.' },
+                { word: 'nest', sentence: 'The bird built its nest in the tree.', meaning: '둥지', translation: '새가 나무에 둥지를 틀었다.' },
+                { word: 'cage', sentence: 'The tiger was kept in a strong cage.', meaning: '우리, 새장', translation: '그 호랑이는 튼튼한 우리에 갇혀 있었다.' },
+                { word: 'snake', sentence: 'A snake slithered across the path.', meaning: '뱀', translation: '뱀 한 마리가 길을 가로질러 스르르 기어갔다.' },
+                { word: 'lizard', sentence: 'The lizard was sunbathing on a rock.', meaning: '도마뱀', translation: '도마뱀이 바위 위에서 일광욕을 하고 있었다.' },
+                { word: 'shark', sentence: 'The shark is a dangerous predator in the sea.', meaning: '상어', translation: '상어는 바다의 위험한 포식자이다.' }
             ],
             'unit34': [
-                { word: 'plant', sentence: 'This is my favorite housep___t.', meaning: '식물, 초목, 나무', translation: '이것은 내가 가장 좋아하는 실내 화초이다.' },
-                { word: 'plant', sentence: 'My father works at a car p___t.', meaning: '공장', translation: '아버지는 자동차 공장에서 일하신다.' },
-                { word: 'plant', sentence: 'We will p___t these seeds in the garden.', meaning: '심다', translation: '우리는 이 씨앗들을 정원에 심을 것이다.' },
-                { word: 'maple', sentence: 'The m___e leaf is a symbol of Canada.', meaning: '단풍나무', translation: '단풍나무 잎은 캐나다의 상징이다.' },
-                { word: 'olive', sentence: 'O___e oil is very healthy.', meaning: '올리브; 올리브나무', translation: '올리브유는 매우 건강에 좋다.' },
-                { word: 'rose', sentence: 'He gave her a beautiful red r__e.', meaning: '장미', translation: '그는 그녀에게 아름다운 붉은 장미를 주었다.' },
-                { word: 'bloom', sentence: 'The cherry blossoms b___m in spring.', meaning: '꽃을 피우다, 꽃이 피다', translation: '벚꽃은 봄에 핀다.' },
-                { word: 'berry', sentence: 'This yogurt has mixed b____s.', meaning: '산딸기류 열매, -베리', translation: '이 요거트에는 여러 종류의 베리가 섞여 있다.' },
-                { word: 'cactus', sentence: 'A c____s can store a lot of water.', meaning: '선인장', translation: '선인장은 많은 물을 저장할 수 있다.' },
-                { word: 'cucumber', sentence: 'I put a slice of c______r in my water.', meaning: '오이', translation: '나는 물에 오이 한 조각을 넣었다.' },
-                { word: 'pumpkin', sentence: 'We carved a p_____n for Halloween.', meaning: '호박', translation: '우리는 핼러윈을 위해 호박을 조각했다.' },
-                { word: 'mushroom', sentence: 'I found a wild m______m in the forest.', meaning: '버섯', translation: '나는 숲에서 야생 버섯을 발견했다.' },
-                { word: 'seed', sentence: 'He planted a s__d and watched it grow.', meaning: '씨, 씨앗', translation: '그는 씨앗을 심고 그것이 자라는 것을 지켜보았다.' },
-                { word: 'root', sentence: 'The r__t of the problem is a lack of communication.', meaning: '뿌리; 근원, 핵심', translation: '그 문제의 근원은 소통의 부족이다.' },
-                { word: 'branch', sentence: 'A bird is sitting on the b____h of the tree.', meaning: '나뭇가지', translation: '새 한 마리가 나뭇가지에 앉아 있다.' },
-                { word: 'branch', sentence: 'Our bank has a b____h in New York.', meaning: '지사, 분점', translation: '우리 은행은 뉴욕에 지사가 있다.' },
-                { word: 'stick', sentence: 'He picked up a s___k from the ground.', meaning: '나무토막, 나뭇가지', translation: '그는 땅에서 나뭇가지를 주웠다.' },
-                { word: 'stick', sentence: 'You need a glue s___k for this project.', meaning: '막대기', translation: '이 프로젝트에는 막대기 풀이 필요하다.' },
-                { word: 'stick', sentence: 'Don\'t s___k your knife into the table.', meaning: '찌르다', translation: '식탁에 칼을 찌르지 마세요.' },
-                { word: 'stick', sentence: 'This tape doesn\'t s___k well.', meaning: '달라붙다', translation: '이 테이프는 잘 달라붙지 않는다.' },
-                { word: 'leaf', sentence: 'The tree has green l__f.', meaning: '잎', translation: '그 나무는 푸른 잎을 가지고 있다.' },
-                { word: 'straw', sentence: 'The farmer stored s___w for the winter.', meaning: '짚, 밀짚, 지푸라기', translation: '농부는 겨울을 대비해 짚을 저장했다.' },
-                { word: 'straw', sentence: 'He drank the juice through a s___w.', meaning: '빨대', translation: '그는 빨대로 주스를 마셨다.' },
-                { word: 'insect', sentence: 'An ant is a very small i____t.', meaning: '곤충', translation: '개미는 매우 작은 곤충이다.' },
-                { word: 'bug', sentence: 'I found a strange b_g on the leaf.', meaning: '벌레, 작은 곤충', translation: '나는 잎 위에서 이상한 벌레를 발견했다.' },
-                { word: 'worm', sentence: 'A w__m was crawling on the ground.', meaning: '벌레; 기생충', translation: '벌레 한 마리가 땅 위를 기어가고 있었다.' },
-                { word: 'beetle', sentence: 'A b____e is an insect with hard outer wings.', meaning: '딱정벌레', translation: '딱정벌레는 딱딱한 겉날개를 가진 곤충이다.' },
-                { word: 'butterfly', sentence: 'The caterpillar turned into a beautiful b_______y.', meaning: '나비', translation: '애벌레가 아름다운 나비로 변했다.' },
-                { word: 'mosquito', sentence: 'A m______o bit my arm.', meaning: '모기', translation: '모기가 내 팔을 물었다.' },
-                { word: 'spider', sentence: 'The s____r is spinning a web.', meaning: '거미', translation: '거미가 거미줄을 치고 있다.' },
-                { word: 'web', sentence: 'The spider caught a fly in its w_b.', meaning: '거미줄', translation: '거미는 거미줄로 파리를 잡았다.' },
-                { word: 'web', sentence: 'The internet is a w_b of information.', meaning: '(복잡하게 연결된) -망', translation: '인터넷은 정보의 망이다.' },
-                { word: 'shell', sentence: 'The snail hid inside its s___l.', meaning: '껍데기, 껍질', translation: '달팽이는 껍데기 안으로 숨었다.' }
+                { word: 'plant', sentence: 'This is my favorite houseplant.', meaning: '식물', translation: '이것은 내가 가장 좋아하는 실내 화초이다.' },
+                { word: 'plant', sentence: 'My father works at a car plant.', meaning: '공장', translation: '아버지는 자동차 공장에서 일하신다.' },
+                { word: 'plant', sentence: 'We will plant these seeds in the garden.', meaning: '심다', translation: '우리는 이 씨앗들을 정원에 심을 것이다.' },
+                { word: 'maple', sentence: 'The maple leaf is a symbol of Canada.', meaning: '단풍나무', translation: '단풍나무 잎은 캐나다의 상징이다.' },
+                { word: 'olive', sentence: 'Olive oil is very healthy.', meaning: '올리브', translation: '올리브유는 매우 건강에 좋다.' },
+                { word: 'rose', sentence: 'He gave her a beautiful red rose.', meaning: '장미', translation: '그는 그녀에게 아름다운 붉은 장미를 주었다.' },
+                { word: 'bloom', sentence: 'The cherry blossoms bloom in spring.', meaning: '꽃이 피다', translation: '벚꽃은 봄에 핀다.' },
+                { word: 'berry', sentence: 'This yogurt has mixed berries.', meaning: '베리', translation: '이 요거트에는 여러 종류의 베리가 섞여 있다.' },
+                { word: 'cactus', sentence: 'A cactus can store a lot of water.', meaning: '선인장', translation: '선인장은 많은 물을 저장할 수 있다.' },
+                { word: 'cucumber', sentence: 'I put a slice of cucumber in my water.', meaning: '오이', translation: '나는 물에 오이 한 조각을 넣었다.' },
+                { word: 'pumpkin', sentence: 'We carved a pumpkin for Halloween.', meaning: '호박', translation: '우리는 핼러윈을 위해 호박을 조각했다.' },
+                { word: 'mushroom', sentence: 'I found a wild mushroom in the forest.', meaning: '버섯', translation: '나는 숲에서 야생 버섯을 발견했다.' },
+                { word: 'seed', sentence: 'He planted a seed and watched it grow.', meaning: '씨앗', translation: '그는 씨앗을 심고 그것이 자라는 것을 지켜보았다.' },
+                { word: 'root', sentence: 'The root of the problem is a lack of communication.', meaning: '뿌리; 근원', translation: '그 문제의 근원은 소통의 부족이다.' },
+                { word: 'branch', sentence: 'A bird is sitting on the branch of the tree.', meaning: '나뭇가지', translation: '새 한 마리가 나뭇가지에 앉아 있다.' },
+                { word: 'branch', sentence: 'Our bank has a branch in New York.', meaning: '지사', translation: '우리 은행은 뉴욕에 지사가 있다.' },
+                { word: 'stick', sentence: 'He picked up a stick from the ground.', meaning: '나뭇가지', translation: '그는 땅에서 나뭇가지를 주웠다.' },
+                { word: 'stick', sentence: 'You need a glue stick for this project.', meaning: '막대기', translation: '이 프로젝트에는 막대기 풀이 필요하다.' },
+                { word: 'stick', sentence: 'Don\'t stick your knife into the table.', meaning: '찌르다', translation: '식탁에 칼을 찌르지 마세요.' },
+                { word: 'stick', sentence: 'This tape doesn\'t stick well.', meaning: '달라붙다', translation: '이 테이프는 잘 달라붙지 않는다.' },
+                { word: 'leaf', sentence: 'The tree has green leaf.', meaning: '잎', translation: '그 나무는 푸른 잎을 가지고 있다.' },
+                { word: 'straw', sentence: 'The farmer stored straw for the winter.', meaning: '짚', translation: '농부는 겨울을 대비해 짚을 저장했다.' },
+                { word: 'straw', sentence: 'He drank the juice through a straw.', meaning: '빨대', translation: '그는 빨대로 주스를 마셨다.' },
+                { word: 'insect', sentence: 'An ant is a very small insect.', meaning: '곤충', translation: '개미는 매우 작은 곤충이다.' },
+                { word: 'bug', sentence: 'I found a strange bug on the leaf.', meaning: '벌레', translation: '나는 잎 위에서 이상한 벌레를 발견했다.' },
+                { word: 'worm', sentence: 'A worm was crawling on the ground.', meaning: '지렁이; 벌레', translation: '벌레 한 마리가 땅 위를 기어가고 있었다.' },
+                { word: 'beetle', sentence: 'A beetle is an insect with hard outer wings.', meaning: '딱정벌레', translation: '딱정벌레는 딱딱한 겉날개를 가진 곤충이다.' },
+                { word: 'butterfly', sentence: 'The caterpillar turned into a beautiful butterfly.', meaning: '나비', translation: '애벌레가 아름다운 나비로 변했다.' },
+                { word: 'mosquito', sentence: 'A mosquito bit my arm.', meaning: '모기', translation: '모기가 내 팔을 물었다.' },
+                { word: 'spider', sentence: 'The spider is spinning a web.', meaning: '거미', translation: '거미가 거미줄을 치고 있다.' },
+                { word: 'web', sentence: 'The spider caught a fly in its web.', meaning: '거미줄', translation: '거미는 거미줄로 파리를 잡았다.' },
+                { word: 'web', sentence: 'The internet is a web of information.', meaning: '망', translation: '인터넷은 정보의 망이다.' },
+                { word: 'shell', sentence: 'The snail hid inside its shell.', meaning: '껍질', translation: '달팽이는 껍데기 안으로 숨었다.' }
             ],
             'unit35': [
-                { word: 'universe', sentence: 'The u______e is vast and full of mysteries.', meaning: '우주, 은하계', translation: '우주는 광활하고 신비로 가득 차 있다.' },
-                { word: 'galaxy', sentence: 'Our Milky Way g____y contains billions of stars.', meaning: '은하계; 은하수', translation: '우리 은하계는 수십억 개의 별을 포함하고 있다.' },
-                { word: 'consist', sentence: 'A team should c_____t of members with different skills.', meaning: '이루어져 있다', translation: '팀은 다른 기술을 가진 구성원들로 이루어져 있어야 한다.' },
-                { word: 'numerous', sentence: 'There are n______s stars in the sky.', meaning: '많은', translation: '하늘에는 많은 별들이 있다.' },
-                { word: 'float', sentence: 'Wood will f___t on water.', meaning: '뜨다; 떠다니다, 떠돌다', translation: '나무는 물 위에 뜰 것이다.' },
-                { word: 'planet', sentence: 'Earth is the third p____t from the sun.', meaning: '행성', translation: '지구는 태양계의 세 번째 행성이다.' },
-                { word: 'comet', sentence: 'We saw a c___t streak across the sky.', meaning: '혜성', translation: '우리는 혜성이 하늘을 가로지르는 것을 보았다.' },
-                { word: 'earth', sentence: 'The rocket fell back to e___h.', meaning: '지구', translation: '로켓은 지구로 다시 떨어졌다.' },
-                { word: 'earth', sentence: 'This e___h is very fertile.', meaning: '흙', translation: '이 흙은 매우 비옥하다.' },
-                { word: 'gravity', sentence: 'Astronauts experience zero g_____y in space.', meaning: '(지구) 중력', translation: '우주 비행사들은 우주에서 무중력을 경험한다.' },
-                { word: 'exist', sentence: 'Do you believe that ghosts e___t?', meaning: '존재하다, 실재하다', translation: '당신은 유령이 존재한다고 믿나요?' },
-                { word: 'solar', sentence: 'We use s___r panels to generate electricity.', meaning: '태양의; 태양열을 이용한', translation: '우리는 전기를 생산하기 위해 태양 전지판을 사용한다.' },
-                { word: 'lunar', sentence: 'The l___r eclipse was amazing to watch.', meaning: '달의', translation: '월식은 정말 멋진 광경이었다.' },
-                { word: 'flash', sentence: 'A camera f___h went off in the dark.', meaning: '번쩍임', translation: '어둠 속에서 카메라 플래시가 터졌다.' },
-                { word: 'flash', sentence: 'Lightning f___hed across the sky.', meaning: '(잠깐) 비치다, 번쩍이다', translation: '번개가 하늘을 가로질러 번쩍였다.' },
-                { word: 'burst', sentence: 'The balloon b___t with a loud noise.', meaning: '터지다, 폭발하다', translation: '풍선이 큰 소리를 내며 터졌다.' },
-                { word: 'observe', sentence: 'Scientists o_____e the behavior of animals.', meaning: '관찰하다, 관측하다', translation: '과학자들은 동물의 행동을 관찰한다.' },
-                { word: 'spaceship', sentence: 'The s________p traveled to Mars.', meaning: '우주선', translation: '우주선은 화성으로 여행했다.' },
-                { word: 'rocket', sentence: 'The r____t launched into space.', meaning: '로켓', translation: '로켓이 우주로 발사되었다.' },
-                { word: 'rocket', sentence: 'Prices are expected to r____t this year.', meaning: '치솟다, 급증하다', translation: '올해 물가가 치솟을 것으로 예상된다.' },
-                { word: 'astronaut', sentence: 'An a_______t walked on the moon.', meaning: '우주 비행사', translation: '우주 비행사가 달 위를 걸었다.' },
-                { word: 'shuttle', sentence: 'The space s_____e returned to Earth safely.', meaning: '우주 왕복선', translation: '우주 왕복선은 지구로 무사히 귀환했다.' },
-                { word: 'launch', sentence: 'They will l____h a new product next month.', meaning: '시작하다, 개시하다', translation: '그들은 다음 달에 신제품을 출시할 것이다.' },
-                { word: 'launch', sentence: 'The l____h of the rocket was successful.', meaning: '개시, 출시, 발사', translation: '로켓 발사는 성공적이었다.' },
-                { word: 'explore', sentence: 'Let\'s e_____e the new city.', meaning: '탐험하다, 탐구하다', translation: '새로운 도시를 탐험해 보자.' },
-                { word: 'footprint', sentence: 'We saw a bear\'s f_______t in the snow.', meaning: '발자국', translation: '우리는 눈 속에서 곰의 발자국을 보았다.' },
-                { word: 'discover', sentence: 'The explorer d_______ed a new island.', meaning: '발견하다', translation: '그 탐험가는 새로운 섬을 발견했다.' },
-                { word: 'detect', sentence: 'The test can d____t the presence of the virus.', meaning: '탐지하다, 감지하다', translation: '그 검사는 바이러스의 존재를 탐지할 수 있다.' },
-                { word: 'alien', sentence: 'He claims he was abducted by an a___n.', meaning: '외계인; 외계의', translation: '그는 외계인에게 납치되었다고 주장한다.' }
+                { word: 'universe', sentence: 'The universe is vast and full of mysteries.', meaning: '우주', translation: '우주는 광활하고 신비로 가득 차 있다.' },
+                { word: 'galaxy', sentence: 'Our Milky Way galaxy contains billions of stars.', meaning: '은하계', translation: '우리 은하계는 수십억 개의 별을 포함하고 있다.' },
+                { word: 'consist', sentence: 'A team should consist of members with different skills.', meaning: '이루어지다', translation: '팀은 다른 기술을 가진 구성원들로 이루어져 있어야 한다.' },
+                { word: 'numerous', sentence: 'There are numerous stars in the sky.', meaning: '많은', translation: '하늘에는 많은 별들이 있다.' },
+                { word: 'float', sentence: 'Wood will float on water.', meaning: '뜨다', translation: '나무는 물 위에 뜰 것이다.' },
+                { word: 'planet', sentence: 'Earth is the third planet from the sun.', meaning: '행성', translation: '지구는 태양계의 세 번째 행성이다.' },
+                { word: 'comet', sentence: 'We saw a comet streak across the sky.', meaning: '혜성', translation: '우리는 혜성이 하늘을 가로지르는 것을 보았다.' },
+                { word: 'earth', sentence: 'The rocket fell back to earth.', meaning: '지구', translation: '로켓은 지구로 다시 떨어졌다.' },
+                { word: 'earth', sentence: 'This earth is very fertile.', meaning: '흙', translation: '이 흙은 매우 비옥하다.' },
+                { word: 'gravity', sentence: 'Astronauts experience zero gravity in space.', meaning: '중력', translation: '우주 비행사들은 우주에서 무중력을 경험한다.' },
+                { word: 'exist', sentence: 'Do you believe that ghosts exist?', meaning: '존재하다', translation: '당신은 유령이 존재한다고 믿나요?' },
+                { word: 'solar', sentence: 'We use solar panels to generate electricity.', meaning: '태양의', translation: '우리는 전기를 생산하기 위해 태양 전지판을 사용한다.' },
+                { word: 'lunar', sentence: 'The lunar eclipse was amazing to watch.', meaning: '달의', translation: '월식은 정말 멋진 광경이었다.' },
+                { word: 'flash', sentence: 'A camera flash went off in the dark.', meaning: '번쩍임', translation: '어둠 속에서 카메라 플래시가 터졌다.' },
+                { word: 'flash', sentence: 'Lightning flashed across the sky.', meaning: '번쩍이다', translation: '번개가 하늘을 가로질러 번쩍였다.' },
+                { word: 'burst', sentence: 'The balloon burst with a loud noise.', meaning: '터지다', translation: '풍선이 큰 소리를 내며 터졌다.' },
+                { word: 'observe', sentence: 'Scientists observe the behavior of animals.', meaning: '관찰하다', translation: '과학자들은 동물의 행동을 관찰한다.' },
+                { word: 'spaceship', sentence: 'The spaceship traveled to Mars.', meaning: '우주선', translation: '우주선은 화성으로 여행했다.' },
+                { word: 'rocket', sentence: 'The rocket launched into space.', meaning: '로켓', translation: '로켓이 우주로 발사되었다.' },
+                { word: 'rocket', sentence: 'Prices are expected to rocket this year.', meaning: '치솟다', translation: '올해 물가가 치솟을 것으로 예상된다.' },
+                { word: 'astronaut', sentence: 'An astronaut walked on the moon.', meaning: '우주 비행사', translation: '우주 비행사가 달 위를 걸었다.' },
+                { word: 'shuttle', sentence: 'The space shuttle returned to Earth safely.', meaning: '우주 왕복선', translation: '우주 왕복선은 지구로 무사히 귀환했다.' },
+                { word: 'launch', sentence: 'They will launch a new product next month.', meaning: '출시하다', translation: '그들은 다음 달에 신제품을 출시할 것이다.' },
+                { word: 'launch', sentence: 'The launch of the rocket was successful.', meaning: '발사', translation: '로켓 발사는 성공적이었다.' },
+                { word: 'explore', sentence: 'Let\'s explore the new city.', meaning: '탐험하다', translation: '새로운 도시를 탐험해 보자.' },
+                { word: 'footprint', sentence: 'We saw a bear\'s footprint in the snow.', meaning: '발자국', translation: '우리는 눈 속에서 곰의 발자국을 보았다.' },
+                { word: 'discover', sentence: 'The explorer discovered a new island.', meaning: '발견하다', translation: '그 탐험가는 새로운 섬을 발견했다.' },
+                { word: 'detect', sentence: 'The test can detect the presence of the virus.', meaning: '탐지하다', translation: '그 검사는 바이러스의 존재를 탐지할 수 있다.' },
+                { word: 'alien', sentence: 'He claims he was abducted by an alien.', meaning: '외계인', translation: '그는 외계인에게 납치되었다고 주장한다.' }
             ],
             'unit36': [
-                { word: 'number', sentence: 'What is your lucky n____r?', meaning: '수, 숫자; 번호', translation: '당신의 행운의 숫자는 무엇인가요?' },
-                { word: 'amount', sentence: 'A large a____t of money was donated.', meaning: '양; 총액', translation: '많은 양의 돈이 기부되었다.' },
-                { word: 'amount', sentence: 'The total bill a____s to $100.', meaning: '(금액이) ~ 되다', translation: '총액이 100달러가 되다.' },
-                { word: 'couple', sentence: 'I\'d like a c____e of apples, please.', meaning: '두 개, 두 사람; 커플, 부부', translation: '사과 두어 개 주세요.' },
-                { word: 'double', sentence: 'The price of the ticket is d____e on weekends.', meaning: '두 배의; 두 배로 만들다', translation: '주말에는 티켓 가격이 두 배이다.' },
-                { word: 'half', sentence: 'I spent h__f of my money on books.', meaning: '절반, 2분의 1', translation: '나는 내 돈의 절반을 책에 썼다.' },
-                { word: 'half', sentence: 'It\'s h__f past two, so it\'s two-thirty.', meaning: '30분', translation: '2시 반, 즉 2시 30분이다.' },
-                { word: 'extra', sentence: 'Can I get an e___a pillow for my room?', meaning: '추가의, 여분의, 임시의', translation: '제 방에 추가의 베개를 받을 수 있을까요?' },
-                { word: 'enough', sentence: 'Do we have e____h food for everyone?', meaning: '필요한 만큼의, 충분한; 충분히', translation: '모두를 위한 충분한 음식이 있나요?' },
-                { word: 'same', sentence: 'They are wearing the s__e shirt.', meaning: '(똑)같은, 동일한; 똑같이 (the ~)', translation: '그들은 똑같은 셔츠를 입고 있다.' },
-                { word: 'few', sentence: 'F_w people came to the meeting.', meaning: '(수가) 많지 않은[적은]', translation: '회의에 온 사람이 많지 않았다.' },
-                { word: 'bit', sentence: 'Add just a b_t of salt.', meaning: '조금, 약간', translation: '소금을 조금만 더하세요.' },
-                { word: 'any', sentence: 'Do you have a_y questions?', meaning: '어떤, 어느, 무슨; 아무(것); 전혀, 조금도', translation: '어떤 질문이라도 있나요?' },
-                { word: 'nothing', sentence: 'There is n_____g in the box.', meaning: '아무것도 (~아니다), 아무것도 아닌 것', translation: '상자 안에는 아무것도 없다.' },
-                { word: 'only', sentence: 'He is my o__y friend.', meaning: '유일한', translation: '그는 나의 유일한 친구이다.' },
-                { word: 'only', sentence: 'She is o__y five years old.', meaning: '단지, 오직', translation: '그녀는 단지 다섯 살이다.' },
-                { word: 'centimeter', sentence: 'The line is 10 c________s long.', meaning: '센티미터', translation: '그 선은 길이가 10센티미터이다.' },
-                { word: 'kilogram', sentence: 'This bag weighs 5 k______s.', meaning: '킬로그램 (1,000그램)', translation: '이 가방은 무게가 5킬로그램이다.' },
-                { word: 'mile', sentence: 'The town is 10 m___s away from here.', meaning: '<거리 단위>마일 (1,609m)', translation: '그 마을은 여기서 10마일 떨어져 있다.' },
-                { word: 'piece', sentence: 'I\'d like a p___e of cake.', meaning: '한 조각, 한 부분 (자르거나 나눠 놓은 것); (깨어진) 조각', translation: '케이크 한 조각 주세요.' },
-                { word: 'pair', sentence: 'I need a new p__r of shoes.', meaning: '한 쌍, 한 짝', translation: '나는 새 신발 한 켤레가 필요하다.' },
-                { word: 'count', sentence: 'Can you c___t from one to ten in Spanish?', meaning: '수를 세다; 계산하다', translation: '스페인어로 1부터 10까지 수를 셀 수 있나요?' },
-                { word: 'add', sentence: 'If you a_d 3 and 4, you get 7.', meaning: '더하다, 추가하다', translation: '3과 4를 더하면 7이 됩니다.' },
-                { word: 'plus', sentence: 'Two p__s two equals four.', meaning: '더하기, 플러스; ~이상의', translation: '2 더하기 2는 4이다.' },
-                { word: 'divide', sentence: 'Let\'s d____e the pizza into four slices.', meaning: '나누다, 갈라지다', translation: '피자를 네 조각으로 나누자.' },
-                { word: 'increase', sentence: 'The company\'s profits i______d last year.', meaning: '증가하다; 증가', translation: '그 회사의 수익은 작년에 증가했다.' },
-                { word: 'measure', sentence: 'We need to m_____e the temperature of the room.', meaning: '재다, 측정하다', translation: '우리는 방의 온도를 재야 한다.' },
-                { word: 'measure', sentence: 'The government took strong m_____s to stop the spread.', meaning: '조치, 대책; (어떤 것의) 양, 정도', translation: '정부는 확산을 막기 위해 강력한 조치를 취했다.' },
-                { word: 'weigh', sentence: 'How much do you w___h?', meaning: '무게를 달다, 체중을 달다; 무게가 ~이다', translation: '당신은 무게가 얼마인가요?' }
+                { word: 'number', sentence: 'What is your lucky number?', meaning: '숫자', translation: '당신의 행운의 숫자는 무엇인가요?' },
+                { word: 'amount', sentence: 'A large amount of money was donated.', meaning: '양', translation: '많은 양의 돈이 기부되었다.' },
+                { word: 'amount', sentence: 'The total bill amounts to $100.', meaning: '~이 되다', translation: '총액이 100달러가 되다.' },
+                { word: 'couple', sentence: 'I\'d like a couple of apples, please.', meaning: '두 개; 커플', translation: '사과 두어 개 주세요.' },
+                { word: 'double', sentence: 'The price of the ticket is double on weekends.', meaning: '두 배의', translation: '주말에는 티켓 가격이 두 배이다.' },
+                { word: 'half', sentence: 'I spent half of my money on books.', meaning: '절반', translation: '나는 내 돈의 절반을 책에 썼다.' },
+                { word: 'half', sentence: 'It\'s half past two, so it\'s two-thirty.', meaning: '30분', translation: '2시 반, 즉 2시 30분이다.' },
+                { word: 'extra', sentence: 'Can I get an extra pillow for my room?', meaning: '추가의', translation: '제 방에 추가의 베개를 받을 수 있을까요?' },
+                { word: 'enough', sentence: 'Do we have enough food for everyone?', meaning: '충분한', translation: '모두를 위한 충분한 음식이 있나요?' },
+                { word: 'same', sentence: 'They are wearing the same shirt.', meaning: '같은', translation: '그들은 똑같은 셔츠를 입고 있다.' },
+                { word: 'few', sentence: 'Few people came to the meeting.', meaning: '적은', translation: '회의에 온 사람이 많지 않았다.' },
+                { word: 'bit', sentence: 'Add just a bit of salt.', meaning: '조금', translation: '소금을 조금만 더하세요.' },
+                { word: 'any', sentence: 'Do you have any questions?', meaning: '어떤', translation: '어떤 질문이라도 있나요?' },
+                { word: 'nothing', sentence: 'There is nothing in the box.', meaning: '아무것도 (~아니다)', translation: '상자 안에는 아무것도 없다.' },
+                { word: 'only', sentence: 'He is my only friend.', meaning: '유일한', translation: '그는 나의 유일한 친구이다.' },
+                { word: 'only', sentence: 'She is only five years old.', meaning: '단지', translation: '그녀는 단지 다섯 살이다.' },
+                { word: 'centimeter', sentence: 'The line is 10 centimeters long.', meaning: '센티미터', translation: '그 선은 길이가 10센티미터이다.' },
+                { word: 'kilogram', sentence: 'This bag weighs 5 kilograms.', meaning: '킬로그램', translation: '이 가방은 무게가 5킬로그램이다.' },
+                { word: 'mile', sentence: 'The town is 10 miles away from here.', meaning: '마일', translation: '그 마을은 여기서 10마일 떨어져 있다.' },
+                { word: 'piece', sentence: 'I\'d like a piece of cake.', meaning: '조각', translation: '케이크 한 조각 주세요.' },
+                { word: 'pair', sentence: 'I need a new pair of shoes.', meaning: '쌍, 켤레', translation: '나는 새 신발 한 켤레가 필요하다.' },
+                { word: 'count', sentence: 'Can you count from one to ten in Spanish?', meaning: '세다', translation: '스페인어로 1부터 10까지 수를 셀 수 있나요?' },
+                { word: 'add', sentence: 'If you add 3 and 4, you get 7.', meaning: '더하다', translation: '3과 4를 더하면 7이 됩니다.' },
+                { word: 'plus', sentence: 'Two plus two equals four.', meaning: '더하기', translation: '2 더하기 2는 4이다.' },
+                { word: 'divide', sentence: 'Let\'s divide the pizza into four slices.', meaning: '나누다', translation: '피자를 네 조각으로 나누자.' },
+                { word: 'increase', sentence: 'The company\'s profits increased last year.', meaning: '증가하다', translation: '그 회사의 수익은 작년에 증가했다.' },
+                { word: 'measure', sentence: 'We need to measure the temperature of the room.', meaning: '재다', translation: '우리는 방의 온도를 재야 한다.' },
+                { word: 'measure', sentence: 'The government took strong measures to stop the spread.', meaning: '조치', translation: '정부는 확산을 막기 위해 강력한 조치를 취했다.' },
+                { word: 'weigh', sentence: 'How much do you weigh?', meaning: '무게가 ~이다', translation: '당신은 무게가 얼마인가요?' }
             ],
             'unit37': [
-                { word: 'hour', sentence: 'The meeting will last for an h__r.', meaning: '1시간', translation: '회의는 1시간 동안 계속될 것이다.' },
-                { word: 'minute', sentence: 'Wait a m____e, please.', meaning: '<시간 단위>분; 잠깐', translation: '잠깐만 기다려 주세요.' },
-                { word: 'second', sentence: 'There are 60 s____s in a minute.', meaning: '<시간 단위> 초', translation: '1분은 60초이다.' },
-                { word: 'second', sentence: 'Just a s____d, I\'m almost ready.', meaning: '잠시, 순간', translation: '잠시만, 거의 다 준비됐어.' },
-                { word: 'second', sentence: 'He finished s____d in the race.', meaning: '두 번째의', translation: '그는 경주에서 2등으로 들어왔다.' },
-                { word: 'noon', sentence: 'We decided to meet at n__n.', meaning: '정오<낮 12시>, 한낮', translation: '우리는 정오에 만나기로 했다.' },
-                { word: 'evening', sentence: 'I usually watch TV in the e_____g.', meaning: '저녁, 밤, 야간', translation: '나는 보통 저녁에 TV를 본다.' },
-                { word: 'tonight', sentence: 'Are you doing anything t_____t?', meaning: '오늘 밤에; 오늘 밤', translation: '오늘 밤에 뭐 하니?' },
-                { word: 'present', sentence: 'What is the p_____t time?', meaning: '현재, 지금', translation: '현재 시각이 몇 시입니까?' },
-                { word: 'present', sentence: 'Thank you for the lovely p_____t.', meaning: '선물', translation: '멋진 선물 고마워요.' },
-                { word: 'present', sentence: 'All students must be p_____t at the assembly.', meaning: '참석한', translation: '모든 학생은 조회에 참석해야 한다.' },
-                { word: 'future', sentence: 'What are your plans for the f____e?', meaning: '미래, 장래; 미래의', translation: '당신의 미래 계획은 무엇인가요?' },
-                { word: 'moment', sentence: 'Please wait for a m____t.', meaning: '순간, 잠깐; (어떤 일이 일어난) 때, 시기', translation: '잠깐만 기다려 주세요.' },
-                { word: 'forever', sentence: 'I\'ll love you f_____r.', meaning: '영원히', translation: '영원히 당신을 사랑할게요.' },
-                { word: 'early', sentence: 'She gets up e___y in the morning.', meaning: '이른, 빠른; 일찍, 빨리', translation: '그녀는 아침에 일찍 일어난다.' },
-                { word: 'late', sentence: 'I was l__e for school today.', meaning: '늦은, 지각한; 늦게', translation: '나는 오늘 학교에 늦었다.' },
-                { word: 'soon', sentence: 'I\'ll be back s__n.', meaning: '곧, 머지않아, 이내; 빨리', translation: '곧 돌아올게.' },
-                { word: 'since', sentence: 'I have lived here s___e 2010.', meaning: '~ 이후 계속; ~ 이후로', translation: '나는 2010년 이후로 계속 여기에 살고 있다.' },
-                { word: 'since', sentence: 'S___e you\'re tired, you should rest.', meaning: '~ 때문에, ~이므로', translation: '너는 피곤하기 때문에, 쉬어야 한다.' },
-                { word: 'almost', sentence: 'I\'ve a____t finished my homework.', meaning: '거의, 대부분', translation: '나는 숙제를 거의 다 끝냈다.' },
-                { word: 'date', sentence: 'What\'s the d__e today?', meaning: '날짜', translation: '오늘 날짜가 며칠이죠?' },
-                { word: 'date', sentence: 'He asked her out on a d__e.', meaning: '데이트', translation: '그는 그녀에게 데이트 신청을 했다.' },
-                { word: 'everyday', sentence: 'Brushing your teeth is an e______y task.', meaning: '매일의, 일상의', translation: '이를 닦는 것은 일상의 일이다.' },
-                { word: 'yesterday', sentence: 'I met him y_______y.', meaning: '어제; 어제', translation: '나는 어제 그를 만났다.' },
-                { word: 'tomorrow', sentence: 'T______w will be a sunny day.', meaning: '내일; 내일, 미래', translation: '내일은 맑은 날이 될 것이다.' },
-                { word: 'week', sentence: 'There are seven days in a w__k.', meaning: '주, 일주일', translation: '일주일은 7일이다.' },
-                { word: 'weekend', sentence: 'What are you doing this w_____d?', meaning: '주말', translation: '이번 주말에 뭐 하니?' },
-                { word: 'month', sentence: 'My birthday is next m___h.', meaning: '달, 월', translation: '내 생일은 다음 달이다.' },
-                { word: 'last', sentence: 'This is the l__t warning.', meaning: '마지막의', translation: '이게 마지막 경고야.' },
-                { word: 'last', sentence: 'I saw him l__t week.', meaning: '지난, 가장 최근의', translation: '나는 지난주에 그를 봤다.' },
-                { word: 'last', sentence: 'The movie l__s for two hours.', meaning: '계속되다, 지속되다', translation: '그 영화는 2시간 동안 계속된다.' },
-                { word: 'final', sentence: 'This is the f___l chapter of the book.', meaning: '마지막의, 최종의; 최종적인; 결승전', translation: '이것이 이 책의 마지막 장이다.' },
-                { word: 'end', sentence: 'The movie has a happy e_d.', meaning: '끝, 말', translation: '그 영화는 행복한 결말로 끝난다.' },
-                { word: 'end', sentence: 'The concert will e_d at 10 PM.', meaning: '끝나다', translation: '콘서트는 밤 10시에 끝날 것이다.' }
+                { word: 'hour', sentence: 'The meeting will last for an hour.', meaning: '시간', translation: '회의는 1시간 동안 계속될 것이다.' },
+                { word: 'minute', sentence: 'Wait a minute, please.', meaning: '분; 잠깐', translation: '잠깐만 기다려 주세요.' },
+                { word: 'second', sentence: 'There are 60 seconds in a minute.', meaning: '초', translation: '1분은 60초이다.' },
+                { word: 'second', sentence: 'Just a second, I\'m almost ready.', meaning: '순간', translation: '잠시만, 거의 다 준비됐어.' },
+                { word: 'second', sentence: 'He finished second in the race.', meaning: '두 번째의', translation: '그는 경주에서 2등으로 들어왔다.' },
+                { word: 'noon', sentence: 'We decided to meet at noon.', meaning: '정오', translation: '우리는 정오에 만나기로 했다.' },
+                { word: 'evening', sentence: 'I usually watch TV in the evening.', meaning: '저녁', translation: '나는 보통 저녁에 TV를 본다.' },
+                { word: 'tonight', sentence: 'Are you doing anything tonight?', meaning: '오늘 밤', translation: '오늘 밤에 뭐 하니?' },
+                { word: 'present', sentence: 'What is the present time?', meaning: '현재', translation: '현재 시각이 몇 시입니까?' },
+                { word: 'present', sentence: 'Thank you for the lovely present.', meaning: '선물', translation: '멋진 선물 고마워요.' },
+                { word: 'present', sentence: 'All students must be present at the assembly.', meaning: '참석한', translation: '모든 학생은 조회에 참석해야 한다.' },
+                { word: 'future', sentence: 'What are your plans for the future?', meaning: '미래', translation: '당신의 미래 계획은 무엇인가요?' },
+                { word: 'moment', sentence: 'Please wait for a moment.', meaning: '순간', translation: '잠깐만 기다려 주세요.' },
+                { word: 'forever', sentence: 'I\'ll love you forever.', meaning: '영원히', translation: '영원히 당신을 사랑할게요.' },
+                { word: 'early', sentence: 'She gets up early in the morning.', meaning: '일찍', translation: '그녀는 아침에 일찍 일어난다.' },
+                { word: 'late', sentence: 'I was late for school today.', meaning: '늦은', translation: '나는 오늘 학교에 늦었다.' },
+                { word: 'soon', sentence: 'I\'ll be back soon.', meaning: '곧', translation: '곧 돌아올게.' },
+                { word: 'since', sentence: 'I have lived here since 2010.', meaning: '~이후로', translation: '나는 2010년 이후로 계속 여기에 살고 있다.' },
+                { word: 'since', sentence: 'Since you\'re tired, you should rest.', meaning: '~때문에', translation: '너는 피곤하기 때문에, 쉬어야 한다.' },
+                { word: 'almost', sentence: 'I\'ve almost finished my homework.', meaning: '거의', translation: '나는 숙제를 거의 다 끝냈다.' },
+                { word: 'date', sentence: 'What\'s the date today?', meaning: '날짜', translation: '오늘 날짜가 며칠이죠?' },
+                { word: 'date', sentence: 'He asked her out on a date.', meaning: '데이트', translation: '그는 그녀에게 데이트 신청을 했다.' },
+                { word: 'everyday', sentence: 'Brushing your teeth is an everyday task.', meaning: '일상의', translation: '이를 닦는 것은 일상의 일이다.' },
+                { word: 'yesterday', sentence: 'I met him yesterday.', meaning: '어제', translation: '나는 어제 그를 만났다.' },
+                { word: 'tomorrow', sentence: 'Tomorrow will be a sunny day.', meaning: '내일', translation: '내일은 맑은 날이 될 것이다.' },
+                { word: 'week', sentence: 'There are seven days in a week.', meaning: '주일', translation: '일주일은 7일이다.' },
+                { word: 'weekend', sentence: 'What are you doing this weekend?', meaning: '주말', translation: '이번 주말에 뭐 하니?' },
+                { word: 'month', sentence: 'My birthday is next month.', meaning: '달, 월', translation: '내 생일은 다음 달이다.' },
+                { word: 'last', sentence: 'This is the last warning.', meaning: '마지막의', translation: '이게 마지막 경고야.' },
+                { word: 'last', sentence: 'I saw him last week.', meaning: '지난', translation: '나는 지난주에 그를 봤다.' },
+                { word: 'last', sentence: 'The movie lasts for two hours.', meaning: '지속되다', translation: '그 영화는 2시간 동안 계속된다.' },
+                { word: 'final', sentence: 'This is the final chapter of the book.', meaning: '최종의', translation: '이것이 이 책의 마지막 장이다.' },
+                { word: 'end', sentence: 'The movie has a happy end.', meaning: '끝', translation: '그 영화는 행복한 결말로 끝난다.' },
+                { word: 'end', sentence: 'The concert will end at 10 PM.', meaning: '끝나다', translation: '콘서트는 밤 10시에 끝날 것이다.' }
             ],
             'unit38': [
-                { word: 'object', sentence: 'What is that strange o____t in the sky?', meaning: '물체, 물건', translation: '하늘에 있는 저 이상한 물체는 무엇이니?' },
-                { word: 'object', sentence: 'The o____t of the game is to score points.', meaning: '목적, 목표', translation: '그 게임의 목적은 점수를 얻는 것이다.' },
-                { word: 'object', sentence: 'I o____t to your plan.', meaning: '반대하다', translation: '나는 너의 계획에 반대한다.' },
-                { word: 'type', sentence: 'What t__e of food do you like?', meaning: '유형, 종류', translation: '어떤 종류의 음식을 좋아하세요?' },
-                { word: 'type', sentence: 'She is learning to t__e on a keyboard.', meaning: '(컴퓨터로) 타자 치다, 입력하다', translation: '그녀는 키보드로 타자 치는 것을 배우고 있다.' },
-                { word: 'describe', sentence: 'Can you d______e what the thief looked like?', meaning: '묘사하다, 설명하다', translation: '그 도둑이 어떻게 생겼는지 묘사해 주시겠어요?' },
-                { word: 'shape', sentence: 'The box has a square s___e.', meaning: '모양, 형태', translation: '그 상자는 정사각형 모양이다.' },
-                { word: 'shape', sentence: 'He is in good s___e because he exercises regularly.', meaning: '몸매, 체형', translation: '그는 규칙적으로 운동하기 때문에 몸매가 좋다.' },
-                { word: 'circle', sentence: 'Draw a c____e on the paper.', meaning: '원, 동그라미', translation: '종이 위에 원을 그리세요.' },
-                { word: 'circle', sentence: 'The birds c____d overhead.', meaning: '(특히 공중에서) 빙빙 돌다', translation: '새들이 머리 위에서 빙빙 돌았다.' },
-                { word: 'round', sentence: 'The Earth is r___d.', meaning: '둥근, 원형의', translation: '지구는 둥글다.' },
-                { word: 'round', sentence: 'Let\'s play another r___d of cards.', meaning: '한 차례, 한 회', translation: '카드 게임 한 차례 더 하자.' },
-                { word: 'square', sentence: 'A window is usually s____e.', meaning: '정사각형 모양의', translation: '창문은 보통 정사각형 모양이다.' },
-                { word: 'square', sentence: 'A s____e has four equal sides.', meaning: '정사각형', translation: '정사각형은 네 개의 동일한 변을 가지고 있다.' },
-                { word: 'square', sentence: 'People gathered in the town s____e.', meaning: '광장', translation: '사람들이 타운 광장에 모였다.' },
-                { word: 'flat', sentence: 'The table has a f__t surface.', meaning: '평평한', translation: '그 탁자는 표면이 평평하다.' },
-                { word: 'flat', sentence: 'My bicycle has a f__t tire.', meaning: '타이어가 펑크 난', translation: '내 자전거 타이어가 펑크 났다.' },
-                { word: 'line', sentence: 'Draw a straight l__e.', meaning: '선, 줄', translation: '직선을 그리세요.' },
-                { word: 'sharp', sentence: 'This knife is very s___p.', meaning: '날카로운, 뾰족한', translation: '이 칼은 매우 날카롭다.' },
-                { word: 'sharp', sentence: 'There was a s___p increase in prices.', meaning: '급격한', translation: '물가가 급격하게 상승했다.' },
-                { word: 'size', sentence: 'What s__e shoes do you wear?', meaning: '크기, 규모', translation: '신발 사이즈가 어떻게 되세요?' },
-                { word: 'large', sentence: 'New York is a very l___e city.', meaning: '(규모가) 큰, (양이) 많은', translation: '뉴욕은 매우 큰 도시이다.' },
-                { word: 'giant', sentence: 'The story is about a friendly g___t.', meaning: '(이야기 속의) 거인; 거대한', translation: '그 이야기는 친절한 거인에 관한 것이다.' },
-                { word: 'huge', sentence: 'He lives in a h__e mansion.', meaning: '거대한, 엄청난', translation: '그는 거대한 저택에 산다.' },
-                { word: 'tiny', sentence: 'The chances of winning are very t__y.', meaning: '아주 작은, 아주 적은', translation: '이길 확률은 아주 적다.' },
-                { word: 'wide', sentence: 'The river is very w__e at this point.', meaning: '(폭이) 넓은', translation: '그 강은 이 지점에서 폭이 매우 넓다.' },
-                { word: 'deep', sentence: 'The ocean is very d__p here.', meaning: '깊은; 깊이가 ~인', translation: '이곳은 바다가 매우 깊다.' },
-                { word: 'short', sentence: 'The movie was too s___t.', meaning: '짧은', translation: '그 영화는 너무 짧았다.' },
-                { word: 'short', sentence: 'I am s___t of money this month.', meaning: '부족한', translation: '나는 이번 달에 돈이 부족하다.' },
-                { word: 'white', sentence: 'Snow is w___e.', meaning: '흰색의, 하얀; 흰색', translation: '눈은 희다.' },
-                { word: 'green', sentence: 'Grass is g___n.', meaning: '초록색의', translation: '풀은 초록색이다.' },
-                { word: 'green', sentence: 'We support g___n energy.', meaning: '환경 보호의', translation: '우리는 환경 보호 에너지를 지지한다.' },
-                { word: 'gray', sentence: 'The sky turned g__y before the storm.', meaning: '회색, 쥐색; 회색의, 쥐색의', translation: '폭풍우 전에 하늘이 회색으로 변했다.' },
-                { word: 'silver', sentence: 'She has s____r hair.', meaning: '은; 은빛, 은색; 은색의', translation: '그녀는 은색 머리카락을 가지고 있다.' },
-                { word: 'metal', sentence: 'Iron is a hard m___l.', meaning: '금속', translation: '철은 단단한 금속이다.' },
-                { word: 'bright', sentence: 'The stars are b____t tonight.', meaning: '밝은', translation: '오늘 밤은 별이 밝다.' },
-                { word: 'bright', sentence: 'He is a very b____t student.', meaning: '똑똑한', translation: '그는 매우 똑똑한 학생이다.' },
-                { word: 'dark', sentence: 'It gets d__k early in the winter.', meaning: '어두운, 캄캄한; 어둠', translation: '겨울에는 일찍 어두워진다.' }
+                { word: 'object', sentence: 'What is that strange object in the sky?', meaning: '물체', translation: '하늘에 있는 저 이상한 물체는 무엇이니?' },
+                { word: 'object', sentence: 'The object of the game is to score points.', meaning: '목적', translation: '그 게임의 목적은 점수를 얻는 것이다.' },
+                { word: 'object', sentence: 'I object to your plan.', meaning: '반대하다', translation: '나는 너의 계획에 반대한다.' },
+                { word: 'type', sentence: 'What type of food do you like?', meaning: '종류', translation: '어떤 종류의 음식을 좋아하세요?' },
+                { word: 'type', sentence: 'She is learning to type on a keyboard.', meaning: '입력하다', translation: '그녀는 키보드로 타자 치는 것을 배우고 있다.' },
+                { word: 'describe', sentence: 'Can you describe what the thief looked like?', meaning: '묘사하다', translation: '그 도둑이 어떻게 생겼는지 묘사해 주시겠어요?' },
+                { word: 'shape', sentence: 'The box has a square shape.', meaning: '모양', translation: '그 상자는 정사각형 모양이다.' },
+                { word: 'shape', sentence: 'He is in good shape because he exercises regularly.', meaning: '상태; 체형', translation: '그는 규칙적으로 운동하기 때문에 몸매가 좋다.' },
+                { word: 'circle', sentence: 'Draw a circle on the paper.', meaning: '원', translation: '종이 위에 원을 그리세요.' },
+                { word: 'circle', sentence: 'The birds circled overhead.', meaning: '빙빙 돌다', translation: '새들이 머리 위에서 빙빙 돌았다.' },
+                { word: 'round', sentence: 'The Earth is round.', meaning: '둥근', translation: '지구는 둥글다.' },
+                { word: 'round', sentence: 'Let\'s play another round of cards.', meaning: '차례, 회', translation: '카드 게임 한 차례 더 하자.' },
+                { word: 'square', sentence: 'A window is usually square.', meaning: '정사각형의', translation: '창문은 보통 정사각형 모양이다.' },
+                { word: 'square', sentence: 'A square has four equal sides.', meaning: '정사각형', translation: '정사각형은 네 개의 동일한 변을 가지고 있다.' },
+                { word: 'square', sentence: 'People gathered in the town square.', meaning: '광장', translation: '사람들이 타운 광장에 모였다.' },
+                { word: 'flat', sentence: 'The table has a flat surface.', meaning: '평평한', translation: '그 탁자는 표면이 평평하다.' },
+                { word: 'flat', sentence: 'My bicycle has a flat tire.', meaning: '펑크 난', translation: '내 자전거 타이어가 펑크 났다.' },
+                { word: 'line', sentence: 'Draw a straight line.', meaning: '선', translation: '직선을 그리세요.' },
+                { word: 'sharp', sentence: 'This knife is very sharp.', meaning: '날카로운', translation: '이 칼은 매우 날카롭다.' },
+                { word: 'sharp', sentence: 'There was a sharp increase in prices.', meaning: '급격한', translation: '물가가 급격하게 상승했다.' },
+                { word: 'size', sentence: 'What size shoes do you wear?', meaning: '크기', translation: '신발 사이즈가 어떻게 되세요?' },
+                { word: 'large', sentence: 'New York is a very large city.', meaning: '큰', translation: '뉴욕은 매우 큰 도시이다.' },
+                { word: 'giant', sentence: 'The story is about a friendly giant.', meaning: '거인', translation: '그 이야기는 친절한 거인에 관한 것이다.' },
+                { word: 'huge', sentence: 'He lives in a huge mansion.', meaning: '거대한', translation: '그는 거대한 저택에 산다.' },
+                { word: 'tiny', sentence: 'The chances of winning are very tiny.', meaning: '작은', translation: '이길 확률은 아주 적다.' },
+                { word: 'wide', sentence: 'The river is very wide at this point.', meaning: '넓은', translation: '그 강은 이 지점에서 폭이 매우 넓다.' },
+                { word: 'deep', sentence: 'The ocean is very deep here.', meaning: '깊은', translation: '이곳은 바다가 매우 깊다.' },
+                { word: 'short', sentence: 'The movie was too short.', meaning: '짧은', translation: '그 영화는 너무 짧았다.' },
+                { word: 'short', sentence: 'I am short of money this month.', meaning: '부족한', translation: '나는 이번 달에 돈이 부족하다.' },
+                { word: 'white', sentence: 'Snow is white.', meaning: '하얀', translation: '눈은 희다.' },
+                { word: 'green', sentence: 'Grass is green.', meaning: '초록색의', translation: '풀은 초록색이다.' },
+                { word: 'green', sentence: 'We support green energy.', meaning: '환경 보호의', translation: '우리는 환경 보호 에너지를 지지한다.' },
+                { word: 'gray', sentence: 'The sky turned gray before the storm.', meaning: '회색', translation: '폭풍우 전에 하늘이 회색으로 변했다.' },
+                { word: 'silver', sentence: 'She has silver hair.', meaning: '은색의', translation: '그녀는 은색 머리카락을 가지고 있다.' },
+                { word: 'metal', sentence: 'Iron is a hard metal.', meaning: '금속', translation: '철은 단단한 금속이다.' },
+                { word: 'bright', sentence: 'The stars are bright tonight.', meaning: '밝은', translation: '오늘 밤은 별이 밝다.' },
+                { word: 'bright', sentence: 'He is a very bright student.', meaning: '똑똑한', translation: '그는 매우 똑똑한 학생이다.' },
+                { word: 'dark', sentence: 'It gets dark early in the winter.', meaning: '어두운', translation: '겨울에는 일찍 어두워진다.' }
             ],
             'unit39': [
-                { word: 'clean', sentence: 'Please wash your c___n hands before eating.', meaning: '깨끗한, 깔끔한', translation: '먹기 전에 깨끗한 손을 씻으세요.' },
-                { word: 'clean', sentence: 'I need to c___n my room.', meaning: '청소하다, 닦다', translation: '나는 내 방을 청소해야 한다.' },
-                { word: 'dirty', sentence: 'Your shoes are d___y.', meaning: '더러운, 지저분한', translation: '네 신발은 더럽다.' },
-                { word: 'fast', sentence: 'A cheetah can run very f__t.', meaning: '빠른; 빠르게, 빨리', translation: '치타는 매우 빠르게 달릴 수 있다.' },
-                { word: 'quick', sentence: 'We had a q___k lunch.', meaning: '빠른, 신속한; 빨리, 신속히', translation: '우리는 빠른 점심을 먹었다.' },
-                { word: 'slow', sentence: 'The turtle is very s__w.', meaning: '느린; 느리게, 천천히', translation: '거북이는 매우 느리다.' },
-                { word: 'hard', sentence: 'This rock is very h__d.', meaning: '단단한, 굳은, 딱딱한', translation: '이 바위는 매우 단단하다.' },
-                { word: 'hard', sentence: 'The exam was too h__d for me.', meaning: '어려운, 힘든', translation: '그 시험은 나에게 너무 어려웠다.' },
-                { word: 'hard', sentence: 'She is a h__d worker.', meaning: '열심히 하는', translation: '그녀는 열심히 하는 일꾼이다.' },
-                { word: 'hard', sentence: 'You must study h__d.', meaning: '열심히', translation: '너는 열심히 공부해야 한다.' },
-                { word: 'soft', sentence: 'The pillow is very s__t.', meaning: '부드러운, 푹신한', translation: '그 베개는 매우 부드럽다.' },
-                { word: 'cheap', sentence: 'This T-shirt is very c___p.', meaning: '값싼', translation: '이 티셔츠는 매우 값싸다.' },
-                { word: 'expensive', sentence: 'A new car is very e_______e.', meaning: '값비싼', translation: '새 차는 매우 값비싸다.' },
-                { word: 'different', sentence: 'My opinion is d_______t from yours.', meaning: '다른, 차이가 나는; 여러 가지의', translation: '내 의견은 너의 것과 다르다.' },
-                { word: 'similar', sentence: 'Their houses are s_____r in size.', meaning: '비슷한, 유사한, 닮은', translation: '그들의 집은 크기가 비슷하다.' },
-                { word: 'everything', sentence: 'He lost e________g in the fire.', meaning: '모든 것, 모두', translation: '그는 화재로 모든 것을 잃었다.' },
-                { word: 'anything', sentence: 'You can buy a______g you want.', meaning: '무엇, 아무것; 무엇이든', translation: '너는 네가 원하는 무엇이든 살 수 있다.' },
-                { word: 'heavy', sentence: 'The box is too h___y to lift.', meaning: '무거운', translation: '그 상자는 들기에 너무 무겁다.' },
-                { word: 'heavy', sentence: 'There was h___y rain last night.', meaning: '(양이) 많은, 심한', translation: '어젯밤에 비가 심하게 왔다.' },
-                { word: 'dry', sentence: 'My clothes are still d_y.', meaning: '마른, 건조한', translation: '내 옷이 아직 마르지 않았다.' },
-                { word: 'dry', sentence: 'The d_y season is long here.', meaning: '(날이) 가문, 비가 오지 않는', translation: '이곳은 건기가 길다.' },
-                { word: 'open', sentence: 'The window is o__n.', meaning: '열린', translation: '창문이 열려 있다.' },
-                { word: 'open', sentence: 'Please o__n the door.', meaning: '열다', translation: '문을 열어주세요.' },
-                { word: 'open', sentence: 'The store will o__n at 10 AM.', meaning: '개업하다', translation: '그 가게는 오전 10시에 개업할 것이다.' },
-                { word: 'quiet', sentence: 'The library is a q___t place to study.', meaning: '조용한, 고요한', translation: '도서관은 공부하기에 조용한 장소이다.' },
-                { word: 'popular', sentence: 'This song is very p_____r among teenagers.', meaning: '인기 있는; 대중의, 대중적인', translation: '이 노래는 십대들 사이에서 매우 인기 있다.' },
-                { word: 'simple', sentence: 'The instructions are s____e and easy to follow.', meaning: '단순한, 간단한', translation: '설명서가 단순해서 따라 하기 쉽다.' },
-                { word: 'empty', sentence: 'The bottle is e___y.', meaning: '빈, 비어 있는', translation: '병이 비어 있다.' },
-                { word: 'precious', sentence: 'Time is the most p______s thing.', meaning: '귀중한, 값비싼', translation: '시간은 가장 귀중한 것이다.' },
-                { word: 'special', sentence: 'My birthday is a s_____l day for me.', meaning: '특별한', translation: '내 생일은 나에게 특별한 날이다.' },
-                { word: 'unique', sentence: 'Each person\'s fingerprint is u____e.', meaning: '유일한, 독특한', translation: '각 사람의 지문은 유일하다.' },
-                { word: 'perfect', sentence: 'Nobody is p_____t.', meaning: '완벽한', translation: '아무도 완벽하지 않다.' },
-                { word: 'useful', sentence: 'This tool is very u____l for gardening.', meaning: '유용한, 도움이 되는', translation: '이 도구는 정원 가꾸기에 매우 유용하다.' }
+                { word: 'clean', sentence: 'Please wash your clean hands before eating.', meaning: '깨끗한', translation: '먹기 전에 깨끗한 손을 씻으세요.' },
+                { word: 'clean', sentence: 'I need to clean my room.', meaning: '청소하다', translation: '나는 내 방을 청소해야 한다.' },
+                { word: 'dirty', sentence: 'Your shoes are dirty.', meaning: '더러운', translation: '네 신발은 더럽다.' },
+                { word: 'fast', sentence: 'A cheetah can run very fast.', meaning: '빠른; 빨리', translation: '치타는 매우 빠르게 달릴 수 있다.' },
+                { word: 'quick', sentence: 'We had a quick lunch.', meaning: '빠른', translation: '우리는 빠른 점심을 먹었다.' },
+                { word: 'slow', sentence: 'The turtle is very slow.', meaning: '느린', translation: '거북이는 매우 느리다.' },
+                { word: 'hard', sentence: 'This rock is very hard.', meaning: '딱딱한', translation: '이 바위는 매우 단단하다.' },
+                { word: 'hard', sentence: 'The exam was too hard for me.', meaning: '어려운', translation: '그 시험은 나에게 너무 어려웠다.' },
+                { word: 'hard', sentence: 'She is a hard worker.', meaning: '열심히 하는', translation: '그녀는 열심히 하는 일꾼이다.' },
+                { word: 'hard', sentence: 'You must study hard.', meaning: '열심히', translation: '너는 열심히 공부해야 한다.' },
+                { word: 'soft', sentence: 'The pillow is very soft.', meaning: '부드러운', translation: '그 베개는 매우 부드럽다.' },
+                { word: 'cheap', sentence: 'This T-shirt is very cheap.', meaning: '값싼', translation: '이 티셔츠는 매우 값싸다.' },
+                { word: 'expensive', sentence: 'A new car is very expensive.', meaning: '값비싼', translation: '새 차는 매우 값비싸다.' },
+                { word: 'different', sentence: 'My opinion is different from yours.', meaning: '다른', translation: '내 의견은 너의 것과 다르다.' },
+                { word: 'similar', sentence: 'Their houses are similar in size.', meaning: '비슷한', translation: '그들의 집은 크기가 비슷하다.' },
+                { word: 'everything', sentence: 'He lost everything in the fire.', meaning: '모든 것', translation: '그는 화재로 모든 것을 잃었다.' },
+                { word: 'anything', sentence: 'You can buy anything you want.', meaning: '무엇이든', translation: '너는 네가 원하는 무엇이든 살 수 있다.' },
+                { word: 'heavy', sentence: 'The box is too heavy to lift.', meaning: '무거운', translation: '그 상자는 들기에 너무 무거운 것이다.' },
+                { word: 'heavy', sentence: 'There was heavy rain last night.', meaning: '심한', translation: '어젯밤에 비가 심하게 왔다.' },
+                { word: 'dry', sentence: 'My clothes are still dry.', meaning: '마른', translation: '내 옷이 아직 마르지 않았다.' },
+                { word: 'dry', sentence: 'The dry season is long here.', meaning: '가문', translation: '이곳은 건기가 길다.' },
+                { word: 'open', sentence: 'The window is open.', meaning: '열린', translation: '창문이 열려 있다.' },
+                { word: 'open', sentence: 'Please open the door.', meaning: '열다', translation: '문을 열어주세요.' },
+                { word: 'open', sentence: 'The store will open at 10 AM.', meaning: '개업하다', translation: '그 가게는 오전 10시에 개업할 것이다.' },
+                { word: 'quiet', sentence: 'The library is a quiet place to study.', meaning: '조용한', translation: '도서관은 공부하기에 조용한 장소이다.' },
+                { word: 'popular', sentence: 'This song is very popular among teenagers.', meaning: '인기 있는', translation: '이 노래는 십대들 사이에서 매우 인기 있다.' },
+                { word: 'simple', sentence: 'The instructions are simple and easy to follow.', meaning: '간단한', translation: '설명서가 단순해서 따라 하기 쉽다.' },
+                { word: 'empty', sentence: 'The bottle is empty.', meaning: '비어 있는', translation: '병이 비어 있다.' },
+                { word: 'precious', sentence: 'Time is the most precious thing.', meaning: '귀중한', translation: '시간은 가장 귀중한 것이다.' },
+                { word: 'special', sentence: 'My birthday is a special day for me.', meaning: '특별한', translation: '내 생일은 나에게 특별한 날이다.' },
+                { word: 'unique', sentence: 'Each person\'s fingerprint is unique.', meaning: '독특한', translation: '각 사람의 지문은 유일하다.' },
+                { word: 'perfect', sentence: 'Nobody is perfect.', meaning: '완벽한', translation: '아무도 완벽하지 않다.' },
+                { word: 'useful', sentence: 'This tool is very useful for gardening.', meaning: '유용한', translation: '이 도구는 정원 가꾸기에 매우 유용하다.' }
             ],
             'unit40': [
-                { word: 'meantime', sentence: 'In the m______e, I\'ll prepare some snacks.', meaning: '그동안에, 그 사이에; 한편', translation: '그동안에, 내가 간식을 좀 준비할게.' },
-                { word: 'ever', sentence: 'Have you e_r been to Paris?', meaning: '한 번이라도', translation: '파리에 한 번이라도 가본 적이 있나요?' },
-                { word: 'ever', sentence: 'He is e_r optimistic.', meaning: '언제나, 항상', translation: '그는 언제나 낙관적이다.' },
-                { word: 'maybe', sentence: 'M___e he will come tomorrow.', meaning: '어쩌면, 아마', translation: '어쩌면 그는 내일 올지도 모른다.' },
-                { word: 'perhaps', sentence: 'P_____s it will rain later.', meaning: '아마, 어쩌면', translation: '아마 나중에 비가 올지도 모른다.' },
-                { word: 'actually', sentence: 'He looks young, but a______y he is over 40.', meaning: '실제로; 실은, 사실은', translation: '그는 젊어 보이지만, 실제로는 40세가 넘었다.' },
-                { word: 'already', sentence: 'I\'ve a_____y seen that movie.', meaning: '이미, 벌써', translation: '나는 이미 저 영화를 봤어.' },
-                { word: 'nearly', sentence: 'It\'s n____y midnight.', meaning: '거의', translation: '거의 자정이다.' },
-                { word: 'anyway', sentence: 'I\'m tired, but a____y, I have to finish this.', meaning: '그래도; 어쨌든', translation: '피곤해. 그래도, 나는 이것을 끝내야 해.' },
-                { word: 'instead', sentence: 'There was no coffee, so I drank tea i_____d.', meaning: '대신에', translation: '커피가 없어서, 대신에 차를 마셨다.' },
-                { word: 'always', sentence: 'She a____s arrives on time.', meaning: '항상, 언제나', translation: '그녀는 항상 제시간에 도착한다.' },
-                { word: 'often', sentence: 'I o___n go for a walk in the evening.', meaning: '흔히, 자주', translation: '나는 저녁에 흔히 산책을 간다.' },
-                { word: 'sometimes', sentence: 'S_______s I feel like staying home.', meaning: '때때로, 가끔', translation: '나는 때때로 집에 머물고 싶다.' },
-                { word: 'never', sentence: 'I will n___r forget your kindness.', meaning: '결코 ~않다, 전혀 ~아니다', translation: '당신의 친절을 결코 잊지 않을게요.' },
-                { word: 'either', sentence: 'You can choose e____r the blue one or the red one.', meaning: '(둘 중) 어느 하나', translation: '당신은 파란색 것과 빨간색 것 중 어느 하나를 선택할 수 있습니다.' },
-                { word: 'neither', sentence: 'N_____r of them knew the answer.', meaning: '어느 쪽도 ~이 아니다', translation: '그들 중 어느 쪽도 답을 알지 못했다.' },
-                { word: 'else', sentence: 'Do you need anything e__e?', meaning: '또 다른, 그 밖의 다른', translation: '그 밖에 다른 것이 더 필요한가요?' },
-                { word: 'such', sentence: 'I have never seen s_ch a beautiful sight.', meaning: '그런, 그러한', translation: '나는 그런 아름다운 광경을 본 적이 없다.' },
-                { word: 'likely', sentence: 'It is l____y to snow tomorrow.', meaning: '~할[일] 것 같은', translation: '내일 눈이 올 것 같다.' },
-                { word: 'unlike', sentence: 'U____e his brother, he is very tall.', meaning: '~과 달리; ~과 다른', translation: '그의 형과 달리, 그는 매우 키가 크다.' },
-                { word: 'against', sentence: 'He is a_____t the new plan.', meaning: '~에 반대하여, ~에 맞서', translation: '그는 새 계획에 반대한다.' },
-                { word: 'besides', sentence: 'B_____s milk, we also need to buy bread.', meaning: '~이외에; 게다가, 그밖에', translation: '우유 이외에, 우리는 빵도 사야 한다.' },
-                { word: 'during', sentence: 'D____g the summer, we went to the beach.', meaning: '~ 동안에, ~ 사이에', translation: '여름 동안에, 우리는 해변에 갔다.' },
-                { word: 'although', sentence: 'A______h it was cold, he went swimming.', meaning: '(비록) ~이긴 하지만', translation: '(비록) 날씨가 추웠지만, 그는 수영하러 갔다.' },
-                { word: 'whether', sentence: 'I don\'t know w_____r he will come or not.', meaning: '~인지 (아닌지); ~이든 (아니든)', translation: '나는 그가 올지 안 올지 모르겠다.' },
-                { word: 'nor', sentence: 'He can\'t sing, n_r can he dance.', meaning: '~도 (또한) 아니다', translation: '그는 노래도 못하고, 춤도 못 춘다.' }
+                { word: 'meantime', sentence: 'In the meantime, I\'ll prepare some snacks.', meaning: '그동안에', translation: '그동안에, 내가 간식을 좀 준비할게.' },
+                { word: 'ever', sentence: 'Have you ever been to Paris?', meaning: '한 번이라도', translation: '파리에 한 번이라도 가본 적이 있나요?' },
+                { word: 'ever', sentence: 'He is ever optimistic.', meaning: '언제나', translation: '그는 언제나 낙관적이다.' },
+                { word: 'maybe', sentence: 'Maybe he will come tomorrow.', meaning: '어쩌면', translation: '어쩌면 그는 내일 올지도 모른다.' },
+                { word: 'perhaps', sentence: 'Perhaps it will rain later.', meaning: '아마도', translation: '아마 나중에 비가 올지도 모른다.' },
+                { word: 'actually', sentence: 'He looks young, but actually he is over 40.', meaning: '사실은', translation: '그는 젊어 보이지만, 실제로는 40세가 넘었다.' },
+                { word: 'already', sentence: 'I\'ve already seen that movie.', meaning: '이미', translation: '나는 이미 저 영화를 봤어.' },
+                { word: 'nearly', sentence: 'It\'s nearly midnight.', meaning: '거의', translation: '거의 자정이다.' },
+                { word: 'anyway', sentence: 'I\'m tired, but anyway, I have to finish this.', meaning: '어쨌든', translation: '피곤해. 그래도, 나는 이것을 끝내야 해.' },
+                { word: 'instead', sentence: 'There was no coffee, so I drank tea instead.', meaning: '대신에', translation: '커피가 없어서, 대신에 차를 마셨다.' },
+                { word: 'always', sentence: 'She always arrives on time.', meaning: '항상', translation: '그녀는 항상 제시간에 도착한다.' },
+                { word: 'often', sentence: 'I often go for a walk in the evening.', meaning: '자주', translation: '나는 저녁에 흔히 산책을 간다.' },
+                { word: 'sometimes', sentence: 'Sometimes I feel like staying home.', meaning: '가끔', translation: '나는 때때로 집에 머물고 싶다.' },
+                { word: 'never', sentence: 'I will never forget your kindness.', meaning: '결코 ~않다', translation: '당신의 친절을 결코 잊지 않을게요.' },
+                { word: 'either', sentence: 'You can choose either the blue one or the red one.', meaning: '둘 중 하나', translation: '당신은 파란색 것과 빨간색 것 중 어느 하나를 선택할 수 있습니다.' },
+                { word: 'neither', sentence: 'Neither of them knew the answer.', meaning: '어느 쪽도 ~아니다', translation: '그들 중 어느 쪽도 답을 알지 못했다.' },
+                { word: 'else', sentence: 'Do you need anything else?', meaning: '다른', translation: '그 밖에 다른 것이 더 필요한가요?' },
+                { word: 'such', sentence: 'I have never seen such a beautiful sight.', meaning: '그런', translation: '나는 그런 아름다운 광경을 본 적이 없다.' },
+                { word: 'likely', sentence: 'It is likely to snow tomorrow.', meaning: '~할 것 같은', translation: '내일 눈이 올 것 같다.' },
+                { word: 'unlike', sentence: 'Unlike his brother, he is very tall.', meaning: '~와 달리', translation: '그의 형과 달리, 그는 매우 키가 크다.' },
+                { word: 'against', sentence: 'He is against the new plan.', meaning: '~에 반대하여', translation: '그는 새 계획에 반대한다.' },
+                { word: 'besides', sentence: 'Besides milk, we also need to buy bread.', meaning: '~이외에', translation: '우유 이외에, 우리는 빵도 사야 한다.' },
+                { word: 'during', sentence: 'During the summer, we went to the beach.', meaning: '~동안에', translation: '여름 동안에, 우리는 해변에 갔다.' },
+                { word: 'although', sentence: 'Although it was cold, he went swimming.', meaning: '비록 ~이지만', translation: '(비록) 날씨가 추웠지만, 그는 수영하러 갔다.' },
+                { word: 'whether', sentence: 'I don\'t know whether he will come or not.', meaning: '~인지 아닌지', translation: '나는 그가 올지 안 올지 모르겠다.' },
+                { word: 'nor', sentence: 'He can\'t sing, nor can he dance.', meaning: '~도 아니다', translation: '그는 노래도 못하고, 춤도 못 춘다.' }
             ]
         };
 
         const unitSelectionScreen = document.getElementById('unit-selection-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
-
         const quizTitle = document.getElementById('quiz-title');
         const progressIndicator = document.getElementById('progress-indicator');
         const sentenceEl = document.getElementById('sentence');
         const meaningEl = document.getElementById('meaning');
         const answerForm = document.getElementById('answer-form');
         const answerInput = document.getElementById('answer-input');
-
         const scoreEl = document.getElementById('score');
         const incorrectList = document.getElementById('incorrect-answers-list');
         const copyBtn = document.getElementById('copy-results-btn');
@@ -483,7 +445,6 @@
             score = 0;
             incorrectAnswers = [];
             currentQuestions = [];
-
             let title = '';
 
             if (mode.startsWith('unit')) {
@@ -495,7 +456,7 @@
                 title = `Unit ${start}-${end} 복습`;
                 let combined = [];
                 for (let i = start; i <= end; i++) {
-                    combined.push(...quizData[`unit${i}`]);
+                    if(quizData[`unit${i}`]) combined.push(...quizData[`unit${i}`]);
                 }
                 shuffle(combined);
                 currentQuestions = combined.slice(0, 30);
@@ -504,31 +465,33 @@
                 title = `Unit ${start}-${end} 통합`;
                 let combined = [];
                 for (let i = start; i <= end; i++) {
-                    combined.push(...quizData[`unit${i}`]);
+                    if(quizData[`unit${i}`]) combined.push(...quizData[`unit${i}`]);
                 }
                 currentQuestions = combined;
             }
 
             quizTitle.textContent = title;
             shuffle(currentQuestions);
-
             unitSelectionScreen.classList.add('hidden');
             resultScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
-
             displayQuestion();
         }
 
         function displayQuestion() {
             if (currentQuestionIndex < currentQuestions.length) {
                 const question = currentQuestions[currentQuestionIndex];
-                const hint = question.word.charAt(0) + '_'.repeat(question.word.length - 1);
                 
-                // For better hint replacement
-                const regex = new RegExp(`\\b${question.word}\\b`, 'i');
-                const highlightedSentence = question.sentence.replace(regex, `<span class="font-bold text-indigo-600">${hint}</span>`);
+                // 문장에서 문제 단어를 찾아 힌트(첫글자 + 언더바)로 변환
+                const targetWord = question.word;
+                const regexForFinding = new RegExp(`${targetWord}[a-z]*`, 'i');
+                const match = question.sentence.match(regexForFinding);
+                const actualWordInSentence = match ? match[0] : targetWord;
+
+                const hint = actualWordInSentence.charAt(0) + '_'.repeat(actualWordInSentence.length - 1);
+                const highlightedSentence = question.sentence.replace(actualWordInSentence, `<span class="font-bold text-indigo-600">${hint}</span>`);
+                
                 sentenceEl.innerHTML = highlightedSentence;
-                
                 meaningEl.textContent = question.translation;
                 progressIndicator.textContent = `${currentQuestionIndex + 1} / ${currentQuestions.length}`;
                 answerInput.value = '';
@@ -540,10 +503,6 @@
         
         answerForm.addEventListener('submit', e => {
             e.preventDefault();
-            checkAnswer();
-        });
-
-        function checkAnswer() {
             const userAnswer = answerInput.value.trim().toLowerCase();
             const correctAnswer = currentQuestions[currentQuestionIndex].word.toLowerCase();
 
@@ -555,17 +514,14 @@
                     userAnswer: answerInput.value.trim()
                 });
             }
-
             currentQuestionIndex++;
             displayQuestion();
-        }
+        });
 
         function showResults() {
             quizScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
-
             scoreEl.textContent = `총 ${currentQuestions.length}문제 중 ${score}문제 정답`;
-
             incorrectList.innerHTML = '';
             if (incorrectAnswers.length === 0) {
                 incorrectList.innerHTML = '<li class="text-green-600 font-semibold p-4 bg-green-50 rounded-lg">모든 문제를 맞혔습니다!</li>';
@@ -574,7 +530,7 @@
                     const li = document.createElement('li');
                     li.className = 'p-4 border border-gray-200 rounded-lg bg-red-50';
                     li.innerHTML = `
-                        <p class="text-gray-700 mb-2">${item.question.sentence.replace(new RegExp(`\\b${item.question.word}\\b`, 'i'), `<strong class="text-red-500">${item.question.word}</strong>`)}</p>
+                        <p class="text-gray-700 mb-2">${item.question.sentence.replace(new RegExp(`${item.question.word}[a-z]*`, 'i'), `<strong class="text-red-500">${item.question.word}</strong>`)}</p>
                         <p class="text-sm text-gray-500 mb-2">(뜻: ${item.question.meaning})</p>
                         <p class="text-sm"><strong>정답:</strong> <span class="text-blue-600">${item.question.word}</span> | <strong>입력한 답:</strong> <span class="text-red-600">${item.userAnswer || "입력 안 함"}</span></p>
                     `;
@@ -589,36 +545,21 @@
         });
 
         copyBtn.addEventListener('click', () => {
-            let resultText = `--- 퀴즈 결과 (${quizTitle.textContent}) ---\n`;
-            resultText += `점수: ${score} / ${currentQuestions.length}\n\n`;
+            let resultText = `--- 퀴즈 결과 (${quizTitle.textContent}) ---\n점수: ${score} / ${currentQuestions.length}\n\n`;
             if (incorrectAnswers.length > 0) {
                 resultText += '--- 틀린 문제 ---\n';
                 incorrectAnswers.forEach(item => {
-                    resultText += `문제: ${item.question.sentence}\n`;
-                    resultText += `정답: ${item.question.word}\n`;
-                    resultText += `입력한 답: ${item.userAnswer || "입력 안 함"}\n\n`;
+                    resultText += `문제: ${item.question.sentence}\n정답: ${item.question.word}\n입력한 답: ${item.userAnswer || "입력 안 함"}\n\n`;
                 });
-            } else {
-                resultText += '틀린 문제가 없습니다. 완벽해요!\n';
             }
-            
-            // Use execCommand for compatibility
             const textarea = document.createElement('textarea');
             textarea.value = resultText;
             document.body.appendChild(textarea);
             textarea.select();
-            try {
-                document.execCommand('copy');
-                copyFeedback.textContent = '클립보드에 복사되었습니다!';
-            } catch (err) {
-                copyFeedback.textContent = '복사에 실패했습니다.';
-                console.error('Copy failed', err);
-            }
+            document.execCommand('copy');
             document.body.removeChild(textarea);
-
-            setTimeout(() => {
-                copyFeedback.textContent = '';
-            }, 2000);
+            copyFeedback.textContent = '클립보드에 복사되었습니다!';
+            setTimeout(() => { copyFeedback.textContent = ''; }, 2000);
         });
     </script>
 </body>
