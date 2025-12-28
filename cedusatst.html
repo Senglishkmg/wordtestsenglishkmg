@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>세듀 어휘끝 수능 문장제 포털</title>
+    <style>
+        :root {
+            --main-purple: #5c5cf4;
+            --main-green: #27ae60;
+            --bg-gray: #f4f7f6;
+            --text-dark: #2d3436;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+        }
+
+        .portal-container {
+            background: white; width: 100%; max-width: 600px;
+            border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 40px; text-align: center;
+        }
+
+        .header-title { font-size: 26px; font-weight: 800; color: var(--text-dark); margin-bottom: 35px; }
+
+        /* 섹션 구분선 */
+        .section-header {
+            text-align: left; font-size: 17px; font-weight: 800; color: var(--main-green);
+            border-bottom: 2px solid var(--main-green); padding-bottom: 8px; margin-bottom: 20px;
+        }
+
+        /* 6개 버튼 그리드 */
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .unit-btn {
+            background-color: #fff;
+            border: 2px solid #eef0ff;
+            border-radius: 15px;
+            padding: 25px 15px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .unit-btn:hover {
+            border-color: var(--main-purple);
+            background-color: #fbfcff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(92, 92, 244, 0.1);
+        }
+
+        .unit-btn .title { font-size: 18px; font-weight: 800; color: var(--main-purple); }
+
+        /* 특수 유닛 전용 스타일 */
+        .special-btn { border-color: #ffeaa7; }
+        .special-btn .title { color: #d35400; }
+
+        @media (max-width: 480px) {
+            .quiz-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="portal-container">
+    <div class="header-title">세듀 어휘끝 수능 문장제</div>
+
+    <div class="section-header">범위를 선택하세요</div>
+    
+    <div class="quiz-grid">
+        <a href="cedusatst0110.html" class="unit-btn">
+            <span class="title">Unit 01 - 10</span>
+        </a>
+
+        <a href="cedusatst1120.html" class="unit-btn">
+            <span class="title">Unit 11 - 20</span>
+        </a>
+
+        <a href="cedusatst2130.html" class="unit-btn">
+            <span class="title">Unit 21 - 30</span>
+        </a>
+
+        <a href="cedusatst3140.html" class="unit-btn">
+            <span class="title">Unit 31 - 40</span>
+        </a>
+
+        <a href="cedusatst4145.html" class="unit-btn">
+            <span class="title">Unit 41 - 45</span>
+        </a>
+
+        <a href="cedusatst_special.html" class="unit-btn special-btn">
+            <span class="title">Special Units</span>
+        </a>
+    </div>
+
+    <p style="margin-top:35px; font-size:12px; color:#bdc3c7;">S 영어전문학원 단어 시험 시스템</p>
+</div>
+
+</body>
+</html>

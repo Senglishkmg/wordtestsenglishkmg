@@ -1,0 +1,554 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어휘끝 수능 예문시험 (Unit 01-10)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 1.5rem; }
+        .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 0.5rem; background-color: #4f46e5; color: white; font-weight: 600; text-align: center; cursor: pointer; transition: 0.3s; border: none; width: 100%; }
+        .btn:hover { background-color: #4338ca; transform: translateY(-1px); }
+        .btn-secondary { background-color: #6b7280; }
+        .btn-review { background-color: #16a34a; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div id="app-container" class="w-full max-w-3xl mx-auto">
+        <div id="unit-selection-screen" class="card">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">어휘끝 수능 (Unit 01-10)</h1>
+            <p class="text-center text-gray-600 mb-8">모든 단어와 숙어가 포함되어 있습니다.</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                <button onclick="startQuiz('unit01')" class="btn">Unit 01</button>
+                <button onclick="startQuiz('unit02')" class="btn">Unit 02</button>
+                <button onclick="startQuiz('unit03')" class="btn">Unit 03</button>
+                <button onclick="startQuiz('unit04')" class="btn">Unit 04</button>
+                <button onclick="startQuiz('unit05')" class="btn">Unit 05</button>
+                <button onclick="startQuiz('unit06')" class="btn">Unit 06</button>
+                <button onclick="startQuiz('unit07')" class="btn">Unit 07</button>
+                <button onclick="startQuiz('unit08')" class="btn">Unit 08</button>
+                <button onclick="startQuiz('unit09')" class="btn">Unit 09</button>
+                <button onclick="startQuiz('unit10')" class="btn">Unit 10</button>
+            </div>
+            <div class="space-y-3">
+                <button onclick="startQuiz('review_01-05')" class="btn btn-review">Unit 01-05 전체 랜덤</button>
+                <button onclick="startQuiz('review_06-10')" class="btn btn-review">Unit 06-10 전체 랜덤</button>
+                <button onclick="startQuiz('all')" class="btn btn-secondary">Unit 01-10 전체 랜덤 학습</button>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="card hidden">
+            <div class="flex justify-between items-center mb-6"><h2 id="quiz-title" class="text-2xl font-bold text-gray-800"></h2><div id="progress-indicator" class="text-lg font-semibold text-gray-600"></div></div>
+            <div class="mb-6 p-6 bg-gray-50 rounded-lg">
+                <p id="sentence" class="text-xl text-gray-700 mb-2 leading-relaxed"></p>
+                <p id="meaning" class="text-md text-indigo-600 font-medium"></p>
+            </div>
+            <form onsubmit="event.preventDefault(); checkAnswer();">
+                <input type="text" id="answer-input" autocomplete="off" class="w-full p-3 border-2 border-gray-300 rounded-lg text-lg" placeholder="정답을 입력하세요...">
+                <button type="submit" class="w-full btn mt-4">제출</button>
+            </form>
+        </div>
+
+        <div id="result-screen" class="card hidden">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">학습 결과</h2>
+            <p id="score" class="text-2xl text-center font-semibold text-indigo-600 mb-8"></p>
+            <div id="incorrect-answers-container" class="mb-8 max-h-80 overflow-y-auto"><ul id="incorrect-answers-list" class="space-y-4"></ul></div>
+            <button onclick="location.reload()" class="btn btn-secondary">유닛 선택으로</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {
+            'unit01': [
+                { word: 'appearance', sentence: 'The candidate’s physical _________ functions as a primary cue for voters.', meaning: '외모, (겉)모습', translation: '후보자의 외모는 유권자들에게 주요 단서로 작용한다.' },
+                { word: 'appearance', sentence: 'The sudden _________ of new technology renders existing industries obsolete.', meaning: '출현, 등장', translation: '신기술의 갑작스러운 출현은 기존 산업을 쓸모없게 만든다.' },
+                { word: 'emerged', sentence: 'A new social hierarchy _________ as the result of the economic revolution.', meaning: '나타나다', translation: '경제 혁명의 결과로 새로운 사회적 계급 구조가 나타났다.' },
+                { word: 'essential', sentence: 'Specific nutrients are _________ for maintaining the physiological balance.', meaning: '필수적인', translation: '특정 영양소는 신체의 생리적 균형을 유지하는 데 필수적이다.' },
+                { word: 'essential', sentence: 'The _________ nature of art lies in its ability to transcend boundaries.', meaning: '본질적인', translation: '예술의 본질적인 성격은 경계를 초월하는 능력에 있다.' },
+                { word: 'major', sentence: 'Technological innovation serves as a _________ driver of modern growth.', meaning: '중요한, 주된', translation: '기술 혁신은 현대 성장의 주요한 동력 역할을 한다.' },
+                { word: 'major', sentence: 'Many students choose to _________ in computer science to secure jobs.', meaning: '전공하다', translation: '많은 학생은 취업을 보장받기 위해 컴퓨터 공학을 전공한다.' },
+                { word: 'major', sentence: 'A student’s academic _________ often dictates their initial career path.', meaning: '전공', translation: '학생의 학술적 전공은 종종 초기 경력 경로를 결정한다.' },
+                { word: 'major', sentence: 'The _________ issued a strategic command to stabilize the battlefield.', meaning: '소령', translation: '그 소령은 전장을 안정시키기 위해 전략적 명령을 내렸다.' },
+                { word: 'sake', sentence: 'Individual freedom is sometimes restricted for the _________ of public safety.', meaning: '이익', translation: '개인의 자유는 때때로 공공의 안전(이익)을 위해 제한된다.' },
+                { word: 'sake', sentence: 'Researchers collect data for the _________ of objective scientific discovery.', meaning: '목적', translation: '연구자들은 객관적인 과학적 발견이라는 목적을 위해 데이터를 수집한다.' },
+                { word: 'radical', sentence: 'The _________ political movement caused a significant shift in power.', meaning: '급진적인', translation: '급진적인 정치 운동은 권력 구조에 상당한 변화를 일으켰다.' },
+                { word: 'radical', sentence: 'Solving poverty requires a _________ restructuring of the welfare system.', meaning: '근본적인', translation: '빈곤 문제를 해결하는 것은 복지 시스템의 근본적인 재구조화를 필요로 한다.' },
+                { word: 'feature', sentence: 'The most prominent _________ of the theory is its focus on evidence.', meaning: '특징', translation: '그 이론의 가장 두드러진 특징은 실증적 증거에 대한 강조이다.' },
+                { word: 'features', sentence: 'Sharp facial _________ are often perceived as a sign of strong personality.', meaning: '이목구비; 용모', translation: '뚜렷한 이목구비는 종종 강한 성격의 징표로 인식된다.' },
+                { word: 'feature', sentence: 'The magazine published a special _________ on the impacts of AI.', meaning: '특집', translation: '그 잡지는 인공지능의 영향에 대한 특별 특집 기사를 게재했다.' },
+                { word: 'features', sentence: 'The new museum _________ a vast collection of ancient artifacts.', meaning: '특징으로 삼다', translation: '그 새로운 박물관은 방대한 고대 유물 소장품을 특징으로 삼고 있다.' },
+                { word: 'granted', sentence: 'The government _________ permission for the new research project.', meaning: '승인하다', translation: '정부는 새 연구 프로젝트에 대한 허가를 승인했다.' },
+                { word: 'grant', sentence: 'The university received a government _________ to study energy.', meaning: '보조금', translation: '그 대학교는 에너지 연구를 위해 정부 보조금을 받았다.' },
+                { word: 'tone', sentence: 'The author’s _________ conveys the emotional atmosphere of the story.', meaning: '어조, 말투', translation: '작가의 어조는 이야기의 감정적 분위기를 전달한다.' },
+                { word: 'tone', sentence: 'The musician adjusted the _________ to create a melancholic feeling.', meaning: '음색', translation: '음악가는 우울한 느낌을 만들기 위해 음색을 조정했다.' },
+                { word: 'tone', sentence: 'The painter used a warm _________ to evoke a feeling of comfort.', meaning: '색조', translation: '화가는 안락한 느낌을 불러일으키기 위해 따뜻한 색조를 사용했다.' },
+                { word: 'relieved', sentence: 'The new medicine _________ the patient’s severe pain.', meaning: '완화시키다', translation: '그 신약은 환자의 심한 통증을 완화해 주었다.' },
+                { word: 'phenomenon', sentence: 'Global warming is a complex _________ caused by human activity.', meaning: '현상', translation: '지구 온난화는 인간 활동에 의해 발생하는 복잡한 현상이다.' },
+                { word: 'contains', sentence: 'The report _________ detailed information on the market trends.', meaning: '포함하다', translation: '그 보고서는 시장 동향에 대한 상세한 정보를 포함하고 있다.' },
+                { word: 'contain', sentence: 'The government worked to _________ the spread of the virus.', meaning: '억제하다', translation: '정부는 바이러스의 확산을 억제하기 위해 노력했다.' },
+                { word: 'absorbed', sentence: 'The sponge _________ the spilled liquid quickly.', meaning: '흡수하다', translation: '스폰지가 쏟아진 액체를 빠르게 흡수했다.' },
+                { word: 'absorbed', sentence: 'He was so _________ in the book that he forgot the time.', meaning: '몰두시키다', translation: '그는 책에 너무 몰두해서 시간 가는 줄 몰랐다.' },
+                { word: 'prior', sentence: '_________ experience is a requirement for this senior position.', meaning: '사전의', translation: '사전 경험은 이 고위직의 자격 요건이다.' },
+                { word: 'comfort', sentence: 'Modern technology provides _________ in our daily lives.', meaning: '안락, 편안', translation: '현대 기술은 우리의 일상생활에 안락함을 제공한다.' },
+                { word: 'ensured', sentence: 'The safety locks _________ the protection of the valuables.', meaning: '보장하다', translation: '안전 잠금장치가 귀중품의 보호를 보장했다.' },
+                { word: 'derived', sentence: 'Many English words are _________ from Latin roots.', meaning: '유래하다', translation: '많은 영어 단어들이 라틴어 어원에서 유래한다.' },
+                { word: 'generated', sentence: 'The solar panels _________ enough electricity for the whole house.', meaning: '발생시키다', translation: '태양광 패널이 집 전체에 충분한 전기를 만들어냈다.' },
+                { word: 'population', sentence: 'The growing _________ increases the demand for housing.', meaning: '인구', translation: '증가하는 인구는 주택 수요를 높인다.' },
+                { word: 'demonstrated', sentence: 'The experiment _________ the effectiveness of the new drug.', meaning: '보여주다', translation: '그 실험은 신약의 효과를 입증해 주었다.' },
+                { word: 'humanity', sentence: 'Art expresses the common essence of _________.', meaning: '인류, 인간성', translation: '예술은 인류의 공통된 본질을 표현한다.' },
+                { word: 'neutral', sentence: 'The mediator maintained a _________ position to reach a fair deal.', meaning: '중립의', translation: '중재자는 공정한 거래에 도달하기 위해 중립적 위치를 유지했다.' },
+                { word: 'ultimate', sentence: 'Customer satisfaction is the _________ goal of our company.', meaning: '궁극적인', translation: '고객 만족은 우리 회사의 궁극적인 목표이다.' },
+                { word: 'session', sentence: 'The training _________ provided practical skills for the employees.', meaning: '기간', translation: '교육 세션은 직원들에게 실용적인 기술을 제공했다.' },
+                { word: 'stripped', sentence: 'The storm _________ the trees of their leaves.', meaning: '벗기다, 빼앗다', translation: '폭풍이 나무의 잎들을 다 벗겨냈다.' },
+                { word: 'illusion', sentence: 'The magician created an _________ of disappearing.', meaning: '환상; 착각', translation: '마술사는 사라지는 환상을 만들어냈다.' },
+                { word: 'tempted', sentence: 'The high salary _________ him to change his job.', meaning: '유혹하다', translation: '높은 급여가 그를 이직하도록 유혹했다.' },
+                { word: 'modified', sentence: 'The engineer _________ the design to improve safety.', meaning: '수정하다', translation: '엔지니어는 안전을 개선하기 위해 설계를 수정했다.' },
+                { word: 'owe', sentence: 'I _________ my success to my parents’ support.', meaning: '빚지고 있다', translation: '나의 성공은 부모님의 지원 덕분이다.' },
+                { word: 'exposed', sentence: 'The investigation _________ the company’s illegal activities.', meaning: '노출시키다, 폭로하다', translation: '조사는 회사의 불법 활동을 폭로했다.' },
+                { word: 'passage', sentence: 'Reading the _________ helps understand the author’s intent.', meaning: '단락, 구절', translation: '단락을 읽는 것은 작가의 의도를 이해하도록 돕는다.' },
+                { word: 'registered', sentence: 'He _________ his car at the local office.', meaning: '등록하다', translation: '그는 지역 사무소에 자신의 차를 등록했다.' },
+                { word: 'broke up', sentence: 'The meeting _________ _________ after several hours of debate.', meaning: '해산하다, 끝나다', translation: '회의는 몇 시간의 토론 끝에 끝났다.' },
+                { word: 'brushed up', sentence: 'I _________ _________ on my Spanish before the trip.', meaning: '복습하다', translation: '나는 여행 전에 스페인어를 복습했다.' },
+                { word: 'built up', sentence: 'Regular exercise _________ _________ physical endurance.', meaning: '강화하다', translation: '규칙적인 운동은 체력을 길러준다.' },
+                { word: 'burned up', sentence: 'The documents were _________ _________ in the fire.', meaning: '타버리다', translation: '그 서류들은 화재로 완전히 타버렸다.' },
+                { word: 'called up', sentence: 'The smell _________ _________ childhood memories.', meaning: '불러일으키다', translation: '그 냄새는 어린 시절의 기억을 불러일으켰다.' },
+                { word: 'came up with', sentence: 'The team _________ _________ _________ a creative solution.', meaning: '생각해내다', translation: '팀은 창의적인 해결책을 생각해냈다.' },
+                { word: 'dried up', sentence: 'The river _________ _________ during the long drought.', meaning: '말라붙다', translation: '긴 가뭄 동안 강이 바싹 말라붙었다.' },
+                { word: 'held up', sentence: 'The pillars _________ _________ the heavy roof.', meaning: '떠받치다, 유지하다', translation: '기둥들이 무거운 지붕을 떠받치고 있었다.' }
+            ],
+            'unit02': [
+                { word: 'attained', sentence: 'The scientist _________ international recognition for his work.', meaning: '성취하다', translation: '그 과학자는 자신의 연구로 국제적 인정을 성취했다.' },
+                { word: 'abandoned', sentence: 'They _________ the old building many years ago.', meaning: '유기하다, 버리다', translation: '그들은 수년 전에 그 낡은 건물을 버렸다.' },
+                { word: 'facilitates', sentence: 'The new system _________ faster data processing.', meaning: '용이하게 하다', translation: '새 시스템은 더 빠른 데이터 처리를 용이하게 한다.' },
+                { word: 'inherent', sentence: 'Curiosity is _________ in human nature.', meaning: '내재하는, 타고난', translation: '호기심은 인간의 본성에 내재되어 있다.' },
+                { word: 'exceeded', sentence: 'The results _________ our expectations.', meaning: '초과하다', translation: '결과가 우리의 기대를 초과했다.' },
+                { word: 'dense', sentence: 'The _________ fog made driving dangerous.', meaning: '빽빽한, 짙은', translation: '짙은 안개가 운전을 위험하게 만들었다.' },
+                { word: 'seemingly', sentence: 'The task was _________ impossible at first.', meaning: '겉보기에는', translation: '그 과업은 처음에는 겉보기에 불가능해 보였다.' },
+                { word: 'interfered', sentence: 'The noise _________ with my concentration.', meaning: '방해하다', translation: '소음이 나의 집중을 방해했다.' },
+                { word: 'substitute', sentence: 'We had to _________ margarine for butter.', meaning: '대체하다', translation: '우리는 버터 대신 마가린을 사용해야 했다.' },
+                { word: 'eliminated', sentence: 'The team was _________ from the tournament.', meaning: '제거하다', translation: '그 팀은 토너먼트에서 탈락(제거)했다.' },
+                { word: 'versus', sentence: 'The game was school A _________ school B.', meaning: '- 대', translation: '경기는 A 학교 대 B 학교였다.' },
+                { word: 'assigned', sentence: 'The manager _________ new tasks to each employee.', meaning: '배정하다', translation: '매니저는 각 직원에게 새로운 업무를 배정했다.' },
+                { word: 'assembled', sentence: 'Volunteers _________ at the park for the cleanup.', meaning: '집합시키다, 모이다', translation: '자원봉사자들이 청소를 위해 공원에 모였다.' },
+                { word: 'glowed', sentence: 'Her face _________ with happiness.', meaning: '빛나다, 상기되다', translation: '그녀의 얼굴이 행복으로 빛났다.' },
+                { word: 'triggered', sentence: 'The dust _________ an allergic reaction.', meaning: '촉발시키다', translation: '먼지가 알레르기 반응을 유발했다.' },
+                { word: 'browsed', sentence: 'I _________ the store without buying anything.', meaning: '둘러보다', translation: '나는 아무것도 사지 않고 가게를 둘러보았다.' },
+                { word: 'moisture', sentence: 'The soil requires _________ to support plant growth.', meaning: '수분, 습기', translation: '토양은 식물 성장을 지원하기 위해 수분을 필요로 한다.' },
+                { word: 'static', sentence: 'Prices remained _________ during the economic crisis.', meaning: '고정된, 정지 상태의', translation: '경제 위기 동안 가격은 고정된 상태를 유지했다.' },
+                { word: 'vice', sentence: 'Greed is often considered a _________.', meaning: '악, 악덕', translation: '탐욕은 흔히 악덕으로 여겨진다.' },
+                { word: 'exerted', sentence: 'He _________ all his influence to change the law.', meaning: '행사하다, 쓰다', translation: '그는 법을 바꾸기 위해 자신의 모든 영향력을 행사했다.' },
+                { word: 'faded', sentence: 'The memory _________ as time passed.', meaning: '바래다, 사라지다', translation: '시간이 흐르면서 기억이 서서히 사라졌다.' },
+                { word: 'leaked', sentence: 'Confidential info was _________ to the press.', meaning: '새다, 누설하다', translation: '기밀 정보가 언론에 누설되었다.' },
+                { word: 'domain', sentence: 'Science is a _________ of human knowledge.', meaning: '영역, 분야', translation: '과학은 인간 지식의 한 분야이다.' },
+                { word: 'concealed', sentence: 'The spy _________ his true identity.', meaning: '감추다', translation: '스파이는 자신의 진짜 정체를 숨겼다.' },
+                { word: 'sustained', sentence: 'Oxygen is necessary to _________ life.', meaning: '지탱하다, 유지하다', translation: '산소는 생명을 유지하는 데 필수적이다.' },
+                { word: 'classify', sentence: 'Libraries _________ books by subject.', meaning: '분류하다', translation: '도서관은 책을 주제별로 분류한다.' },
+                { word: 'assured', sentence: 'The doctor _________ the patient of a full recovery.', meaning: '보장하다', translation: '의사는 환자에게 완쾌를 장담(보장)했다.' },
+                { word: 'fostered', sentence: 'The school _________ creativity through art programs.', meaning: '발전시키다, 기르다', translation: '학교는 예술 프로그램을 통해 창의성을 길러주었다.' },
+                { word: 'permanent', sentence: 'Plastic pollution causes _________ damage to the ocean.', meaning: '영구적인', translation: '플라스틱 오염은 바다에 영구적인 피해를 준다.' },
+                { word: 'fatal', sentence: 'The mistake proved _________ to the project.', meaning: '치명적인', translation: '그 실수는 프로젝트에 치명적인 것으로 드러났다.' },
+                { word: 'retained', sentence: 'The company _________ its market share despite competition.', meaning: '보유하다', translation: '그 회사는 경쟁에도 불구하고 시장 점유율을 유지했다.' },
+                { word: 'keep up with', sentence: 'It’s hard to _________ _________ _________ rapid technology changes.', meaning: '따라잡다', translation: '급격한 기술 변화를 따라잡는 것은 어렵다.' },
+                { word: 'looked up', sentence: 'She _________ _________ the word in the dictionary.', meaning: '찾아보다', translation: '그녀는 사전에서 그 단어를 찾아보았다.' },
+                { word: 'make up', sentence: 'Ten units _________ _________ the entire textbook.', meaning: '구성하다', translation: '10개의 유닛이 교과서 전체를 구성한다.' },
+                { word: 'make up for', sentence: 'Hard work can _________ _________ _________ a lack of talent.', meaning: '보충하다', translation: '노력은 재능의 부족을 보충할 수 있다.' },
+                { word: 'picked up', sentence: 'I _________ _________ some Spanish while living in Madrid.', meaning: '익히다', translation: '나는 마드리드에 사는 동안 스페인어를 좀 익혔다.' },
+                { word: 'put up with', sentence: 'I cannot _________ _________ _________ _________ this noise anymore.', meaning: '참다', translation: '나는 이 소음을 더는 참을 수 없다.' },
+                { word: 'set up', sentence: 'They _________ _________ a new system to improve safety.', meaning: '설치하다', translation: '그들은 안전을 개선하기 위해 새 시스템을 설치했다.' },
+                { word: 'takes up', sentence: 'The piano _________ _________ a lot of space.', meaning: '차지하다', translation: '피아노는 많은 공간을 차지한다.' },
+                { word: 'turned up', sentence: 'The lost keys _________ _________ under the sofa.', meaning: '발견되다', translation: '잃어버린 열쇠가 소파 밑에서 발견되었다.' }
+            ],
+            'unit03': [
+                { word: 'emergency', sentence: 'Quick action is vital in an _________.', meaning: '비상사태', translation: '비상사태 시 신속한 행동이 필수적이다.' },
+                { word: 'harsh', sentence: '_________ conditions challenge the survival of animals.', meaning: '혹독한', translation: '혹독한 환경은 동물의 생존을 위협한다.' },
+                { word: 'merit', sentence: 'The proposal has the _________ of being cost-effective.', meaning: '장점', translation: '그 제안은 비용 효율적이라는 장점이 있다.' },
+                { word: 'barrier', sentence: 'Language can be a _________ to effective communication.', meaning: '장벽', translation: '언어는 효과적인 소통의 장벽이 될 수 있다.' },
+                { word: 'integrated', sentence: 'The school _________ technology into its curriculum.', meaning: '통합시키다', translation: '학교는 기술을 교육 과정에 통합시켰다.' },
+                { word: 'vulnerable', sentence: 'Old buildings are _________ to earthquakes.', meaning: '취약한', translation: '오래된 건물들은 지진에 취약하다.' },
+                { word: 'remarkable', sentence: 'The athlete showed _________ progress after training.', meaning: '놀랄 만한', translation: '그 선수는 훈련 후 놀랄 만한 진전을 보였다.' },
+                { word: 'norms', sentence: 'Social _________ guide people’s behavior.', meaning: '규범', translation: '사회적 규범이 사람들의 행동을 안내한다.' },
+                { word: 'vast', sentence: 'The desert covers a _________ area.', meaning: '엄청난', translation: '사막은 막대한 지역을 덮고 있다.' },
+                { word: 'equality', sentence: 'Education promotes social _________.', meaning: '평등', translation: '교육은 사회적 평등을 증진한다.' },
+                { word: 'mounted', sentence: 'The pressure _________ as the deadline approached.', meaning: '증가하다, 올라타다', translation: '마감 기한이 다가옴에 따라 압박감이 증가했다.' },
+                { word: 'prominent', sentence: 'She is a _________ figure in the scientific world.', meaning: '중요한, 눈에 띄는', translation: '그녀는 과학계에서 중요한 인물이다.' },
+                { word: 'subtle', sentence: '_________ changes in light affect the room’s mood.', meaning: '미묘한', translation: '빛의 미묘한 변화가 방의 분위기에 영향을 미친다.' },
+                { word: 'duration', sentence: 'The _________ of the film is two hours.', meaning: '지속 시간', translation: '영화의 지속 시간은 2시간이다.' },
+                { word: 'portions', sentence: 'The chef divided the food into equal _________.', meaning: '부분, 1인분', translation: '요리사가 음식을 똑같은 양(부분)으로 나누었다.' },
+                { word: 'visible', sentence: 'The stars were _________ in the clear sky.', meaning: '눈에 보이는', translation: '맑은 하늘에 별들이 보였다.' },
+                { word: 'gazed', sentence: 'He _________ at the sunset in silence.', meaning: '응시하다', translation: '그는 침묵 속에 일몰을 응시했다.' },
+                { word: 'glanced', sentence: 'She _________ at her watch during the meeting.', meaning: '흘낏 보다', translation: '그녀는 회의 중에 시계를 흘낏 보았다.' },
+                { word: 'tremendous', sentence: 'The discovery had a _________ impact on medicine.', meaning: '엄청난', translation: '그 발견은 의학에 엄청난 영향을 미쳤다.' },
+                { word: 'remote', sentence: 'The village is _________ from the city.', meaning: '외딴, 먼', translation: '그 마을은 도시에서 멀리 떨어져 있다.' },
+                { word: 'abundant', sentence: 'The region is _________ in natural resources.', meaning: '풍부한', translation: '그 지역은 천연자원이 풍부하다.' },
+                { word: 'capacity', sentence: 'The stadium has a _________ of 50,000 people.', meaning: '수용량, 능력', translation: '그 경기장은 5만 명의 수용량을 가지고 있다.' },
+                { word: 'external', sentence: '_________ factors influence plant growth.', meaning: '외부의', translation: '외부 요인들이 식물의 성장에 영향을 미친다.' },
+                { word: 'diminished', sentence: 'The noise _________ after the rain.', meaning: '줄이다, 폄하하다', translation: '비가 온 후 소음이 줄어들었다.' },
+                { word: 'shrank', sentence: 'The sweater _________ in hot water.', meaning: '줄어들다, 움츠러들다', translation: '그 스웨터는 뜨거운 물에서 줄어들었다.' },
+                { word: 'ethical', sentence: 'Doctors follow _________ guidelines.', meaning: '윤리적인', translation: '의사들은 윤리적 가이드라인을 따른다.' },
+                { word: 'constitute', sentence: 'These laws _________ the legal system.', meaning: '구성하다', translation: '이 법들은 법 체계를 구성한다.' },
+                { word: 'excelled', sentence: 'He _________ in mathematics from a young age.', meaning: '뛰어나다', translation: '그는 어린 나이부터 수학에서 뛰어났다.' },
+                { word: 'certificate', sentence: 'This _________ proves your qualification.', meaning: '증명서', translation: '이 증명서가 당신의 자격을 증명한다.' },
+                { word: 'strive', sentence: 'Athletes _________ to win the gold medal.', meaning: '노력하다', translation: '운동선수들은 금메달을 따기 위해 매우 노력한다.' },
+                { word: 'behalf', sentence: 'He spoke on _________ of the students.', meaning: '이익, 지지', translation: '그는 학생들을 대표하여(지지하여) 발언했다.' },
+                { word: 'defended', sentence: 'The army _________ the city from attack.', meaning: '방어하다, 옹호하다', translation: '군대는 공격으로부터 도시를 방어했다.' },
+                { word: 'cue', sentence: 'The lights provided a _________ for the actors.', meaning: '신호', translation: '조명이 배우들에게 신호를 주었다.' },
+                { word: 'engaged', sentence: 'The lecturer _________ the audience with stories.', meaning: '참여시키다, 사로잡다', translation: '강연자는 이야기로 청중을 사로잡았다(참여시켰다).' },
+                { word: 'similarity', sentence: 'There is a clear _________ between the twins.', meaning: '유사성', translation: '그 쌍둥이 사이에는 분명한 유사성이 있다.' },
+                { word: 'break down', sentence: 'The car _________ _________ on the highway.', meaning: '고장 나다', translation: '자동차가 고속도로 위에서 고장 났다.' },
+                { word: 'bring down', sentence: 'The scandal _________ _________ the government.', meaning: '하락시키다, 무너뜨리다', translation: '그 스캔들이 정부를 무너뜨렸다.' },
+                { word: 'come down with', sentence: 'She _________ _________ _________ a cold last night.', meaning: '병에 걸리다', translation: '그녀는 어제저녁에 감기에 걸렸다.' },
+                { word: 'get down', sentence: 'The bad news _________ her _________.', meaning: '낙담시키다', translation: '나쁜 소식이 그녀를 낙담시켰다.' },
+                { word: 'hand down', sentence: 'Traditions are _________ _________ through generations.', meaning: '물려주다', translation: '전통은 세대를 통해 물려 내려온다.' }
+            ],
+            'unit04': [
+                { word: 'rid', sentence: 'Recycling helps _________ the ocean of plastic.', meaning: '없애다', translation: '재활용은 바다에서 플라스틱을 없애는 데 도움을 준다.' },
+                { word: 'invest', sentence: 'They _________ money in solar power.', meaning: '투자하다', translation: '그들은 태양광 발전에 돈을 투자한다.' },
+                { word: 'substance', sentence: 'Water is a vital _________ for all life.', meaning: '물질, 본질', translation: '물은 모든 생명에게 필수적인 물질이다.' },
+                { word: 'mission', sentence: 'The astronaut’s _________ is to reach Mars.', meaning: '임무, 사명', translation: '우주비행사의 임무는 화성에 도달하는 것이다.' },
+                { word: 'faith', sentence: 'Success requires _________ in one’s goals.', meaning: '확신, 신뢰', translation: '성공은 자신의 목표에 대한 신뢰를 필요로 한다.' },
+                { word: 'hence', sentence: 'The road is icy; _________, we must drive slowly.', meaning: '그러므로', translation: '길이 얼었다; 그러므로 우리는 천천히 운전해야 한다.' },
+                { word: 'dominated', sentence: 'English _________ global business.', meaning: '지배하다', translation: '영어가 세계 비즈니스를 지배했다.' },
+                { word: 'overwhelmed', sentence: 'The large task _________ the small team.', meaning: '압도하다', translation: '방대한 업무가 작은 팀을 압도했다.' },
+                { word: 'protested', sentence: 'Citizens _________ against the tax hike.', meaning: '항의하다', translation: '시민들이 세금 인상에 항의했다.' },
+                { word: 'scattered', sentence: 'The wind _________ the seeds across the field.', meaning: '흩뿌리다', translation: '바람이 씨앗들을 들판에 흩뿌렸다.' },
+                { word: 'dilemma', sentence: 'He faced a _________ between career and family.', meaning: '딜레마', translation: '그는 경력과 가족 사이의 딜레마에 처했다.' },
+                { word: 'vertical', sentence: 'The wall has _________ stripes.', meaning: '수직의', translation: '그 벽에는 수직 줄무늬가 있다.' },
+                { word: 'inevitable', sentence: 'Aging is _________ for all living beings.', meaning: '불가피한', translation: '노화는 모든 생명체에게 불가피하다.' },
+                { word: 'simultaneously', sentence: 'The two events happened _________ at noon.', meaning: '동시에', translation: '두 사건이 정오에 동시에 발생했다.' },
+                { word: 'trembled', sentence: 'His hands _________ with fear.', meaning: '떨다', translation: '그의 손이 공포로 떨렸다.' },
+                { word: 'spare', sentence: 'Can you _________ some time for a meeting?', meaning: '할애하다', translation: '회의를 위해 시간을 좀 할애해 줄 수 있나요?' },
+                { word: 'temporary', sentence: 'The pain is only _________ after surgery.', meaning: '일시적인', translation: '수술 후의 통증은 일시적일 뿐이다.' },
+                { word: 'undermined', sentence: 'The rumor _________ his reputation.', meaning: '약화시키다', translation: '그 소문이 그의 평판을 약화시켰다.' },
+                { word: 'rubbed', sentence: 'She _________ her eyes after waking up.', meaning: '문지르다', translation: '그녀는 잠에서 깬 뒤 눈을 비볐다.' },
+                { word: 'cope', sentence: 'Therapy helps _________ with stress.', meaning: '대처하다', translation: '치료는 스트레스에 대처하는 것을 돕는다.' },
+                { word: 'vague', sentence: 'His answer was too _________ to understand.', meaning: '애매모호한', translation: '그의 대답은 이해하기에 너무 모호했다.' },
+                { word: 'dim', sentence: 'The lights became _________ in the theater.', meaning: '어둑한', translation: '극장의 조명이 어둑해졌다.' },
+                { word: 'blurred', sentence: 'The rain _________ the view through the window.', meaning: '흐릿해지다', translation: '비가 창밖 풍경을 흐릿하게 만들었다.' },
+                { word: 'posture', sentence: 'Good _________ is vital for back health.', meaning: '자세', translation: '좋은 자세는 등 건강에 필수적이다.' },
+                { word: 'oval', sentence: 'The mirror has an _________ shape.', meaning: '타원형의', translation: '그 거울은 타원형 모양이다.' },
+                { word: 'steep', sentence: 'The mountain has a _________ slope.', meaning: '가파른', translation: '그 산은 가파른 경사를 가지고 있다.' },
+                { word: 'magnitude', sentence: 'Scientists measured the _________ of the earthquake.', meaning: '규모, 크기', translation: '과학자들이 지진의 규모를 측정했다.' },
+                { word: 'worthwhile', sentence: 'Volunteering is a _________ experience.', meaning: '가치 있는', translation: '자원봉사는 가치 있는 경험이다.' },
+                { word: 'minimize', sentence: 'Safety gear helps _________ the risk of injury.', meaning: '최소화하다', translation: '안전 장비는 부상 위험을 최소화하는 데 도움을 준다.' },
+                { word: 'integral', sentence: 'Practice is an _________ part of mastery.', meaning: '필수적인', translation: '연습은 숙달의 필수적인 부분이다.' },
+                { word: 'ceased', sentence: 'The rain _________ after the storm.', meaning: '중지하다', translation: '폭풍우가 지난 후 비가 그쳤다.' },
+                { word: 'bind', sentence: 'Promises _________ people together.', meaning: '묶다, 결속시키다', translation: '약속은 사람들을 하나로 결속시킨다.' },
+                { word: 'grasped', sentence: 'He _________ the complex concept quickly.', meaning: '이해하다, 꽉 잡다', translation: '그는 복잡한 개념을 빨리 이해했다.' },
+                { word: 'elevated', sentence: 'The lift _________ the workers to the roof.', meaning: '올리다', translation: '승강기가 작업자들을 지붕으로 올렸다.' },
+                { word: 'hold down', sentence: 'Stones were used to _________ _________ the tent.', meaning: '억제하다', translation: '텐트를 누르기 위해 돌이 사용되었다.' },
+                { word: 'let down', sentence: 'I don’t want to _________ _________ my parents.', meaning: '실망시키다', translation: '나는 부모님을 실망하게 해드리고 싶지 않다.' },
+                { word: 'look down on', sentence: 'You should not _________ _________ _________ others.', meaning: '무시하다', translation: '타인을 무시해서는 안 된다.' },
+                { word: 'put down', sentence: 'She _________ _________ her thoughts on paper.', meaning: '적다', translation: '그녀는 자신의 생각을 종이에 적었다.' },
+                { word: 'settle down', sentence: 'The kids finally _________ _________ after the game.', meaning: '진정되다, 정착하다', translation: '아이들은 게임이 끝난 후 마침내 진정되었다.' },
+                { word: 'turn down', sentence: 'He _________ _________ the job offer.', meaning: '거절하다', translation: '그는 일자리 제안을 거절했다.' }
+            ],
+            'unit05': [
+                { word: 'dust', sentence: 'D_________ covered the old books.', meaning: '먼지', translation: '먼지가 오래된 책들을 뒤덮었다.' },
+                { word: 'package', sentence: 'The p_________ arrived at my door this morning.', meaning: '소포', translation: '소포가 오늘 아침 내 문 앞에 도착했다.' },
+                { word: 'paradigm', sentence: 'The new _________ shifted the scientific view.', meaning: '패러다임', translation: '새로운 패러다임이 과학적 관점을 변화시켰다.' },
+                { word: 'format', sentence: 'The f_________ of the report is easy to follow.', meaning: '구성 방식', translation: '보고서의 구성 방식은 따라가기 쉽다.' },
+                { word: 'upcoming', sentence: 'Students are preparing for the _________ exam.', meaning: '다가오는', translation: '학생들이 다가오는 시험을 준비하고 있다.' },
+                { word: 'drawback', sentence: 'One _________ of the plan is its high cost.', meaning: '결점', translation: '그 계획의 한 가지 결점은 높은 비용이다.' },
+                { word: 'prone', sentence: 'Tired drivers are _________ to accidents.', meaning: '~하기 쉬운', translation: '피곤한 운전자는 사고를 내기 쉽다.' },
+                { word: 'inquiry', sentence: 'The police made an _________ into the case.', meaning: '조사', translation: '경찰이 그 사건에 대해 조사를 했다.' },
+                { word: 'alternate', sentence: 'Day and night _________ throughout the year.', meaning: '교대로 일어나다', translation: '낮과 밤은 일 년 내내 교대로 일어난다.' },
+                { word: 'overlap', sentence: 'The two circles _________ in the middle.', meaning: '겹쳐지다', translation: '두 원이 가운데에서 겹쳐진다.' },
+                { word: 'lessened', sentence: 'Medicine _________ the patient’s pain.', meaning: '줄이다', translation: '약이 환자의 통증을 줄여주었다.' },
+                { word: 'terminal', sentence: 'The bus stopped at the _________.', meaning: '종점', translation: '버스가 종점(터미널)에 멈췄다.' },
+                { word: 'collision', sentence: 'The _________ of cars caused a traffic jam.', meaning: '충돌', translation: '자동차들의 충돌이 교통 정체를 일으켰다.' },
+                { word: 'converge', sentence: 'Three roads _________ at the town center.', meaning: '모여들다', translation: '세 개의 길이 마을 중심부에서 모여든다.' },
+                { word: 'potent', sentence: 'The medicine is _________ against the virus.', meaning: '강력한', translation: '그 약은 바이러스에 강력하다.' },
+                { word: 'optimal', sentence: '8 hours is the _________ amount of sleep.', meaning: '최적의', translation: '8시간이 최적의 수면 양이다.' },
+                { word: 'discard', sentence: 'Please _________ empty bottles in the bin.', meaning: '버리다', translation: '빈 병을 쓰레기통에 버려주세요.' },
+                { word: 'magnifies', sentence: 'A lens _________ small objects.', meaning: '확대하다', translation: '렌즈는 작은 물체들을 확대한다.' },
+                { word: 'prosper', sentence: 'The town _________ed after the new factory opened.', meaning: '번영하다', translation: '그 마을은 새 공장이 문을 연 후 번영했다.' },
+                { word: 'bare', sentence: 'He walked with _________ feet on the sand.', meaning: '맨-, 벌거벗은', translation: '그는 모래 위를 맨발로 걸었다.' },
+                { word: 'orient', sentence: 'The map helps _________ travelers in the city.', meaning: '지향하게 하다', translation: '지도는 여행자들이 도시에서 방향을 잡도록 돕는다.' },
+                { word: 'detach', sentence: 'You can _________ the screen from the laptop.', meaning: '분리하다', translation: '당신은 노트북에서 화면을 분리할 수 있다.' },
+                { word: 'parallel', sentence: 'The two lines run _________ to each other.', meaning: '평행한', translation: '두 선이 서로 평행하게 달린다.' },
+                { word: 'crude', sentence: 'C_________ oil is refined to make gasoline.', meaning: '가공되지 않은', translation: '원유는 가솔린을 만들기 위해 정제된다.' },
+                { word: 'deplete', sentence: 'Overfishing _________s fish populations.', meaning: '고갈시키다', translation: '남획은 물고기 개체수를 고갈시킨다.' },
+                { word: 'absurd', sentence: 'His excuse was _________ and funny.', meaning: '터무니없는', translation: '그의 변명은 터무니없고 웃겼다.' },
+                { word: 'strengthened', sentence: 'Exercise _________ his physical health.', meaning: '강화하다', translation: '운동이 그의 신체 건강을 강화해주었다.' },
+                { word: 'spatial', sentence: 'Architecture requires _________ awareness.', meaning: '공간의', translation: '건축은 공간 지각력을 필요로 한다.' },
+                { word: 'entails', sentence: 'Success _________ a lot of hard work.', meaning: '수반하다', translation: '성공은 많은 노력을 수반한다.' },
+                { word: 'repetitive', sentence: 'R_________ tasks can be boring.', meaning: '반복적인', translation: '반복적인 일은 지루할 수 있다.' },
+                { word: 'deadline', sentence: 'I finished the project before the _________.', meaning: '마감 기한', translation: '나는 마감 기한 전에 프로젝트를 끝냈다.' },
+                { word: 'motion', sentence: 'The slow _________ of the clouds is peaceful.', meaning: '움직임', translation: '구름의 느린 움직임은 평화롭다.' },
+                { word: 'incredible', sentence: 'The view from the top was _________ to see.', meaning: '놀라운', translation: '정상에서의 풍경은 보기에 정말 놀라웠다.' },
+                { word: 'ongoing', sentence: 'The _________ project needs more support.', meaning: '진행 중인', translation: '진행 중인 프로젝트는 더 많은 지원이 필요하다.' },
+                { word: 'readily', sentence: 'Information is _________ available online.', meaning: '손쉽게', translation: '정보는 온라인에서 손쉽게 이용 가능하다.' },
+                { word: 'do away with', sentence: 'They want to _________ _________ _________ unfair rules.', meaning: '없애다', translation: '그들은 불공정한 규칙을 폐지(없애고)하고 싶어 한다.' },
+                { word: 'give away', sentence: 'He _________ _________ his old clothes to charity.', meaning: '기부하다', translation: '그는 자신의 헌 옷을 자선 단체에 기부했다.' },
+                { word: 'passed away', sentence: 'His grandfather _________ _________ last year.', meaning: '사망하다', translation: '그의 할아버지는 작년에 돌아가셨다.' },
+                { word: 'take away', sentence: 'The waiter _________ _________ the empty plates.', meaning: '제거하다, 치우다', translation: '웨이터가 빈 접시들을 치웠다(제거했다).' },
+                { word: 'turn away', sentence: 'The club _________ _________ underage people.', meaning: '돌려보내다', translation: '클럽은 미성년자들을 돌려보냈다.' }
+            ],
+            'unit06': [
+                { word: 'domestic', sentence: '_________ flights are cheaper than international ones.', meaning: '국내의', translation: '국내선 비행기는 국제선보다 저렴하다.' },
+                { word: 'investigate', sentence: 'Experts _________ the cause of the failure.', meaning: '조사하다', translation: '전문가들이 실패 원인을 조사한다.' },
+                { word: 'cited', sentence: 'The student _________ several sources in her paper.', meaning: '인용하다', translation: '그 학생은 논문에서 여러 출처를 인용했다.' },
+                { word: 'trivial', sentence: 'Don’t waste time on _________ issues.', meaning: '사소한', translation: '사소한 문제에 시간을 낭비하지 마라.' },
+                { word: 'extinguished', sentence: 'Firefighters _________ the forest fire.', meaning: '끄다', translation: '소방관들이 산불을 껐다.' },
+                { word: 'deprived', sentence: 'The war _________ many people of their homes.', meaning: '박탈하다', translation: '전쟁이 많은 사람에게서 집을 빼앗았다(박탈했다).' },
+                { word: 'weird', sentence: 'She heard a _________ noise in the attic.', meaning: '기이한', translation: '그녀는 다락방에서 기이한 소리를 들었다.' },
+                { word: 'mess', sentence: 'The kids made a _________ in the living room.', meaning: '엉망', translation: '아이들이 거실을 엉망으로 만들었다.' },
+                { word: 'disorder', sentence: 'The strike caused social _________ in the city.', meaning: '무질서', translation: '파업이 도시의 사회적 무질서를 초래했다.' },
+                { word: 'ambiguous', sentence: 'Her message was _________ and unclear.', meaning: '애매모호한', translation: '그녀의 메시지는 모호하고 불분명했다.' },
+                { word: 'thrives', sentence: 'Business _________ in a healthy economy.', meaning: '번창하다', translation: '사업은 건강한 경제에서 번창한다.' },
+                { word: 'flourish', sentence: 'Plants _________ with enough sunlight.', meaning: '잘 자라다', translation: '식물은 충분한 햇빛이 있으면 잘 자란다.' },
+                { word: 'fragile', sentence: 'This glass is _________ and breaks easily.', meaning: '부서지기 쉬운', translation: '이 유리는 약해서(부서지기 쉬워서) 쉽게 깨진다.' },
+                { word: 'intervals', sentence: 'The bells ring at 10-minute _________.', meaning: '간격', translation: '종이 10분 간격으로 울린다.' },
+                { word: 'vibrated', sentence: 'The phone _________ during the meeting.', meaning: '진동하다', translation: '회의 중에 전화기가 진동했다.' },
+                { word: 'breakthrough', sentence: 'The new drug is a _________ in medicine.', meaning: '획기적인 발견', translation: '그 신약은 의학계의 획기적인 발견이다.' },
+                { word: 'clarify', sentence: 'Please _________ your answer with an example.', meaning: '명확하게 하다', translation: '예를 들어 당신의 답변을 명확하게 해주세요.' },
+                { word: 'accelerates', sentence: 'Technology _________ the speed of communication.', meaning: '가속하다', translation: '기술은 통신 속도를 가속한다.' },
+                { word: 'abnormal', sentence: '_________ weather affects crop growth.', meaning: '비정상적인', translation: '비정상적인 날씨는 작물 성장에 영향을 미친다.' },
+                { word: 'drastic', sentence: 'The company made _________ cuts in spending.', meaning: '급격한', translation: '회사는 지출을 과감하게(급격하게) 절감했다.' },
+                { word: 'activate', sentence: 'Press the button to _________ the alarm.', meaning: '작동시키다', translation: '알람을 작동시키기 위해 버튼을 누르세요.' },
+                { word: 'allotted', sentence: 'The manager _________ tasks to each person.', meaning: '할당하다', translation: '매니저는 각 사람에게 업무를 할당했다.' },
+                { word: 'hindered', sentence: 'Heavy rain _________ the rescue work.', meaning: '방해하다', translation: '폭우가 구조 작업을 방해했다.' },
+                { word: 'complemented', sentence: 'The red wine _________ the flavor of the meat.', meaning: '보완하다', translation: '레드 와인이 고기 맛을 보완해주었다.' },
+                { word: 'adhered', sentence: 'The poster _________ to the wall firmly.', meaning: '들러붙다', translation: '포스터가 벽에 단단히 붙어 있었다.' },
+                { word: 'mobilized', sentence: 'The nation _________ resources for the emergency.', meaning: '동원하다', translation: '국가는 비상사태를 위해 자원을 동원했다.' },
+                { word: 'crushed', sentence: 'The machine _________ the rocks into powder.', meaning: '으깨다', translation: '기계가 바위를 가루로 으깼다.' },
+                { word: 'frontier', sentence: 'Space is the last _________ for exploration.', meaning: '한계, 경계', translation: '우주는 인간 탐험의 마지막 한계(개척지)이다.' },
+                { word: 'compelled', sentence: 'The law _________ citizens to pay taxes.', meaning: '강요하다', translation: '법은 시민들이 세금을 내도록 강요했다.' },
+                { word: 'circulated', sentence: 'Blood _________ through the body.', meaning: '순환하다', translation: '혈액은 몸을 통해 순환했다.' },
+                { word: 'circuit', sentence: 'Electric current flows through the _________.', meaning: '회로', translation: '전류가 회로를 통해 흐른다.' },
+                { word: 'approximate', sentence: 'The _________ cost is 100 dollars.', meaning: '대략의', translation: '대략적인 비용은 100달러이다.' },
+                { word: 'stationary', sentence: 'The car remained _________ at the red light.', meaning: '정지한', translation: '자동차는 빨간불에 정지해 있었다.' },
+                { word: 'tangible', sentence: 'The investigation provided _________ proof.', meaning: '실체가 있는', translation: '조사는 범죄의 명백한(실체가 있는) 증거를 제공했다.' },
+                { word: 'intrinsic', sentence: 'Curiosity is _________ to human nature.', meaning: '본질적인', translation: '호기심은 인간 본성에 고유한(본질적인) 것이다.' },
+                { word: 'back off', sentence: 'The police told the crowd to _________ _________.', meaning: '물러나다', translation: '경찰은 군중에게 뒤로 물러나라고 말했다.' },
+                { word: 'break off', sentence: 'The country _________ _________ relations.', meaning: '끊다, 중단하다', translation: '그 나라는 이웃 나라와의 관계를 끊었다.' },
+                { word: 'call off', sentence: 'The judge had to _________ _________ the game.', meaning: '취소하다', translation: '판사는 비 때문에 경기를 취소해야 했다.' },
+                { word: 'come off', sentence: 'The button _________ _________ from the shirt.', meaning: '떨어지다', translation: '셔츠에서 단추가 떨어졌다.' },
+                { word: 'cut off', sentence: 'The storm _________ _________ the power supply.', meaning: '차단하다', translation: '폭풍이 전력 공급을 차단했다.' }
+            ],
+            'unit07': [
+                { word: 'innate', sentence: 'Birds have an _________ ability to fly.', meaning: '타고난', translation: '새들은 선천적인 비행 능력을 가지고 있다.' },
+                { word: 'notified', sentence: 'The app _________ users of new messages.', meaning: '통지하다', translation: '앱이 사용자들에게 새 메시지를 알렸다.' },
+                { word: 'partial', sentence: 'The judge was _________ to his friend.', meaning: '편파적인, 부분적인', translation: '그 판사는 자신의 친구에게 편파적이었다.' },
+                { word: 'coincidence', sentence: 'Meeting him was a _________ and not planned.', meaning: '우연의 일치', translation: '그를 만난 것은 우연의 일치였지 계획된 것이 아니었다.' },
+                { word: 'gigantic', sentence: 'The whale is a _________ creature of the sea.', meaning: '거대한', translation: '고래는 바다의 거대한 생물이다.' },
+                { word: 'glimpse', sentence: 'I caught a _________ of the famous actor.', meaning: '언뜻 보다', translation: '나는 그 유명한 배우를 언뜻 보았다.' },
+                { word: 'escalated', sentence: 'The conflict _________ into a major war.', meaning: '확대되다', translation: '갈등이 큰 전쟁으로 확대되었다.' },
+                { word: 'gorgeous', sentence: 'The sunset looked _________ over the ocean.', meaning: '아주 멋진', translation: '대양 위로 지는 일몰이 아주 멋져 보였다.' },
+                { word: 'superficial', sentence: 'His knowledge is _________ and lacks depth.', meaning: '피상적인', translation: '그의 지식은 피상적이고 깊이가 부족하다.' },
+                { word: 'profound', sentence: 'The book had a _________ effect on my life.', meaning: '심오한', translation: '그 책은 내 인생에 심오한 영향을 주었다.' },
+                { word: 'promising', sentence: 'He is a _________ young musician.', meaning: '유망한', translation: '그는 유망한 젊은 음악가이다.' },
+                { word: 'renowned', sentence: 'The city is _________ for its architecture.', meaning: '유명한', translation: '그 도시는 건축물로 유명하다.' },
+                { word: 'prestige', sentence: 'Winning the prize brings _________ to the winner.', meaning: '명성', translation: '그 상을 받는 것은 수상자에게 명성을 가져다준다.' },
+                { word: 'substantial', sentence: 'A _________ amount of rain fell last night.', meaning: '상당한', translation: '어제저녁에 상당한 양의 비가 내렸다.' },
+                { word: 'fraction', sentence: 'The cost is only a _________ of the original price.', meaning: '일부, 분수', translation: '그 비용은 원래 가격의 극히 일부일 뿐이다.' },
+                { word: 'segments', sentence: 'The market is divided into several _________.', meaning: '부분, 구획', translation: '시장은 여러 구획으로 나뉘어 있다.' },
+                { word: 'vanished', sentence: 'The magician made the bird _________ into thin air.', meaning: '사라지다', translation: '마술사는 새를 공중으로 사라지게 했다.' },
+                { word: 'impaired', sentence: 'Loud noise _________ his hearing.', meaning: '손상시키다', translation: '시끄러운 소음이 그의 청력을 손상시켰다.' },
+                { word: 'withstand', sentence: 'The bridge can _________ strong winds.', meaning: '견뎌 내다', translation: '그 다리는 강한 바람을 견뎌 낼 수 있다.' },
+                { word: 'roared', sentence: 'The lion _________ loudly in the cage.', meaning: '으르렁거리다', translation: '사자가 우리 안에서 크게 으르렁거렸다.' },
+                { word: 'slammed', sentence: 'He _________ the door in anger.', meaning: '쾅 닫다', translation: '그는 화가 나서 문을 쾅 닫았다.' },
+                { word: 'rotates', sentence: 'The Earth _________ once every 24 hours.', meaning: '회전하다', translation: '지구는 24시간마다 한 번씩 자전한다.' },
+                { word: 'unified', sentence: 'The leader _________ the country after the war.', meaning: '통합하다', translation: '그 지도자는 전쟁 후 나라를 통합했다.' },
+                { word: 'naked', sentence: 'Stars can be seen with the _________ eye.', meaning: '벌거벗은, 육안의', translation: '별들은 육안으로 볼 수 있다.' },
+                { word: 'pierced', sentence: 'The arrow _________ the target.', meaning: '관통하다', translation: '화살이 과녁을 관통했다.' },
+                { word: 'penetrated', sentence: 'Light _________ through the thick fog.', meaning: '관통하다', translation: '빛이 짙은 안개를 뚫고 들어갔다(관통했다).' },
+                { word: 'trimmed', sentence: 'He _________ the garden bushes.', meaning: '다듬다', translation: '그는 정원 덤불을 다듬었다.' },
+                { word: 'gripped', sentence: 'Fear _________ the city after the earthquake.', meaning: '꽉 잡다, 사로잡다', translation: '지진 후 공포가 도시를 사로잡았다.' },
+                { word: 'indulged', sentence: 'He _________ in his favorite hobby all weekend.', meaning: '마음껏 하다', translation: '그는 주말 내내 자신이 가장 좋아하는 취미를 마음껏 즐겼다.' },
+                { word: 'reared', sentence: 'She _________ her children with love.', meaning: '양육하다', translation: '그녀는 사랑으로 아이들을 길렀다(양육했다).' },
+                { word: 'supreme', sentence: 'The _________ Court makes final decisions.', meaning: '최고의', translation: '대법원은 최종 결정을 내린다.' },
+                { word: 'vacant', sentence: 'The office has been _________ for months.', meaning: '비어 있는', translation: '그 사무실은 몇 달째 비어 있다.' },
+                { word: 'duplicated', sentence: 'They _________ the key for safety.', meaning: '복사하다', translation: '그들은 안전을 위해 열쇠를 복사했다.' },
+                { word: 'keep off', sentence: 'Please _________ _________ the grass.', meaning: '접근하지 않다', translation: '잔디에 들어가지 마세요.' },
+                { word: 'lay off', sentence: 'The company _________ _________ many workers.', meaning: '해고하다', translation: '회사는 많은 직원을 해고해야 했다.' },
+                { word: 'paid off', sentence: 'Hard work finally _________ _________ with success.', meaning: '성과를 올리다, 다 갚다', translation: '노력은 결국 성공이라는 성과를 올렸다.' },
+                { word: 'put off', sentence: 'Never _________ _________ what you can do today.', meaning: '연기하다', translation: '오늘 할 수 있는 일을 미루지 마라.' },
+                { word: 'rolled off', sentence: 'The ball _________ _________ the table.', meaning: '굴러떨어지다', translation: '공이 테이블에서 굴러떨어졌다.' },
+                { word: 'saw off', sentence: 'They went to the station to _________ him _________.', meaning: '배웅하다', translation: '그들은 그를 배웅하기 위해 역에 갔다.' },
+                { word: 'set off', sentence: 'They _________ _________ on a journey early.', meaning: '출발하다', translation: '그들은 일찍 여행을 떠났다(출발했다).' }
+            ],
+            'unit08': [
+                { word: 'concrete', sentence: 'She needs _________ examples to understand the theory.', meaning: '구체적인', translation: '그녀는 그 이론을 이해하기 위해 구체적인 예시가 필요하다.' },
+                { word: 'compound', sentence: 'Water is a chemical _________ of hydrogen and oxygen.', meaning: '혼합물', translation: '물은 수소와 산소의 화학적 혼합물이다.' },
+                { word: 'halted', sentence: 'The strike _________ production for a week.', meaning: '중단시키다', translation: '파업이 일주일 동안 생산을 중단시켰다.' },
+                { word: 'endeavored', sentence: 'The team _________ to reach the peak.', meaning: '노력하다', translation: '그 팀은 정상에 도달하기 위해 노력했다.' },
+                { word: 'deliberate', sentence: 'The move was a _________ attempt to gain power.', meaning: '의도적인', translation: '그 움직임은 권력을 얻기 위한 의도적인 시도였다.' },
+                { word: 'obscured', sentence: 'Clouds _________ the sun.', meaning: '모호하게 하다', translation: '구름이 해를 가렸다(모호하게 했다).' },
+                { word: 'inclined', sentence: 'People are _________ to believe what they see.', meaning: '마음이 기울다', translation: '사람들은 자신이 보는 것을 믿는 경향이 있다.' },
+                { word: 'embraced', sentence: 'The city _________ new technology for growth.', meaning: '받아들이다', translation: '도시는 성장을 위해 신기술을 받아들였다.' },
+                { word: 'supplemented', sentence: 'I _________ my income with a part-time job.', meaning: '보충하다', translation: '나는 아르바이트로 수입을 보충했다.' },
+                { word: 'dull', sentence: 'The knife became _________ after long use.', meaning: '무딘, 지루한', translation: '오랫동안 사용한 후 칼이 무뎌졌다.' },
+                { word: 'subsequent', sentence: '_________ events led to his resignation.', meaning: '그 다음의', translation: '그다음 사건들이 그의 사임으로 이어졌다.' },
+                { word: 'scope', sentence: 'The _________ of the study is limited to the city.', meaning: '범위', translation: '연구의 범위는 도시로 한정된다.' },
+                { word: 'mimicked', sentence: 'The child _________ her father’s voice.', meaning: '모방하다', translation: '아이가 아빠의 목소리를 흉내 냈다.' },
+                { word: 'devastated', sentence: 'The flood _________ the entire village.', meaning: '완전히 파괴하다', translation: '홍수가 마을 전체를 완전히 파괴했다.' },
+                { word: 'compatible', sentence: 'The software is _________ with old computers.', meaning: '호환 가능한', translation: '그 소프트웨어는 오래된 컴퓨터와 호환된다.' },
+                { word: 'fragments', sentence: 'The bowl broke into small _________.', meaning: '파편', translation: '그릇이 작은 조각들(파편)로 부서졌다.' },
+                { word: 'squeezed', sentence: 'She _________ the juice from the lemon.', meaning: '짜내다', translation: '그녀는 레몬에서 즙을 짰다.' },
+                { word: 'discerned', sentence: 'It is hard to _________ the truth from lies.', meaning: '식별하다', translation: '거짓에서 진실을 식별하는 것은 어렵다.' },
+                { word: 'beforehand', sentence: 'You should prepare for the test _________.', meaning: '사전에', translation: '너는 시험을 위해 미리 준비해야 한다.' },
+                { word: 'moderate', sentence: '_________ exercise is good for health.', meaning: '적당한', translation: '적당한 운동은 건강에 좋다.' },
+                { word: 'restrained', sentence: 'He _________ his anger during the debate.', meaning: '억제하다', translation: '그는 토론 중에 분노를 억제했다.' },
+                { word: 'inhibits', sentence: 'Fear _________ the learning process.', meaning: '억제하다', translation: '공포는 학습 과정을 저해(억제)한다.' },
+                { word: 'sole', sentence: 'He was the _________ survivor of the crash.', meaning: '유일한', translation: '그는 그 사고의 유일한 생존자였다.' },
+                { word: 'intact', sentence: 'The ancient city remained _________ for centuries.', meaning: '손상되지 않은', translation: '그 고대 도시는 수 세기 동안 온전하게 유지되었다.' },
+                { word: 'comprise', sentence: 'Fifty states _________ the USA.', meaning: '구성하다', translation: '50개의 주가 미국을 구성한다.' },
+                { word: 'dripped', sentence: 'Water _________ from the leaking pipe.', meaning: '뚝뚝 떨어지다', translation: '새는 파이프에서 물이 뚝뚝 떨어졌다.' },
+                { word: 'gross', sentence: 'The _________ income includes all taxes.', meaning: '총계의', translation: '총수입은 모든 세금을 포함한다.' },
+                { word: 'flaws', sentence: 'The diamond has tiny _________ inside.', meaning: '결함', translation: '그 다이아몬드 안에는 미세한 결함들이 있다.' },
+                { word: 'interior', sentence: 'The _________ design of the building is modern.', meaning: '내부의', translation: '건물의 내부 디자인은 현대적이다.' },
+                { word: 'probable', sentence: 'It is _________ that it will rain this afternoon.', meaning: '있음직한', translation: '오늘 오후에 비가 올 가능성이 있다.' },
+                { word: 'implemented', sentence: 'The school _________ new rules for safety.', meaning: '실행하다', translation: '학교는 안전을 위해 새로운 규칙을 시행했다.' },
+                { word: 'dimension', sentence: 'The 3D printer adds a new _________ to art.', meaning: '차원', translation: '3D 프린터는 예술에 새로운 차원을 더한다.' },
+                { word: 'withheld', sentence: 'The company _________ information from the public.', meaning: '보류하다', translation: '회사는 대중에게 정보를 공개하지 않았다(보류했다).' },
+                { word: 'sheer', sentence: 'Success came from _________ hard work.', meaning: '순전한, 완전한', translation: '성공은 순전한 노력에서 왔다.' },
+                { word: 'staple', sentence: 'Rice is a _________ food in many countries.', meaning: '주식, 주요한', translation: '쌀은 많은 나라에서 주식이다.' },
+                { word: 'show off', sentence: 'He likes to _________ _________ his new car.', meaning: '자랑하다', translation: '그는 자신의 새 차를 자랑하기를 좋아한다.' },
+                { word: 'took off', sentence: 'The plane _________ _________ on time.', meaning: '이륙하다', translation: '비행기가 정시에 이륙했다.' },
+                { word: 'turn off', sentence: 'Please _________ _________ the light before leaving.', meaning: '끄다', translation: '나가기 전에 불을 꺼주세요.' },
+                { word: 'wore off', sentence: 'The effect of the drug _________ _________ in hours.', meaning: '사라지다', translation: '약의 효과는 몇 시간 만에 사라졌다.' },
+                { word: 'worked off', sentence: 'He went to the gym to _________ _________ stress.', meaning: '해소하다', translation: '그는 스트레스를 해소하기 위해 체육관에 갔다.' }
+            ],
+            'unit09': [
+                { word: 'illustrates', sentence: 'This example _________ the theory clearly.', meaning: '설명하다', translation: '이 예시는 그 이론을 명확하게 설명해준다.' },
+                { word: 'depicts', sentence: 'The painting _________ a rural scene.', meaning: '묘사하다', translation: '그 그림은 시골 풍경을 묘사한다.' },
+                { word: 'complimented', sentence: 'The boss _________ the team for their success.', meaning: '칭찬하다', translation: '상사는 팀의 성공에 대해 그들을 칭찬했다.' },
+                { word: 'isolated', sentence: 'The island was _________ from the mainland.', meaning: '고립시키다', translation: '그 섬은 본토로부터 고립되어 있었다.' },
+                { word: 'preference', sentence: 'I have a _________ for tea over coffee.', meaning: '선호', translation: '나는 커피보다 차를 더 선호한다.' },
+                { word: 'drifted', sentence: 'The boat _________ away from the shore.', meaning: '표류하다', translation: '보트가 해안가에서 멀리 떠내려갔다(표류했다).' },
+                { word: 'blinked', sentence: 'She _________ her eyes in the bright light.', meaning: '깜박이다', translation: '그녀는 밝은 빛 속에서 눈을 깜박였다.' },
+                { word: 'fled', sentence: 'The animals _________ from the forest fire.', meaning: '달아나다', translation: '동물들이 산불로부터 도망갔다.' },
+                { word: 'animated', sentence: 'The teacher _________ the lesson with jokes.', meaning: '생기를 불어넣다', translation: '선생님은 농담으로 수업에 생기를 불어넣었다.' },
+                { word: 'upright', sentence: 'Please sit _________ to protect your back.', meaning: '똑바른', translation: '등을 보호하기 위해 똑바로 앉으세요.' },
+                { word: 'altered', sentence: 'Technology has _________ the way we live.', meaning: '변경하다', translation: '기술은 우리가 사는 방식을 바꾸었다.' },
+                { word: 'distorted', sentence: 'The mirror _________ his reflection.', meaning: '왜곡하다, 비틀다', translation: '거울이 그의 비친 모습을 일그러뜨렸다(비틀었다).' },
+                { word: 'proportion', sentence: 'The _________ of salt in the soup is too high.', meaning: '비율', translation: '수프의 소금 비율이 너무 높다.' },
+                { word: 'migrated', sentence: 'Birds _________ south for the winter.', meaning: '이동하다', translation: '새들이 겨울을 나기 위해 남쪽으로 이동했다.' },
+                { word: 'phase', sentence: 'The project is in its final _________ of testing.', meaning: '단계', translation: '그 프로젝트는 테스트의 마지막 단계에 있다.' },
+                { word: 'affairs', sentence: 'He manages the company’s daily _________.', meaning: '일, 사건', translation: '그는 회사의 일상적인 업무(일)를 관리한다.' },
+                { word: 'virtual', sentence: 'V_________ reality creates immersive worlds.', meaning: '가상의', translation: '가상 현실은 몰입형 세계를 만든다.' },
+                { word: 'coordinated', sentence: 'She _________ the team’s efforts for the project.', meaning: '조정하다', translation: '그녀는 프로젝트를 위해 팀의 노력을 조정했다.' },
+                { word: 'relevant', sentence: 'Please provide _________ info for the case.', meaning: '관련 있는', translation: '그 사건과 관련 있는 정보를 제공해주세요.' },
+                { word: 'via', sentence: 'The news spread _________ social media.', meaning: '~을 통해서', translation: '그 소식은 소셜 미디어를 통해 퍼졌다.' },
+                { word: 'sector', sentence: 'The service _________ is growing fast.', meaning: '부문, 분야', translation: '서비스 부문이 빠르게 성장하고 있다.' },
+                { word: 'privilege', sentence: 'Education should be a right, not a _________.', meaning: '특권', translation: '교육은 일부를 위한 특권이 아니라 권리여야 한다.' },
+                { word: 'joint', sentence: 'The two nations started a _________ project.', meaning: '공동의', translation: '두 국가는 공동 프로젝트를 시작했다.' },
+                { word: 'utilize', sentence: 'Companies _________ data to improve service.', meaning: '활용하다', translation: '회사들은 서비스를 개선하기 위해 데이터를 활용한다.' },
+                { word: 'boost', sentence: 'Reading can _________ your vocabulary.', meaning: '신장시키다', translation: '독서는 어휘력을 신장시킬 수 있다.' },
+                { word: 'drilled', sentence: 'The team _________ every morning for the match.', meaning: '반복 훈련시키다', translation: '그 팀은 경기를 위해 매일 아침 반복 훈련을 했다.' },
+                { word: 'peculiar', sentence: 'The plant has a _________ smell.', meaning: '기이한, 독특한', translation: '그 식물은 기이한 냄새가 난다.' },
+                { word: 'portable', sentence: 'A _________ speaker is great for travel.', meaning: '휴대용의', translation: '휴대용 스피커는 여행에 아주 좋다.' },
+                { word: 'shallow', sentence: 'The water is _________ enough to walk in.', meaning: '얕은', translation: '물은 걸어 들어갈 수 있을 만큼 얕다.' },
+                { word: 'break in', sentence: 'Thieves tried to _________ _________ last night.', meaning: '침입하다', translation: '도둑들이 어제저녁에 침입하려고 시도했다.' },
+                { word: 'brought in', sentence: 'The manager _________ _________ new policies.', meaning: '도입하다', translation: '매니저가 새로운 정책을 도입했다.' },
+                { word: 'count in', sentence: 'If you go hiking, _________ me _________!', meaning: '포함시키다', translation: '등산을 간다면 나도 꼭 끼워(포함시켜) 줘!' },
+                { word: 'dropped in', sentence: 'An old friend _________ _________ on us yesterday.', meaning: '잠깐 들르다', translation: '어제 옛 친구가 우리에게 잠깐 들렀다.' },
+                { word: 'filled in', sentence: 'She _________ _________ the form with her info.', meaning: '작성하다', translation: '그녀는 자신의 정보로 양식을 작성했다.' },
+                { word: 'fit in', sentence: 'He tried hard to _________ _________ with his peers.', meaning: '어울리다', translation: '그는 또래들과 어울리기 위해 열심히 노력했다.' },
+                { word: 'gave in', sentence: 'They finally _________ _________ to our demands.', meaning: '굴복하다', translation: '그들은 마침내 우리의 요구에 굴복했다.' },
+                { word: 'handed in', sentence: 'I _________ _________ my assignment on time.', meaning: '제출하다', translation: '나는 과제물을 제때 제출했다.' },
+                { word: 'let in on', sentence: 'He _________ me _________ _________ the secret.', meaning: '알려주다', translation: '그는 나에게 비밀을 알려주었다.' },
+                { word: 'put in', sentence: 'He _________ _________ a lot of effort to win.', meaning: '들이다, 쓰다', translation: '그는 이기기 위해 많은 노력을 들였다.' },
+                { word: 'took in', sentence: 'The students _________ _________ the information easily.', meaning: '이해하다, 섭취하다', translation: '학생들은 정보를 쉽게 이해했다(받아들였다).' }
+            ],
+            'unit10': [
+                { word: 'curbed', sentence: 'The law _________ air pollution in the city.', meaning: '억제하다', translation: '법이 도시의 대기 오염을 억제했다.' },
+                { word: 'bunch', sentence: 'I bought a _________ of bananas.', meaning: '다발, 묶음', translation: '나는 바나나 한 다발을 샀다.' },
+                { word: 'accused', sentence: 'They _________ him of lying.', meaning: '비난하다', translation: '그들은 그가 거짓말을 했다고 비난했다.' },
+                { word: 'retrieve', sentence: 'The dog ran to _________ the ball.', meaning: '되찾다', translation: '개가 공을 되찾아오기 위해 달려갔다.' },
+                { word: 'initiative', sentence: 'The student took the _________ to lead the group.', meaning: '주도(권)', translation: '그 학생은 그룹을 이끌기 위해 주도권을 잡았다.' },
+                { word: 'shed', sentence: 'Trees _________ their leaves in autumn.', meaning: '떨어뜨리다', translation: '나무들은 가을에 잎을 떨어뜨린다.' },
+                { word: 'rendered', sentence: 'The shock _________ him speechless.', meaning: '상태로 만들다', translation: '그 충격이 그를 말문이 막힌 상태로 만들었다.' },
+                { word: 'tickled', sentence: 'The feather _________ his nose.', meaning: '간지럽게 하다', translation: '깃털이 그의 코를 간지럽혔다.' },
+                { word: 'outward', sentence: 'O_________ appearances can be deceiving.', meaning: '겉으로 보이는', translation: '겉모습은 기만적일 수 있다.' },
+                { word: 'embedded', sentence: 'The fossil was _________ in the rock.', meaning: '박다, 끼워 넣다', translation: '화석이 바위 속에 박혀 있었다.' },
+                { word: 'immense', sentence: 'The project requires an _________ amount of work.', meaning: '엄청난', translation: '그 프로젝트는 엄청난 양의 작업을 필요로 한다.' },
+                { word: 'illuminated', sentence: 'The lamps _________ the dark street.', meaning: '비추다', translation: '램프가 어두운 거리를 비추었다.' },
+                { word: 'feat', sentence: 'Building the pyramids was a great _________.', meaning: '위업, 솜씨', translation: '피라미드를 지은 것은 위대한 위업이었다.' },
+                { word: 'shrugged', sentence: 'He _________ his shoulders in indifference.', meaning: '어깨를 으쓱하다', translation: '그는 무관심하게 어깨를 으쓱했다.' },
+                { word: 'knelt', sentence: 'He _________ down to propose.', meaning: '무릎을 꿇다', translation: '그는 청혼하기 위해 무릎을 꿇었다.' },
+                { word: 'superb', sentence: 'The chef prepared a _________ meal.', meaning: '최고의', translation: '요리사가 훌륭한(최상의) 식사를 준비했다.' },
+                { word: 'breakdown', sentence: 'A communication _________ led to a misunderstanding.', meaning: '실패, 고장', translation: '의사소통의 실패가 오해를 불러일으켰다.' },
+                { word: 'conscience', sentence: 'A clear _________ leads to a peaceful mind.', meaning: '양심', translation: '깨끗한 양심은 평화로운 마음으로 이어진다.' },
+                { word: 'premise', sentence: 'The argument is based on a false _________.', meaning: '전제', translation: '그 주장은 잘못된 전제에 근거하고 있다.' },
+                { word: 'dwindled', sentence: 'Supplies _________ during the long winter.', meaning: '줄어들다', translation: '긴 겨울 동안 물자가 줄어들었다.' },
+                { word: 'amplified', sentence: 'The speaker _________ the sound of the music.', meaning: '확대하다', translation: '스피커가 음악 소리를 증폭시켰다.' },
+                { word: 'swift', sentence: 'The eagle made a _________ attack on its prey.', meaning: '신속한', translation: '독수리가 먹잇감을 향해 신속한 공격을 했다.' },
+                { word: 'eligible', sentence: 'Only citizens are _________ to vote.', meaning: '적격의', translation: '시민들만이 투표할 자격이 있다.' },
+                { word: 'majestic', sentence: 'The _________ mountains looked beautiful.', meaning: '장엄한', translation: '장엄한 산들이 아름다워 보였다.' },
+                { word: 'commenced', sentence: 'The ceremony _________ at noon.', meaning: '시작되다', translation: '의식이 정오에 시작되었다.' },
+                { word: 'splendid', sentence: 'The palace has a _________ garden.', meaning: '훌륭한, 화려한', translation: '그 궁전은 화려한 정원을 가지고 있다.' },
+                { word: 'refrain', sentence: 'Please _________ from smoking in this area.', meaning: '삼가다', translation: '이 구역에서는 흡연을 삼가 주세요.' },
+                { word: 'counterproductive', sentence: 'Too much stress is _________ to learning.', meaning: '역효과를 낳는', translation: '지나친 스트레스는 학습에 역효과를 낳는다.' },
+                { word: 'rigorous', sentence: 'The army has _________ training rules.', meaning: '철저한', translation: '군대에는 엄격한 훈련 규칙이 있다.' },
+                { word: 'maneuver', sentence: 'The pilot performed a skilled _________ to land.', meaning: '동작, 책략', translation: '조종사가 착륙을 위해 숙련된 동작을 수행했다.' },
+                { word: 'shade', sentence: 'The tree provides _________ from the sun.', meaning: '그늘', translation: '나무가 태양으로부터 그늘을 제공한다.' },
+                { word: 'tripled', sentence: 'The population _________ in just ten years.', meaning: '3배가 되다', translation: '인구가 단 10년 만에 3배가 되었다.' },
+                { word: 'be into', sentence: 'He is really _________ classic rock music.', meaning: '~에 관심이 많다', translation: '그는 클래식 록 음악에 관심이 정말 많다.' },
+                { word: 'broke into', sentence: 'Someone _________ _________ my house last night.', meaning: '침입하다', translation: '누군가 어제저녁 내 집에 침입했다.' },
+                { word: 'came into', sentence: 'She _________ _________ a large fortune.', meaning: '물려받다', translation: '그녀는 거대한 재산을 물려받았다.' },
+                { word: 'go into', sentence: 'Much effort _________es _________ creating art.', meaning: '투입되다', translation: '예술을 만드는 데 많은 노력이 투입된다.' },
+                { word: 'look into', sentence: 'The manager will _________ _________ the complaint.', meaning: '조사하다', translation: '매니저가 그 불만 사항을 조사할 것이다.' },
+                { word: 'put into', sentence: 'You must _________ effort _________ your work.', meaning: '들이다, 쓰다', translation: '당신은 당신의 일에 노력을 들여야 한다.' },
+                { word: 'run into', sentence: 'I _________ _________ an old friend today.', meaning: '우연히 만나다', translation: '나는 오늘 옛 친구를 우연히 만났다.' },
+                { word: 'talked into', sentence: 'She _________ him _________ buying the car.', meaning: '설득해서 ~하게 하다', translation: '그녀는 그를 설득해서 차를 사게 했다.' }
+            ]
+        };
+
+        let currentQuestions = [], currentIdx = 0, score = 0, incorrect = [];
+
+        function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } }
+
+        function startQuiz(mode) {
+            currentIdx = 0; score = 0; incorrect = []; currentQuestions = [];
+            if (mode === 'all') Object.values(quizData).forEach(u => currentQuestions.push(...u));
+            else if (mode.startsWith('review')) {
+                const [s, e] = mode.split('_')[1].split('-').map(Number);
+                for (let i = s; i <= e; i++) { let k = 'unit' + String(i).padStart(2, '0'); if (quizData[k]) currentQuestions.push(...quizData[k]); }
+            } else currentQuestions = [...quizData[mode]];
+            shuffle(currentQuestions);
+            if (mode.includes('review') || mode === 'all') currentQuestions = currentQuestions.slice(0, 30);
+            document.getElementById('quiz-title').textContent = mode.includes('unit') ? "Unit " + mode.replace('unit', '') : "랜덤 학습";
+            document.getElementById('unit-selection-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQ();
+        }
+
+        function showQ() {
+            if (currentIdx < currentQuestions.length) {
+                const q = currentQuestions[currentIdx];
+                const hint = q.word.charAt(0) + "_".repeat(q.word.length - 1);
+                document.getElementById('sentence').innerHTML = q.sentence.replace("_________", `<span class="text-indigo-600 font-bold">${hint}</span>`);
+                document.getElementById('meaning').textContent = q.translation;
+                document.getElementById('progress-indicator').textContent = `${currentIdx + 1}/${currentQuestions.length}`;
+                document.getElementById('answer-input').value = ""; document.getElementById('answer-input').focus();
+            } else showResults();
+        }
+
+        function checkAnswer() {
+            const user = document.getElementById('answer-input').value.trim().toLowerCase();
+            const correct = currentQuestions[currentIdx].word.toLowerCase();
+            if (user === correct) score++; else incorrect.push({ q: currentQuestions[currentIdx], user: user });
+            currentIdx++; showQ();
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('score').textContent = `${currentQuestions.length} 중 ${score} 정답`;
+            const list = document.getElementById('incorrect-answers-list');
+            list.innerHTML = "";
+            incorrect.forEach(item => {
+                const li = document.createElement('li');
+                li.className = "p-3 bg-red-50 border border-red-200 rounded-lg text-sm";
+                li.innerHTML = `<strong>정답: ${item.q.word}</strong> (입력: ${item.user || '없음'})<br><span class="text-gray-600">${item.q.sentence.replace("_________", item.q.word)}</span>`;
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

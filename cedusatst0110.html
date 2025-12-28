@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>세듀 어휘끝 수능 - Unit 01-10</title>
+    <style>
+        :root {
+            --main-purple: #5c5cf4;
+            --main-green: #27ae60;
+            --bg-gray: #f4f7f6;
+            --text-dark: #2d3436;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white; width: 100%; max-width: 550px;
+            border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 35px; text-align: center;
+        }
+
+        .header-title { font-size: 24px; font-weight: 800; color: var(--text-dark); margin-bottom: 30px; }
+        
+        /* 섹션 구분선 */
+        .section-header {
+            text-align: left; font-size: 16px; font-weight: 800; color: var(--main-green);
+            border-bottom: 2px solid var(--main-green); padding-bottom: 8px; margin-bottom: 15px;
+        }
+
+        /* 버튼 그리드 */
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background-color: #fff;
+            border: 2px solid #eef0ff;
+            border-radius: 15px;
+            padding: 18px 10px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--main-purple);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn:hover {
+            border-color: var(--main-purple);
+            background-color: #fbfcff;
+            transform: translateY(-2px);
+        }
+
+        /* 통합/복습 버튼 스타일 */
+        .btn-review {
+            background-color: var(--main-green);
+            color: white;
+            border: none;
+            grid-column: span 2; /* 가로로 길게 배치 */
+            margin-bottom: 5px;
+        }
+
+        .btn-review:hover {
+            background-color: #219150;
+            color: white;
+        }
+
+        .btn-back {
+            background-color: #636e72;
+            color: white;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .btn-back:hover { background-color: #2d3436; color: white; }
+
+        @media (max-width: 400px) {
+            .unit-grid { grid-template-columns: 1fr; }
+            .btn-review { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-title">세듀 어휘끝 수능<br>Unit 01 - 10</div>
+
+    <div class="section-header">통합 복습 시험</div>
+    <div class="unit-grid">
+        <a href="cedusatst0105.html" class="btn btn-review">Unit 1-5 복습 (통합)</a>
+        <a href="cedusatst0610.html" class="btn btn-review">Unit 6-10 복습 (통합)</a>
+    </div>
+
+    <div class="section-header">개별 유닛 시험</div>
+    <div class="unit-grid">
+        <a href="cedusatst01.html" class="btn">Unit 01</a>
+        <a href="cedusatst02.html" class="btn">Unit 02</a>
+        <a href="cedusatst03.html" class="btn">Unit 03</a>
+        <a href="cedusatst04.html" class="btn">Unit 04</a>
+        <a href="cedusatst05.html" class="btn">Unit 05</a>
+        <a href="cedusatst06.html" class="btn">Unit 06</a>
+        <a href="cedusatst07.html" class="btn">Unit 07</a>
+        <a href="cedusatst08.html" class="btn">Unit 08</a>
+        <a href="cedusatst09.html" class="btn">Unit 09</a>
+        <a href="cedusatst10.html" class="btn">Unit 10</a>
+    </div>
+
+    <a href="cedusatst.html" class="btn btn-back">전체 유닛 목록으로</a>
+</div>
+
+</body>
+</html>
